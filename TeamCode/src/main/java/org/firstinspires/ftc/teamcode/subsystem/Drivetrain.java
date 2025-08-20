@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -14,7 +15,7 @@ import java.util.Locale;
 
 public class Drivetrain extends Subsystem {
     public final String leftFrontName = "Front Left Motor";
-    public final String rightFrontName = "Right Left Motor";
+    public final String rightFrontName = "Front Right Motor";
     public final String leftBackName = "Back Left Motor";
     public final String rightBackName = "Back Right Motor";
     private DcMotor  leftFrontDrive   = null;
@@ -29,10 +30,10 @@ public class Drivetrain extends Subsystem {
     private Telemetry telemetry;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry){
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, leftFrontName);
-        rightFrontDrive = hardwareMap.get(DcMotor.class, rightFrontName);
-        leftBackDrive  = hardwareMap.get(DcMotor.class, leftBackName);
-        rightBackDrive = hardwareMap.get(DcMotor.class, rightBackName);
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, leftFrontName); //0
+        rightFrontDrive = hardwareMap.get(DcMotor.class, rightFrontName); //3
+        leftBackDrive  = hardwareMap.get(DcMotor.class, leftBackName); //1
+        rightBackDrive = hardwareMap.get(DcMotor.class, rightBackName); //2
         
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left and right sticks forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -40,7 +41,7 @@ public class Drivetrain extends Subsystem {
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         this.telemetry = telemetry;
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
