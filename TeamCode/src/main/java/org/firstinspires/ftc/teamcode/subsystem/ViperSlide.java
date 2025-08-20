@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-public class ViperSlide extends Subsystem{
+public class ViperSlide extends Subsystem {
 
     // todo: write your code here
    
@@ -34,7 +33,7 @@ public class ViperSlide extends Subsystem{
     public void raiseElevator(double speed){
         if (speed < 0.04 && speed > -0.04 && elevator.getMode() != DcMotor.RunMode.RUN_USING_ENCODER)
             return;
-        if (state!=SubsystemState.IDLE)
+        if (isBusy())
             forceExit();
         if(elevator.getMode() != DcMotor.RunMode.RUN_USING_ENCODER)
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

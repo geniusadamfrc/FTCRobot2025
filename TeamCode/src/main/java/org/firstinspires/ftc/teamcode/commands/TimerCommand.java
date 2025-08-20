@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 
-public class TimerCommand extends Command{
+public class TimerCommand extends Command {
     private long startTime;
     private long runTime; 
     public TimerCommand(long timeInMilliseconds){

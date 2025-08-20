@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.firstinspires.ftc.teamcode.Subsystem;
 
 public abstract class Command {
     private boolean finished;
     private boolean started;
     private List<Subsystem> subsystems;
-    public Command(){
+    public Command()
+    {
         subsystems = new ArrayList<Subsystem>();
+
     }
     public void registerSubsystem(Subsystem s){
         subsystems.add(s);

@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
-public class SlideClaw extends Subsystem{
+public class SlideClaw extends Subsystem {
     public Servo clawLeft;
     public Servo clawRight;
     public Servo clawLever;

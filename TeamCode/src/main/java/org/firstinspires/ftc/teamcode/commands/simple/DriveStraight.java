@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.commands;
-import org.firstinspires.ftc.teamcode.Drivetrain;
+package org.firstinspires.ftc.teamcode.commands.simple;
+import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.commands.TimerCommand;
+import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class DriveStraight extends Command{
+public class DriveStraight extends Command {
     private Drivetrain drivetrain;
     private TimerCommand timer;
     private int time;
