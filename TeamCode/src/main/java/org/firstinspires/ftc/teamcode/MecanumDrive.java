@@ -21,7 +21,7 @@ public class MecanumDrive extends OpMode {
     @Override
     public void init(){
 
-        Robot.init(hardwareMap, telemetry);
+        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
     }
 
     /*
