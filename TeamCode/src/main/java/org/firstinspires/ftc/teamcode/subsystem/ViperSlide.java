@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
+
 
 public class ViperSlide extends Subsystem {
 
@@ -26,15 +28,15 @@ public class ViperSlide extends Subsystem {
         elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         startingPosition = elevator.getCurrentPosition();
      }
-    
-    public void playOnce(){
+    @Override
+    public void playOnceImpl(){
     }
     
     public void raiseElevator(double speed){
         if (speed < 0.04 && speed > -0.04 && elevator.getMode() != DcMotor.RunMode.RUN_USING_ENCODER)
             return;
-        if (isBusy())
-            forceExit();
+        if (isActive())
+            CommandManager.forceExit(this);
         if(elevator.getMode() != DcMotor.RunMode.RUN_USING_ENCODER)
             elevator.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (elevator.getCurrentPosition()-startingPosition > MAX_POSITION  && speed >0.01) 

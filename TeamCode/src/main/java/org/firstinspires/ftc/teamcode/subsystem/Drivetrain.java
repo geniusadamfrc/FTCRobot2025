@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
 
 import java.util.Locale;
 
@@ -49,7 +50,7 @@ public class Drivetrain extends Subsystem {
         
     }
     @Override
-    public void playOnce(){
+    public void playOnceImpl(){
         initOdo();
     }
     public void initOdo(){
@@ -103,16 +104,18 @@ public class Drivetrain extends Subsystem {
 
 
     public void manualDrive(double forward, double turn, double strafe){
-        if (super.isBusy()){
+        if (super.isActive()){
             if (forward > CONTROLLER_THRESHOLD || forward < -CONTROLLER_THRESHOLD ||
                 turn > CONTROLLER_THRESHOLD || turn < -CONTROLLER_THRESHOLD ||
                 strafe > CONTROLLER_THRESHOLD || strafe < -CONTROLLER_THRESHOLD){
-                forceExit();
+                CommandManager.forceExit(this);
             }else {return;} 
         }
         drive(forward, turn, strafe); 
     }
-    
+    public void driveRobotRelative(double forward, double turn, double strafe){
+        drive(forward, turn, strafe);
+    }
     public void drive(double forward, double turn, double strafe){
         double fls = forward + turn + strafe;
         double frs = forward - turn - strafe;

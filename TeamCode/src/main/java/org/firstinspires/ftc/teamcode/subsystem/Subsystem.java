@@ -1,24 +1,46 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
 
 public class Subsystem {
-    protected Command activeCommand;
-    public boolean isBusy(){
-        return activeCommand!=null && activeCommand.isStarted() && !activeCommand.isFinished();
-    }
+    protected State state;
+    protected Command currentCommand;
+
     public void playOnce(){
-
+        state = State.IDLE;
+        playOnceImpl();
     }
+    public void playOnceImpl(){}
+    public void loop(){}
 
-    public void setBusy(Command command){
-        activeCommand = command;
+    public boolean isActive(){
+        return state ==State.ACTIVE;
     }
-    public void releaseBusy(){
-        activeCommand = null;
+    public boolean isDefault(){
+        return state == State.DEFAULT;
+    }
+    public boolean isIdle(){
+        return state == State.IDLE;
+    }
+    public void setActive(Command command){
+        currentCommand = command;
+        state = State.ACTIVE;
+    }
+    public void setDefault(Command command){
+        currentCommand = command;
+        state = State.DEFAULT;
+    }
+    public void setIdle(){
+        currentCommand = null;
+        state = State.IDLE;
     }
     public void forceExit() {
-        activeCommand.interrupt();
-        releaseBusy();
+        currentCommand.interrupt();
     }
-    public void loop(){}
+
+
+    protected enum State {
+        IDLE, DEFAULT, ACTIVE;
+    }
+
 }

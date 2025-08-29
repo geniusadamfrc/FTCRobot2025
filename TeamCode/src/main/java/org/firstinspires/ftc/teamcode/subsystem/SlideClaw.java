@@ -18,7 +18,7 @@ public class SlideClaw extends Subsystem {
         
      }
     
-    public void playOnce(){
+    public void playOnceImpl(){
         closeClaw();
         lowerClaw();
     }
