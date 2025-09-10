@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
-import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
 public class Robot {
     //These are default.  Don't touch.
@@ -23,6 +23,7 @@ public class Robot {
         Robot.gamepadex1 = new GamePadExtended(gamepad1);
         Robot.gamepadex2 = new GamePadExtended(gamepad2);
         CommandManager.initialize();
+
         //update these
         drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, telemetry);

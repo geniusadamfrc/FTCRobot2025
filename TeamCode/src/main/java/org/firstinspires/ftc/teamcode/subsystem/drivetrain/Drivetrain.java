@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.subsystem;
+package org.firstinspires.ftc.teamcode.subsystem.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,7 +8,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.gamepad.Axis;
+import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 
 import java.util.Locale;
 
@@ -220,6 +222,27 @@ public class Drivetrain extends Subsystem {
 
         telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
         telemetry.update();
+    }
+
+
+    public Command getRobotRelativeDriveCommand(Axis left_stick_y, Axis left_stick_x, Axis right_stick_x){
+        return new Command() {
+            @Override
+            public void beginImpl() {}
+
+            @Override
+            public void loopImpl() {
+                double forward = -left_stick_y.getState();
+                double turn = right_stick_x.getState();
+                double strafe = left_stick_x.getState();
+                driveRobotRelative(forward, turn, strafe);
+            }
+            @Override
+            public void finishImpl() {
+                driveRobotRelative(0, 0, 0);
+            }
+
+        };
     }
 
 

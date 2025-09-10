@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.commands.*;
 import org.firstinspires.ftc.teamcode.subsystem.*;
+import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
 @Autonomous(name="Robot: Auto Double Chamber", group="Robot")
 public class AutoDoubleChamber extends OpMode {

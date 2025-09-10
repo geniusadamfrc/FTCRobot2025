@@ -46,12 +46,12 @@ public class GamePadExtended {
 
 
 
-        left_stick_y = new Axis(Axis.AxisType.left_stick_y, gamepad);
-        left_stick_x = new Axis(Axis.AxisType.left_stick_x, gamepad);
-        right_stick_y = new Axis(Axis.AxisType.right_stick_y, gamepad);
-        right_stick_x = new Axis(Axis.AxisType.right_stick_x, gamepad);
-        left_trigger = new Axis(Axis.AxisType.left_trigger, gamepad);
-        right_trigger = new Axis(Axis.AxisType.right_trigger, gamepad);
+        left_stick_y = new AxisGamePad(AxisGamePad.AxisType.left_stick_y, gamepad);
+        left_stick_x = new AxisGamePad(AxisGamePad.AxisType.left_stick_x, gamepad);
+        right_stick_y = new AxisGamePad(AxisGamePad.AxisType.right_stick_y, gamepad);
+        right_stick_x = new AxisGamePad(AxisGamePad.AxisType.right_stick_x, gamepad);
+        left_trigger = new AxisGamePad(AxisGamePad.AxisType.left_trigger, gamepad);
+        right_trigger = new AxisGamePad(AxisGamePad.AxisType.right_trigger, gamepad);
 
     }
 

@@ -43,15 +43,24 @@ public class CommandManager {
             checkFinish();
         }
 
-
-
         for (Subsystem s : command.getSubsystems()){
             s.setActive(command);
-            commands.add(command);
         }
-        command.begin();
+        startCommand(command);
         return true;
     }
+
+    private static void startCommand(Command command){
+        commands.add(command);
+        command.begin();
+    }
+    private static void finishCommand(Command c){
+        commands.remove(c);
+        for(Subsystem s : c.getSubsystems()){
+            s.setIdle();
+        }
+    }
+
 
     public static void forceExit(Subsystem s){
         s.forceExit();
@@ -73,22 +82,16 @@ public class CommandManager {
                 cc.add(c);
         }
         for(Command c : cc){
-            finish(c);
+            finishCommand(c);
         }
     }
-    private static void finish(Command c){
-        commands.remove(c);
-        for(Subsystem s : c.getSubsystems()){
-            s.setIdle();
-        }
-    }
+
     private static void checkForDefaultCommand(){
         for(Subsystem s : defaultCommands.keySet()){
             if (s.isIdle()){
                 Command c = defaultCommands.get(s);
                 s.setDefault(c);
-                commands.add(c);
-                c.begin();
+                startCommand(c);
             }
         }
     }
