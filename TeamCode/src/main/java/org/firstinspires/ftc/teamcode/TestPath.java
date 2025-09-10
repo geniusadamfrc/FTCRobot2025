@@ -24,7 +24,9 @@ public class TestPath extends OpMode {
             c = new DriveStraightPath(Robot.drivetrain, drivePath, 20.0);
             c.begin();
         }
-        if (c!= null) c.loop();
-        if (c.isFinished()) c = null;
+        if (c!= null) {
+            c.loop();
+            if (c.isFinished()) c = null;
+        }
     }
 }

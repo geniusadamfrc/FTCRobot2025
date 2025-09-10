@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands.simple;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -39,6 +40,6 @@ public class DriveStraightPath extends Command {
 
     @Override
     public void loopImpl() {
-        if (!action.run(null)) finish();
+        if (!action.run(new TelemetryPacket())) finish();
     }
 }
