@@ -182,6 +182,8 @@ public class Drivetrain extends Subsystem {
             Request an update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
+        //telemetry.addData("Wheel Config", leftFrontDrive.getDirection());
+        //telemetry.update();
         if(ignoreOdo)return;
         odo.update();
 

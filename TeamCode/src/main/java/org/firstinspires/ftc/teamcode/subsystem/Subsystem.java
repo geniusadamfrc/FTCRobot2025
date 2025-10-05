@@ -38,6 +38,10 @@ public class Subsystem {
         currentCommand.interrupt();
     }
 
+    public String getCurrentCommand(){
+        if (currentCommand == null) return "IDLE";
+        return currentCommand.getClass().getSimpleName();
+    }
 
     protected enum State {
         IDLE, DEFAULT, ACTIVE;

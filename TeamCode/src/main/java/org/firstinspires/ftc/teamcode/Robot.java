@@ -16,23 +16,19 @@ public class Robot {
     public static Drivetrain drivetrain;
 
 
-    private static boolean initialized;
     public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2){
         //These are default.  Don't touch.
-        if (initialized) return;
-        Robot.gamepadex1 = new GamePadExtended(gamepad1);
-        Robot.gamepadex2 = new GamePadExtended(gamepad2);
-        CommandManager.initialize();
+        if (gamepadex1 == null) gamepadex1 = new GamePadExtended(gamepad1);
+        if (gamepadex2 == null) gamepadex2 = new GamePadExtended(gamepad2);
 
         //update these
-        drivetrain = new Drivetrain();
+        if (drivetrain == null) drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, telemetry);
 
-        //leave this
-        initialized =true;
+
     }
 
-    public static void update(){
+    public static void update(Telemetry telemetry){
         //These are default.  Don't touch.
         gamepadex1.update();
         gamepadex2.update();
@@ -40,7 +36,9 @@ public class Robot {
 
         //update these
         Robot.drivetrain.loop();
+        telemetry.addData("Drivetrain: ", drivetrain.getCurrentCommand());
 
     }
+
 
 }

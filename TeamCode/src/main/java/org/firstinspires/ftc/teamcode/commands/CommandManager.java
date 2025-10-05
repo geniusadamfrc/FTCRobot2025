@@ -9,14 +9,10 @@ import java.util.List;
 
 public class CommandManager {
 
-    private static HashSet<Command> commands;
-    private static HashMap<Subsystem, Command> defaultCommands;
+    private static HashSet<Command> commands= new HashSet<>();
+    private static HashMap<Subsystem, Command> defaultCommands= new HashMap<>();;
     public static boolean BUSY_SUBSYSTEM_INTERRUPT = true; //true for interupt, false will ignore command
 
-    public static void initialize(){
-        defaultCommands = new HashMap<>();
-        commands = new HashSet<>();
-    }
 
     public static void registerDefaultCommand(Command c, Subsystem s) throws Exception {
         if (c.getSubsystems().size() != 1 || c.getSubsystems().get(0) != s){

@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 
 import java.util.Locale;
@@ -27,6 +29,11 @@ public class MecanumDrive extends OpMode {
     public void init(){
 
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
+        try {
+            CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
+        } catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
         intakeWheelLeft = hardwareMap.get(DcMotor.class, "Intake Wheel Left");
         intakeWheelRight = hardwareMap.get(DcMotor.class, "Intake Wheel Right");
         shooterWheelLeft = hardwareMap.get(DcMotor.class, "Shooter Wheel Left");
@@ -61,8 +68,8 @@ public class MecanumDrive extends OpMode {
         double forward = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
         double strafe = gamepad1.left_stick_x;
-        Robot.drivetrain.manualDrive(forward, turn, strafe);
-        Robot.drivetrain.loop();
+        //Robot.drivetrain.manualDrive(forward, turn, strafe);
+        Robot.update(telemetry);
 
         if (gamepad1.a){
             Robot.drivetrain.resetPosition();
