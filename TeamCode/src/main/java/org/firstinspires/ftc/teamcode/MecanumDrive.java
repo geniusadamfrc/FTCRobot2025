@@ -26,7 +26,7 @@ public class MecanumDrive extends OpMode {
     @Override
     public void init(){
 
-        Robot.init(hardwareMap, telemetry);
+        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
         intakeWheelLeft = hardwareMap.get(DcMotor.class, "Intake Wheel Left");
         intakeWheelRight = hardwareMap.get(DcMotor.class, "Intake Wheel Right");
         shooterWheelLeft = hardwareMap.get(DcMotor.class, "Shooter Wheel Left");
