@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,7 +16,10 @@ import java.util.Locale;
 @TeleOp(name = "MecanumDrive")
 public class MecanumDrive extends OpMode {
     double oldTime = 0;
-
+    DcMotor intakeWheelLeft;
+    DcMotor intakeWheelRight;
+    DcMotor shooterWheelLeft;
+    DcMotor shooterWheelRight;
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -22,6 +27,12 @@ public class MecanumDrive extends OpMode {
     public void init(){
 
         Robot.init(hardwareMap, telemetry);
+        intakeWheelLeft = hardwareMap.get(DcMotor.class, "Intake Wheel Left");
+        intakeWheelRight = hardwareMap.get(DcMotor.class, "Intake Wheel Right");
+        shooterWheelLeft = hardwareMap.get(DcMotor.class, "Shooter Wheel Left");
+        shooterWheelRight = hardwareMap.get(DcMotor.class, "Shooter Wheel Right");
+        intakeWheelLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterWheelRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /*
@@ -59,6 +70,16 @@ public class MecanumDrive extends OpMode {
         if (gamepad1.b){
             Robot.drivetrain.recalibrateIMU();
         }
+        if (gamepad1.left_bumper){
+            shooterWheelLeft.setPower(1.0);
+            shooterWheelRight.setPower(1.0);
+        } else{
+            shooterWheelLeft.setPower(0.0);
+            shooterWheelRight.setPower(0.0);
+        }
+        intakeWheelLeft.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+        intakeWheelRight.setPower(gamepad1.right_trigger);
+
     }
     public void doFrequency(){
         /*
