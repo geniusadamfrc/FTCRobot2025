@@ -28,7 +28,7 @@ public class Drivetrain extends Subsystem {
     public final static double CONTROLLER_THRESHOLD = 0.04;
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-
+    private boolean ignoreOdo = true;
 
     private Telemetry telemetry;
 
@@ -43,11 +43,11 @@ public class Drivetrain extends Subsystem {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         this.telemetry = telemetry;
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        if (!ignoreOdo) odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         
         
     }
@@ -56,7 +56,7 @@ public class Drivetrain extends Subsystem {
         initOdo();
     }
     public void initOdo(){
-
+        if (ignoreOdo) return;
         /*
         Set the odometry pod positions relative to the point that the odometry computer tracks around.
         The X pod offset refers to how far sideways from the tracking point the
@@ -65,7 +65,7 @@ public class Drivetrain extends Subsystem {
         the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
         backwards is a negative number.
          */
-        odo.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setOffsets(84.0, 0.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
 
         /*
         Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
@@ -82,7 +82,7 @@ public class Drivetrain extends Subsystem {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
 
         /*
@@ -169,9 +169,11 @@ public class Drivetrain extends Subsystem {
 
 
     public void resetPosition(){
+        if(ignoreOdo)return;
         odo.resetPosAndIMU(); //resets the position to 0 and recalibrates the IMU
     }
     public void recalibrateIMU(){
+        if(ignoreOdo)return;
         odo.recalibrateIMU(); //recalibrates the IMU without resetting position
     }
     @Override
@@ -180,6 +182,7 @@ public class Drivetrain extends Subsystem {
             Request an update from the Pinpoint odometry computer. This checks almost all outputs
             from the device in a single I2C read.
              */
+        if(ignoreOdo)return;
         odo.update();
 
             /*
