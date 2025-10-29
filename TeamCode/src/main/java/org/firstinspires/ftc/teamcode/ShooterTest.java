@@ -54,7 +54,9 @@ import com.qualcomm.robotcore.util.Range;
 public class ShooterTest extends OpMode{
 
     /* Declare OpMode members. */
-    public DcMotorEx leftDrive   = null;
+    public DcMotorEx leftShooterWheel   = null;
+    public DcMotorEx rightShooterWheel = null;
+    public DcMotorEx rampMotor = null;
     public double speed = 1.0;
     /*
      * Code to run ONCE when the driver hits INIT
@@ -62,8 +64,12 @@ public class ShooterTest extends OpMode{
     @Override
     public void init() {
         // Define and Initialize Motors
-        leftDrive  = hardwareMap.get(DcMotorEx.class, "shooter");
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftShooterWheel  = hardwareMap.get(DcMotorEx.class, "left shooter");
+        rightShooterWheel  = hardwareMap.get(DcMotorEx.class, "right shooter");
+        rampMotor  = hardwareMap.get(DcMotorEx.class, "ramp");
+
+
+        leftShooterWheel.setDirection(DcMotor.Direction.REVERSE);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press START.");    //
@@ -89,14 +95,24 @@ public class ShooterTest extends OpMode{
     @Override
     public void loop() {
 
-        leftDrive.setPower(-speed);
-        if (gamepad1.a) speed-=0.01;
-        if (gamepad1.y) speed +=0.01;
+        if (gamepad1.left_bumper) {
+            leftShooterWheel.setPower(speed);
+            rightShooterWheel.setPower(speed);
+        }else{
+            leftShooterWheel.setPower(0.0);
+            rightShooterWheel.setPower(0.0);
+        }
+        if (gamepad1.a) speed-=0.001;
+        if (gamepad1.y) speed +=0.001;
+
+        rampMotor.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
 
         // Send telemetry message to signify robot running;
-        telemetry.addData("Set Speed",  "Offset = %.2f", speed);
-        telemetry.addData("Actual Speed",  "%.2f", leftDrive.getVelocity());
-        }
+        telemetry.addData("Set Power",  "Offset = %.2f", speed);
+        telemetry.addData("Actual Left Speed",  "%.2f", leftShooterWheel.getVelocity());
+        telemetry.addData("Actual Right Speed",  "%.2f", rightShooterWheel.getVelocity());
+
+    }
 
     /*
      * Code to run ONCE after the driver hits STOP
