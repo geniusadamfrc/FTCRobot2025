@@ -15,6 +15,6 @@ public class ShooterIdle extends Command {
 
     @Override
     public void loopImpl() {
-
+        finish();
     }
 }

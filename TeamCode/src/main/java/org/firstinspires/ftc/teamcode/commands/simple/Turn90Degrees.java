@@ -5,7 +5,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Turn90Degrees extends Command {
     private Drivetrain drivetrain;
-    //private IMUSub imu;
     private double power;
     private int angle;
     private Telemetry telemetry;
@@ -29,16 +28,14 @@ public class Turn90Degrees extends Command {
     }
     public void loopImpl(){
         telemetry.addData("Turn 90", "loop");
-        //telemetry.addData("Current Angle", (imu.getHeading()) + "");
-        /*if ((direction && angle < imu.getHeading())
+        telemetry.addData("Current Angle", (drivetrain.getHeading()) + "");
+        if ((direction && angle < drivetrain.getHeading())
             ||
-            (!direction && angle > imu.getHeading())
+            (!direction && angle > drivetrain.getHeading())
             ){
             drivetrain.drive(0,0,0);
             finish();
         }
-        */
-
     }
     // todo: write your code here
 }

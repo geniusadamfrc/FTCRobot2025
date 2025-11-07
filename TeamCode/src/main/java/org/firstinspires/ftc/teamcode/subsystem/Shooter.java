@@ -11,6 +11,7 @@ public class Shooter extends Subsystem{
     public final static String LEFT_SHOOTER_NAME = "leftShooter";
     public final static String RIGHT_SHOOTER_NAME = "rightShooter";
 
+    public final static double SPEED_DROP_ON_SHOT = 200.0;
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
@@ -18,7 +19,7 @@ public class Shooter extends Subsystem{
     private double targetSpeed;
     private double speedTolerance;
 
-    private State state;
+    private ShooterState shooterState;
 
     public void init(HardwareMap hardwareMap){
         leftShooter = hardwareMap.get(DcMotorEx.class, LEFT_SHOOTER_NAME);
@@ -54,19 +55,33 @@ public class Shooter extends Subsystem{
     }
     @Override
     public void loop(){
-
+        if ((shooterState == ShooterState.SPINNING_UP|| shooterState == ShooterState.BALL_SHOT_SPINNING_UP) && isAtSpeed()){
+            shooterState = ShooterState.READY_FOR_SHOT;
+        }
+        if (shooterState == ShooterState.READY_FOR_SHOT && isAtSpeed(SPEED_DROP_ON_SHOT)){
+            shooterState = ShooterState.BALL_SHOT_SPINNING_UP;
+        }
     }
 
     public void setIdle(){
         setTargetSpeed(0.0);
-        state = State.IDLE;
+        shooterState = ShooterState.IDLE;
+    }
+    public void setStartShooting(double targetSpeed){
+        setTargetSpeed(targetSpeed);
+        shooterState = ShooterState.SPINNING_UP;
     }
 
-    
+    public boolean isReadyForShot(){
+        return shooterState == ShooterState.READY_FOR_SHOT;
+    }
+    public boolean isBallShot(){
+        return shooterState == ShooterState.BALL_SHOT_SPINNING_UP;
+    }
 
 
-    private enum State {
-        IDLE, SPINNING_UP, READY_FOR_SHOT
+    private enum ShooterState {
+        IDLE, SPINNING_UP, READY_FOR_SHOT, BALL_SHOT_SPINNING_UP, MANUAL_CONTROL
     }
 
 }

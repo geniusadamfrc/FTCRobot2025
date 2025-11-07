@@ -29,7 +29,7 @@ public class Drivetrain extends Subsystem {
     public final static double CONTROLLER_THRESHOLD = 0.04;
 
     GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    private boolean ignoreOdo = true;
+    private boolean ignoreOdo = false;
 
     private Telemetry telemetry;
 
@@ -105,17 +105,6 @@ public class Drivetrain extends Subsystem {
 
     }
 
-
-    public void manualDrive(double forward, double turn, double strafe){
-        if (super.isActive()){
-            if (forward > CONTROLLER_THRESHOLD || forward < -CONTROLLER_THRESHOLD ||
-                turn > CONTROLLER_THRESHOLD || turn < -CONTROLLER_THRESHOLD ||
-                strafe > CONTROLLER_THRESHOLD || strafe < -CONTROLLER_THRESHOLD){
-                CommandManager.forceExit(this);
-            }else {return;} 
-        }
-        drive(forward, turn, strafe); 
-    }
     public void driveRobotRelative(double forward, double turn, double strafe){
         drive(forward, turn, strafe);
     }
@@ -168,6 +157,9 @@ public class Drivetrain extends Subsystem {
             + rightBackDrive.getCurrentPosition())/4;
     }
 
+    public double getHeading(){
+        return odo.getHeading(AngleUnit.DEGREES);
+    }
 
     public void resetPosition(){
         if(ignoreOdo)return;
@@ -231,27 +223,9 @@ public class Drivetrain extends Subsystem {
     }
 
 
-    public Command getRobotRelativeDriveCommand(Axis left_stick_y, Axis left_stick_x, Axis right_stick_x){
-        return new Command() {
-            @Override
-            public void beginImpl() {}
-
-            @Override
-            public void loopImpl() {
-                double forward = -left_stick_y.getState();
-                double turn = right_stick_x.getState();
-                double strafe = left_stick_x.getState();
-                driveRobotRelative(forward, turn, strafe);
-            }
-            @Override
-            public void finishImpl() {
-                driveRobotRelative(0, 0, 0);
-            }
-
-        };
-    }
 
 
 
-    // todo: write your code here
+
+
 }
