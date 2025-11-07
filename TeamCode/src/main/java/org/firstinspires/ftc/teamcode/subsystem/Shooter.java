@@ -18,13 +18,14 @@ public class Shooter extends Subsystem{
     private double targetSpeed;
     private double speedTolerance;
 
+    private State state;
 
     public void init(HardwareMap hardwareMap){
         leftShooter = hardwareMap.get(DcMotorEx.class, LEFT_SHOOTER_NAME);
         rightShooter = hardwareMap.get(DcMotorEx.class, RIGHT_SHOOTER_NAME);
 
         leftShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -44,8 +45,28 @@ public class Shooter extends Subsystem{
         telemetry.addData("Right Speed", rightShooter.getVelocity());
     }
     public boolean isAtSpeed(){
+        return isAtSpeed(this.speedTolerance);
+    }
+    public boolean isAtSpeed (double speedTolerance){
         return leftShooter.getVelocity() < targetSpeed+ speedTolerance && leftShooter.getVelocity() > targetSpeed - speedTolerance &&
                 rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
+
+    }
+    @Override
+    public void loop(){
+
+    }
+
+    public void setIdle(){
+        setTargetSpeed(0.0);
+        state = State.IDLE;
+    }
+
+    
+
+
+    private enum State {
+        IDLE, SPINNING_UP, READY_FOR_SHOT
     }
 
 }

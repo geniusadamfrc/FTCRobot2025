@@ -2,26 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystem.*;
-
-import java.util.Locale;
 
 @TeleOp(name = "MecanumDrive")
 public class MecanumDrive extends OpMode {
     double oldTime = 0;
-    DcMotor intakeWheelLeft;
-    DcMotor intakeWheelRight;
-    DcMotor shooterWheelLeft;
-    DcMotor shooterWheelRight;
+    double speed = 1000.0;
+    double intakeSpeed = 0.8;
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
@@ -34,12 +23,7 @@ public class MecanumDrive extends OpMode {
         } catch (Exception ex){
             throw new RuntimeException(ex);
         }
-        intakeWheelLeft = hardwareMap.get(DcMotor.class, "Intake Wheel Left");
-        intakeWheelRight = hardwareMap.get(DcMotor.class, "Intake Wheel Right");
-        shooterWheelLeft = hardwareMap.get(DcMotor.class, "Shooter Wheel Left");
-        shooterWheelRight = hardwareMap.get(DcMotor.class, "Shooter Wheel Right");
-        intakeWheelLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooterWheelRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 
     /*
@@ -71,22 +55,26 @@ public class MecanumDrive extends OpMode {
         //Robot.drivetrain.manualDrive(forward, turn, strafe);
         Robot.update(telemetry);
 
-        if (gamepad1.a){
+        /*if (gamepad1.a){
             Robot.drivetrain.resetPosition();
         }
         if (gamepad1.b){
             Robot.drivetrain.recalibrateIMU();
-        }
-        if (gamepad1.left_bumper){
-            shooterWheelLeft.setPower(1.0);
-            shooterWheelRight.setPower(1.0);
-        } else{
-            shooterWheelLeft.setPower(0.0);
-            shooterWheelRight.setPower(0.0);
-        }
-        intakeWheelLeft.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
-        intakeWheelRight.setPower(gamepad1.right_trigger);
+        }*/
+        if (gamepad1.a) speed -=1;
+        if (gamepad1.y) speed +=1;
+        telemetry.addData("Target Speed", speed);
+        Robot.shooter.writeSpeeds(telemetry);
 
+        if (gamepad1.left_bumper){
+            Robot.shooter.setTargetSpeed(speed);
+        } else{
+            Robot.shooter.setTargetSpeed(0.0);
+        }
+        Robot.ramp.setRampPower(gamepad1.left_trigger - gamepad1.right_trigger);
+        if (gamepad1.right_bumper) Robot.ramp.setIntakePower(-intakeSpeed);
+        else Robot.ramp.setIntakePower(0.0);
+        if (gamepad1.x)intakeSpeed = - intakeSpeed;
     }
     public void doFrequency(){
         /*
