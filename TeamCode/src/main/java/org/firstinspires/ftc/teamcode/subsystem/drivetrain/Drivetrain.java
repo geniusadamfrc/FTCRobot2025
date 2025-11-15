@@ -18,10 +18,10 @@ import java.util.Locale;
 
 
 public class Drivetrain extends Subsystem {
-    public final String leftFrontName = "Front Left Motor";
-    public final String rightFrontName = "Front Right Motor";
-    public final String leftBackName = "Back Left Motor";
-    public final String rightBackName = "Back Right Motor";
+    public static final String leftFrontName = "Front Left Motor";
+    public static final String rightFrontName = "Front Right Motor";
+    public static final String leftBackName = "Back Left Motor";
+    public static final String rightBackName = "Back Right Motor";
     private DcMotor  leftFrontDrive   = null;
     private DcMotor  rightFrontDrive  = null;
     private DcMotor  leftBackDrive   = null;
