@@ -219,7 +219,7 @@ public class Drivetrain extends Subsystem {
         telemetry.addData("Status", odo.getDeviceStatus());
 
         telemetry.addData("Pinpoint Frequency", odo.getFrequency()); //prints/gets the current refresh rate of the Pinpoint
-        telemetry.update();
+        //telemetry.update();
     }
 
 

@@ -7,12 +7,13 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
+import org.firstinspires.ftc.teamcode.commands.simple.DriveStraight;
 import org.firstinspires.ftc.teamcode.commands.simple.DriveStraightDistance;
 import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.commands.simple.Shoot3Balls;
 import org.firstinspires.ftc.teamcode.commands.simple.Turn90Degrees;
 
-@Autonomous(name="Auto Backup And Shoot", group="Robot")
+@Autonomous(name="Auto Backup And Shoot")
 public class BackupAndShoot extends OpMode {
 
     private SequentialCommand main;
@@ -28,14 +29,17 @@ public class BackupAndShoot extends OpMode {
     @Override
     public void start(){
         main = new SequentialCommand();
-        main.addCommand(new DriveStraightDistance(Robot.drivetrain, 0.5, 2000, telemetry));
+        main.addCommand(new DriveStraight(Robot.drivetrain, 0.5, 0.0, 1000, telemetry));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
-        main.addCommand(new DriveStraightDistance(Robot.drivetrain, 0.5, 300, telemetry));
+        //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
+        main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
+        main.begin();
     }
 
     @Override
     public void loop() {
+        if (!main.isFinished())
+            main.loop();
 
     }
 }

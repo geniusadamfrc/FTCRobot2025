@@ -26,7 +26,7 @@ public class Shooter extends Subsystem{
         rightShooter = hardwareMap.get(DcMotorEx.class, RIGHT_SHOOTER_NAME);
 
         leftShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightShooter.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

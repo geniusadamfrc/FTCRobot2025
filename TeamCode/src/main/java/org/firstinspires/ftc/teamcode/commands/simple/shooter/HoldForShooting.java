@@ -16,6 +16,6 @@ public class HoldForShooting extends Command{
 
     @Override
     public void loopImpl() {
-        if(Robot.shooter.isAtSpeed(SPEED_DROP)) finish();
+        if(!Robot.shooter.isAtSpeed(SPEED_DROP)) finish();
     }
 }

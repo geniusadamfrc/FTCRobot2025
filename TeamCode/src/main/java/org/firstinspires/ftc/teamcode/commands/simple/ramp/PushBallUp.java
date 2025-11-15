@@ -14,12 +14,14 @@ public class PushBallUp  extends Command {
     }
     @Override
     public void beginImpl() {
-        ramp.setRampPower(0.5);
+        ramp.setRampPower(-0.5);
+        ramp.setIntakePower((-0.5));
     }
 
     @Override
     public void loopImpl() {
-
+        ramp.setRampPower(-1.0);
+        ramp.setIntakePower(-0.8);
     }
     @Override
     public void finishImpl(){

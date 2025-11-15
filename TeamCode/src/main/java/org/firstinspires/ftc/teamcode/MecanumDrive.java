@@ -74,7 +74,7 @@ public class MecanumDrive extends OpMode {
         Robot.ramp.setRampPower(gamepad1.left_trigger - gamepad1.right_trigger);
         if (gamepad1.right_bumper) Robot.ramp.setIntakePower(-intakeSpeed);
         else Robot.ramp.setIntakePower(0.0);
-        if (gamepad1.x)intakeSpeed = - intakeSpeed;
+        //if (gamepad1.x)intakeSpeed = - intakeSpeed;
     }
     public void doFrequency(){
         /*

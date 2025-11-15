@@ -15,7 +15,7 @@ public class ShootBall extends Command {
     }
     @Override
     public void beginImpl() {
-        speedUp = new SpeedUpForShooting(800.0);
+        speedUp = new SpeedUpForShooting(900.0);
         speedUp.begin();
     }
 
@@ -32,7 +32,7 @@ public class ShootBall extends Command {
             moveRamp.loop();
             shooting.loop();
         }
-        if (shooting.isFinished()){
+        if (shooting != null && shooting.isFinished()){
             moveRamp.finish();
             finish();
         }
