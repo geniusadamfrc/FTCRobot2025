@@ -84,4 +84,8 @@ public class Shooter extends Subsystem{
         IDLE, SPINNING_UP, READY_FOR_SHOT, BALL_SHOT_SPINNING_UP, MANUAL_CONTROL
     }
 
+
+
+
+
 }

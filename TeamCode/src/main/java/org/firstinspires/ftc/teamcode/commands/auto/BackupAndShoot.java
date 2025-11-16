@@ -4,6 +4,9 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
@@ -22,19 +25,18 @@ public class BackupAndShoot extends OpMode {
     private SequentialCommand main;
     @Override
     public void init() {
-        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
+        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM,3352, 3200, AngleUnit.DEGREES,45));
         try {
             CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
         } catch (Exception ex){
             throw new RuntimeException(ex);
         }
-        Robot.drivetrain.setOdoPositions(3352, 3200, 45);
 
     }
     @Override
     public void start(){
         main = new SequentialCommand();
-        main.addCommand(new DriveStraightPath(Robot.drivetrain, new MecanumDrive(hardwareMap, new Pose2d(0.0, 0.0, 0.0)), 32));
+        main.addCommand(new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, 32));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
         //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
         main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));

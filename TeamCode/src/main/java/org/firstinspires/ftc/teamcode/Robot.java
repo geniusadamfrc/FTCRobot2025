@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
@@ -19,20 +22,25 @@ public class Robot {
     public static Shooter shooter;
     public static Ramp ramp;
 
-    public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2){
+    public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, Pose2D initialPose){
         //These are default.  Don't touch.
         if (gamepadex1 == null) gamepadex1 = new GamePadExtended(gamepad1);
         if (gamepadex2 == null) gamepadex2 = new GamePadExtended(gamepad2);
 
         //update these
         if (drivetrain == null) drivetrain = new Drivetrain();
-        drivetrain.init(hardwareMap, telemetry);
+        drivetrain.init(hardwareMap, telemetry, initialPose);
         if (shooter == null) shooter = new Shooter();
         shooter.init(hardwareMap);
         if (ramp == null) ramp = new Ramp();
         ramp.init(hardwareMap);
 
     }
+    public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
+        init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM, 0,0, AngleUnit.DEGREES,0));
+    }
+
+
 
     public static void update(Telemetry telemetry){
         //These are default.  Don't touch.
