@@ -3,16 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/MecanumDrive.java
+
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
 
-@TeleOp(name = "MecanumDrive")
-public class MecanumDrive extends OpMode {
-=======
 @TeleOp(name = "MecanumDriveTeam")
 public class MecanumDriveTeam extends OpMode {
->>>>>>> cf325403ca179253e52e6f205a288f87d9978097:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/MecanumDriveTeam.java
     double oldTime = 0;
     double speed = 1000.0;
     double intakeSpeed = 0.8;
@@ -60,12 +56,12 @@ public class MecanumDriveTeam extends OpMode {
         //Robot.drivetrain.manualDrive(forward, turn, strafe);
         Robot.update(telemetry);
 
-        /*if (gamepad1.a){
+        if (gamepad1.x){
             Robot.drivetrain.resetPosition();
         }
         if (gamepad1.b){
             Robot.drivetrain.recalibrateIMU();
-        }*/
+        }
         if (gamepad1.a) speed -=1;
         if (gamepad1.y) speed +=1;
         telemetry.addData("Target Speed", speed);

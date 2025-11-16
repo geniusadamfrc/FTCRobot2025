@@ -14,7 +14,7 @@ public class TestPath extends OpMode {
     private Command c;
     @Override
     public void init() {
-        Robot.init(hardwareMap, telemetry);
+        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
         drivePath = new MecanumDrive(hardwareMap, new Pose2d(0.0, 0.0, 0.0));
     }
 

@@ -105,6 +105,13 @@ public class Drivetrain extends Subsystem {
 
     }
 
+    public void setOdoPositions(double x, double y, double heading){
+        odo.setPosition( new Pose2D(DistanceUnit.MM,x, y, AngleUnit.DEGREES, heading));
+    }
+    public Pose2D getOdoPosition(){
+        return odo.getPosition();
+    }
+
     public void driveRobotRelative(double forward, double turn, double strafe){
         drive(forward, turn, strafe);
     }
