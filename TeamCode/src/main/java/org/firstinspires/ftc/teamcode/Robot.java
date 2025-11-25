@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
-import org.firstinspires.ftc.teamcode.subsystem.Shooter;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
 public class Robot {
@@ -52,6 +52,7 @@ public class Robot {
         Robot.drivetrain.loop();
         telemetry.addData("Drivetrain: ", drivetrain.getCurrentCommand());
         shooter.loop();
+        shooter.camera.doTelemetry(telemetry);
     }
 
 

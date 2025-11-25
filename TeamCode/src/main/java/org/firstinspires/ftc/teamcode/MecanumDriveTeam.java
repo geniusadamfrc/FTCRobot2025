@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
+import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.commands.simple.AlignTarget;
 import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
 
-@TeleOp(name = "MecanumDriveTeam")
+@TeleOp(name = "Blue Teleop")
 public class MecanumDriveTeam extends OpMode {
     double oldTime = 0;
     double speed = 1000.0;
@@ -15,6 +17,8 @@ public class MecanumDriveTeam extends OpMode {
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
+    private Command alignTarget = null;
+
     @Override
     public void init(){
 
@@ -24,7 +28,10 @@ public class MecanumDriveTeam extends OpMode {
         } catch (Exception ex){
             throw new RuntimeException(ex);
         }
-
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch START to start OpMode");
+        telemetry.update();
+        Robot.shooter.camera.setGoalId(20);
     }
 
     /*
@@ -45,36 +52,41 @@ public class MecanumDriveTeam extends OpMode {
      */
     @Override
     public void loop() {
-        //Grabber = hardwareMap.get(Servo.class, "Grabber");
-        // Put loop blocks here.
-        telemetry.update();
-        telemetry.addData("Left Stick", gamepad1.left_stick_y);
-        //telemetry.addData("Claw", Grabber.getPosition());
-        double forward = -gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
-        double strafe = gamepad1.left_stick_x;
-        //Robot.drivetrain.manualDrive(forward, turn, strafe);
         Robot.update(telemetry);
 
+
         if (gamepad1.x){
-            Robot.drivetrain.resetPosition();
+            //Robot.drivetrain.resetPosition();
         }
         if (gamepad1.b){
-            Robot.drivetrain.recalibrateIMU();
+            //Robot.drivetrain.recalibrateIMU();
         }
-        if (gamepad1.a) speed -=1;
-        if (gamepad1.y) speed +=1;
+        if (gamepad2.a) speed -=1;
+        if (gamepad2.y) speed +=1;
         telemetry.addData("Target Speed", speed);
+        telemetry.addData("Ideal Speed", Robot.shooter.getIdealShootingSpeed(telemetry));
         Robot.shooter.writeSpeeds(telemetry);
 
         if (gamepad1.left_bumper){
-            Robot.shooter.setTargetSpeed(speed);
+            Robot.shooter.setTargetSpeed(Robot.shooter.getIdealShootingSpeed(telemetry));
         } else{
             Robot.shooter.setTargetSpeed(0.0);
         }
         Robot.ramp.setRampPower(gamepad1.left_trigger - gamepad1.right_trigger);
         if (gamepad1.right_bumper) Robot.ramp.setIntakePower(-intakeSpeed);
         else Robot.ramp.setIntakePower(0.0);
+
+        if (gamepad1.b) {
+            if (alignTarget == null){
+                alignTarget = new AlignTarget();
+                CommandManager.schedule(alignTarget);
+            }
+        }else{
+            if (alignTarget != null){
+                alignTarget.finish();
+                alignTarget = null;
+            }
+        }
         //if (gamepad1.x)intakeSpeed = - intakeSpeed;
     }
     public void doFrequency(){

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystem;
+package org.firstinspires.ftc.teamcode.subsystem.shooter;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -6,12 +6,23 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-public class Shooter extends Subsystem{
+import java.util.List;
+
+public class Shooter extends Subsystem {
     public final static String LEFT_SHOOTER_NAME = "leftShooter";
     public final static String RIGHT_SHOOTER_NAME = "rightShooter";
 
     public final static double SPEED_DROP_ON_SHOT = 200.0;
+
+
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
@@ -20,6 +31,7 @@ public class Shooter extends Subsystem{
     private double speedTolerance;
 
     private ShooterState shooterState;
+    public CameraSystem camera;
 
     public void init(HardwareMap hardwareMap){
         leftShooter = hardwareMap.get(DcMotorEx.class, LEFT_SHOOTER_NAME);
@@ -29,9 +41,9 @@ public class Shooter extends Subsystem{
         rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        camera = new CameraSystem();
+        camera.init(hardwareMap);
     }
-
 
     public void setTargetSpeed(double targetSpeed){
         this.targetSpeed = targetSpeed;
@@ -42,8 +54,8 @@ public class Shooter extends Subsystem{
         this.speedTolerance = speedTolerance;
     }
     public void writeSpeeds(Telemetry telemetry){
-        telemetry.addData("Left Speed", leftShooter.getVelocity());
-        telemetry.addData("Right Speed", rightShooter.getVelocity());
+        telemetry.addData("Actual Speeds L/R", leftShooter.getVelocity() + "/" + rightShooter.getVelocity());
+        //telemetry.addData("Right Speed", rightShooter.getVelocity());
     }
     public boolean isAtSpeed(){
         return isAtSpeed(this.speedTolerance);
@@ -53,6 +65,17 @@ public class Shooter extends Subsystem{
                 rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
 
     }
+    public double getIdealShootingSpeed(Telemetry telemetry){
+        double range  = camera.computeRangeToGoal(telemetry);
+        if (range < 30) return 0;
+        else if (range< 51) return 600;
+        else {
+            return 500 + 2.5 * range;
+        }
+    }
+
+
+
     @Override
     public void loop(){
         if ((shooterState == ShooterState.SPINNING_UP|| shooterState == ShooterState.BALL_SHOT_SPINNING_UP) && isAtSpeed()){
@@ -61,7 +84,11 @@ public class Shooter extends Subsystem{
         if (shooterState == ShooterState.READY_FOR_SHOT && isAtSpeed(SPEED_DROP_ON_SHOT)){
             shooterState = ShooterState.BALL_SHOT_SPINNING_UP;
         }
+
     }
+
+
+
 
     public void setIdle(){
         setTargetSpeed(0.0);
@@ -77,6 +104,10 @@ public class Shooter extends Subsystem{
     }
     public boolean isBallShot(){
         return shooterState == ShooterState.BALL_SHOT_SPINNING_UP;
+    }
+
+    public double getBearing() {
+        return camera.getBearing();
     }
 
 
