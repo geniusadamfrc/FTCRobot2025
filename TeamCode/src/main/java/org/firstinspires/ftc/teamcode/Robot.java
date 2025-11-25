@@ -21,6 +21,8 @@ public class Robot {
     public static Drivetrain drivetrain;
     public static Shooter shooter;
     public static Ramp ramp;
+    public static Pose2D lastPosition = new Pose2D(DistanceUnit.MM, 0.0, 0.0, AngleUnit.DEGREES, 0.0);
+
 
     public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2, Pose2D initialPose){
         //These are default.  Don't touch.
@@ -49,10 +51,11 @@ public class Robot {
         CommandManager.update();
 
         //update these
-        Robot.drivetrain.loop();
+        drivetrain.loop();
         telemetry.addData("Drivetrain: ", drivetrain.getCurrentCommand());
         shooter.loop();
         shooter.camera.doTelemetry(telemetry);
+        lastPosition = drivetrain.getOdoPosition();
     }
 
 
