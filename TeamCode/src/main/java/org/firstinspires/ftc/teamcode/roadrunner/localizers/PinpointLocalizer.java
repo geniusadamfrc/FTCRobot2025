@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import java.util.Objects;
 
 @Config
-public final class PinpointLocalizer implements Localizer {
+public final class PinpointLocalizer {
     public final GoBildaPinpointDriver driver;
 
     private Pose2d txWorldPinpoint;
@@ -26,17 +26,11 @@ public final class PinpointLocalizer implements Localizer {
         txWorldPinpoint = initialPose;
     }
 
-    @Override
-    public void setPose(Pose2d pose) {
-        txWorldPinpoint = pose.times(txPinpointRobot.inverse());
-    }
 
-    @Override
     public Pose2d getPose() {
         return txWorldPinpoint.times(txPinpointRobot);
     }
 
-    @Override
     public PoseVelocity2d update() {
         driver.update();
         if (Objects.requireNonNull(driver.getDeviceStatus()) == GoBildaPinpointDriver.DeviceStatus.READY) {
