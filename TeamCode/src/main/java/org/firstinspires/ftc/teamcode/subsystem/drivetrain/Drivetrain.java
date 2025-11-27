@@ -36,7 +36,7 @@ public class Drivetrain extends Subsystem {
     public void init(HardwareMap hardwareMap, Telemetry telemetry, Pose2D initialPose){
         this.telemetry = telemetry;
         initMotors(hardwareMap);
-        initOdo(hardwareMap);
+        initOdo(hardwareMap, initialPose);
         initRoadRunner(hardwareMap, initialPose);
     }
     private void initMotors(HardwareMap hardwareMap){
@@ -53,12 +53,13 @@ public class Drivetrain extends Subsystem {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
-    private void initOdo(HardwareMap hardwareMap){
+    private void initOdo(HardwareMap hardwareMap, Pose2D initialPose){
         if (!ignoreOdo) odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
         if (ignoreOdo) return;
         odo.setOffsets(84.0, 0.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.setPosition(initialPose);
     }
     private void initRoadRunner(HardwareMap hardwareMap, Pose2D initialPose){
         this.roadRunnerController = new MecanumDrive(hardwareMap, initialPose);
@@ -171,13 +172,16 @@ public class Drivetrain extends Subsystem {
         //telemetry.update();
         if(ignoreOdo)return;
         odo.update();
-
+        writeOutPosition(telemetry);
+        //String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", odo.getVelX(DistanceUnit.MM), odo.getVelY(DistanceUnit.MM), odo.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
+        //telemetry.addData("Velocity", velocity);
+    }
+    public void writeOutPosition(Telemetry telemetry){
+        odo.update();
         Pose2D pos = odo.getPosition();
         String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
         telemetry.addData("Position", data);
 
-        //String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", odo.getVelX(DistanceUnit.MM), odo.getVelY(DistanceUnit.MM), odo.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
-        //telemetry.addData("Velocity", velocity);
     }
 
 }

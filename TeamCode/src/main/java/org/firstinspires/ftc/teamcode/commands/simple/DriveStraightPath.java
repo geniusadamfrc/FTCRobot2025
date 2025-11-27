@@ -29,14 +29,14 @@ public class DriveStraightPath extends Command {
     @Override
     public void beginImpl() {
         action = drivePath.actionBuilder(new Pose2d(
-                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.MM),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.MM),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.DEGREES)))
-                .lineToX(32)
+                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+                .lineToX(this.inches)
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
                 //.lineToX(47.5)
-                .waitSeconds(3).build();
+                .waitSeconds(0.5).build();
     }
 
     @Override

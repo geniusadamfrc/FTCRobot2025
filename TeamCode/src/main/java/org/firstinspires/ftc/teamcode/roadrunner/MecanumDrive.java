@@ -108,7 +108,7 @@ public final class MecanumDrive {
         }*/
         Robot.drivetrain.setBrakeMode();
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
-        localizer = new PinpointLocalizer(new Pose2d(pose.getX(DistanceUnit.INCH), pose.getY(DistanceUnit.INCH), pose.getHeading(AngleUnit.DEGREES)));
+        localizer = new PinpointLocalizer(new Pose2d(pose.getX(DistanceUnit.INCH), pose.getY(DistanceUnit.INCH), pose.getHeading(AngleUnit.RADIANS)));
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 

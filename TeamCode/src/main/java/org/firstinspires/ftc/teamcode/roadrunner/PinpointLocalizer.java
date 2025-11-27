@@ -17,25 +17,21 @@ import java.util.Objects;
 public final class PinpointLocalizer {
     public final GoBildaPinpointDriver driver;
 
-    private Pose2d txWorldPinpoint;
-    private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
 
     public PinpointLocalizer(Pose2d initialPose) {
         driver = Robot.drivetrain.odo;
-        txWorldPinpoint = initialPose;
     }
 
 
     public Pose2d getPose() {
-        return txWorldPinpoint.times(txPinpointRobot);
+        return new Pose2d(driver.getPosX(DistanceUnit.INCH), driver.getPosY(DistanceUnit.INCH), driver.getHeading(UnnormalizedAngleUnit.RADIANS));
     }
 
     public PoseVelocity2d update() {
         driver.update();
         if (Objects.requireNonNull(driver.getDeviceStatus()) == GoBildaPinpointDriver.DeviceStatus.READY) {
-            txPinpointRobot = new Pose2d(driver.getPosX(DistanceUnit.INCH), driver.getPosY(DistanceUnit.INCH), driver.getHeading(UnnormalizedAngleUnit.RADIANS));
             Vector2d worldVelocity = new Vector2d(driver.getVelX(DistanceUnit.INCH), driver.getVelY(DistanceUnit.INCH));
-            Vector2d robotVelocity = Rotation2d.fromDouble(-txPinpointRobot.heading.log()).times(worldVelocity);
+            Vector2d robotVelocity = Rotation2d.fromDouble(-getPose().heading.log()).times(worldVelocity);
 
             return new PoseVelocity2d(robotVelocity, driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
         }
