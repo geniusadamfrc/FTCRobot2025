@@ -22,6 +22,7 @@ public class CameraSystem {
     private AprilTagDetection lastDetection;
     private double lastBearing;
     private int goalId;
+    private int patternId = 0;
     public void init(HardwareMap hardwareMap) {
 
         // Create the AprilTag processor.
@@ -144,5 +145,25 @@ public class CameraSystem {
         if (current == null) return lastBearing;
         lastBearing = current.ftcPose.bearing;
         return current.ftcPose.bearing;
+    }
+
+    public void tryToObtainPatternID(){
+        if (patternId > 0 ) return;
+        List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
+        if (aprilTags.size() ==0) return;
+        AprilTagDetection current = null;
+        for(AprilTagDetection d : aprilTags){
+            if (d.id < 24 && d.id > 20){
+                current = d;
+            }
+        }
+        if (current == null) return ;
+        patternId = current.id  ;
+    }
+    public boolean isPatternFound(){
+        return patternId >0;
+    }
+    public int getPatternId(){
+        return patternId;
     }
 }

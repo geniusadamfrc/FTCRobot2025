@@ -9,10 +9,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
-import org.firstinspires.ftc.teamcode.commands.simple.DriveStraight;
-import org.firstinspires.ftc.teamcode.commands.simple.DriveStraightPath;
-import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraight;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.commands.simple.Shoot3Balls;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
+import org.firstinspires.ftc.teamcode.commands.simple.shooter.IdentifyPattern;
 
 @Autonomous(name="Blue Backup And Shoot")
 public class BlueBackupAndShoot extends OpMode {
@@ -40,6 +42,9 @@ public class BlueBackupAndShoot extends OpMode {
         main = new SequentialCommand();
         main.addCommand(new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, -24));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
+        main.addCommand(new Turn90DegreesPath(90));
+        main.addCommand(new IdentifyPattern());
+        //main.addCommand(new Drive to First Block of Balls);
         //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
         main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
         main.begin();

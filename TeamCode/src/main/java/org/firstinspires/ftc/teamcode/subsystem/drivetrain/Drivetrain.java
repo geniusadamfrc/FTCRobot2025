@@ -98,10 +98,10 @@ public class Drivetrain extends Subsystem {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    public void driveRobotRelative(double forward, double turn, double strafe){
-        drive(forward, turn, strafe);
+    public void setDriveToZero(){
+        driveRobotRelative(0,0,0);
     }
-    public void drive(double forward, double turn, double strafe){
+    public void driveRobotRelative(double forward, double turn, double strafe){
         double fls = forward + turn + strafe;
         double frs = forward - turn - strafe;
         double bls = forward + turn - strafe;
@@ -133,7 +133,13 @@ public class Drivetrain extends Subsystem {
         minSpeed = Math.min(minSpeed, brs);
         return minSpeed;
     }
-    
+
+    public void driveFieldRelative(double x, double y, double spin){
+        double strafe = Math.cos(odo.getHeading(AngleUnit.RADIANS))*x + Math.sin(odo.getHeading(AngleUnit.RADIANS)*y);
+        double forward = Math.sin(odo.getHeading(AngleUnit.RADIANS))*x + Math.cos(odo.getHeading(AngleUnit.RADIANS)*y);;
+        driveRobotRelative(forward, spin, strafe);
+    }
+
     
     
     public void setPowersRaw(double fls, double frs, double bls, double brs){
