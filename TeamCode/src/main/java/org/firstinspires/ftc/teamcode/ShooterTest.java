@@ -35,8 +35,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 /*
  * This OpMode executes a Tank Drive control TeleOp a direct drive robot
@@ -58,20 +62,29 @@ public class ShooterTest extends OpMode{
     public DcMotorEx leftShooterWheel   = null;
     public DcMotorEx rightShooterWheel = null;
     public DcMotorEx rampMotor = null;
-    public double speed = 1.0;
+    public double speed = 600.0;
+    boolean tuneP = false;
+    boolean tuneI = false;
+    boolean tuneD = false;
+    boolean tuneF = false;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         // Define and Initialize Motors
-        leftShooterWheel  = hardwareMap.get(DcMotorEx.class, "left shooter");
-        rightShooterWheel  = hardwareMap.get(DcMotorEx.class, "right shooter");
+        leftShooterWheel  = hardwareMap.get(DcMotorEx.class, Shooter.LEFT_SHOOTER_NAME);
+        rightShooterWheel  = hardwareMap.get(DcMotorEx.class,Shooter.RIGHT_SHOOTER_NAME);
         rampMotor  = hardwareMap.get(DcMotorEx.class, "ramp");
 
 
         leftShooterWheel.setDirection(DcMotor.Direction.FORWARD);
 
+        leftShooterWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightShooterWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftShooterWheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27,8,0.0,15));
+        rightShooterWheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27,8,0.0,15));
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press START.");    //
     }
@@ -95,16 +108,44 @@ public class ShooterTest extends OpMode{
      */
     @Override
     public void loop() {
-
         if (gamepad1.left_bumper) {
-            leftShooterWheel.setPower(speed);
-            rightShooterWheel.setPower(speed);
+            leftShooterWheel.setVelocity(speed);
+            rightShooterWheel.setVelocity(speed);
         }else{
-            leftShooterWheel.setPower(0.0);
-            rightShooterWheel.setPower(0.0);
+            leftShooterWheel.setVelocity(0.0);
+            rightShooterWheel.setVelocity(0.0);
         }
-        if (gamepad1.a) speed-=0.001;
-        if (gamepad1.y) speed +=0.001;
+        if (gamepad1.a) speed-=1;
+        if (gamepad1.y) speed +=1;
+
+        if (gamepad1.dpad_up){
+            tuneP = true; tuneI = false; tuneD = false; tuneF = false;
+        }
+        if (gamepad1.dpad_left){
+            tuneP = false; tuneI = false; tuneD = true; tuneF = false;
+        }
+        if (gamepad1.dpad_down){
+            tuneP = false; tuneI = true; tuneD = false; tuneF = false;
+        }
+        if (gamepad1.dpad_right){
+            tuneP = false; tuneI = false; tuneD = false; tuneF = true;
+        }
+        if (gamepad1.x){
+            PIDFCoefficients pid1 = rightShooterWheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (tuneP) pid1.p = pid1.p*1.05;
+            if (tuneI) pid1.i = pid1.i*1.05;
+            if (tuneD) pid1.d = pid1.d*1.05;
+            if (tuneF) pid1.f = pid1.f*1.05;
+            rightShooterWheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pid1);
+        }
+        if (gamepad1.b){
+            PIDFCoefficients pid1 = rightShooterWheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (tuneP) pid1.p = pid1.p/1.05;
+            if (tuneI) pid1.i = pid1.i/1.05;
+            if (tuneD) pid1.d = pid1.d/1.05;
+            if (tuneF) pid1.f = pid1.f/1.05;
+            rightShooterWheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pid1);
+        }
 
         rampMotor.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
 
@@ -112,6 +153,17 @@ public class ShooterTest extends OpMode{
         telemetry.addData("Set Power",  "Offset = %.2f", speed);
         telemetry.addData("Actual Left Speed",  "%.2f", leftShooterWheel.getVelocity());
         telemetry.addData("Actual Right Speed",  "%.2f", rightShooterWheel.getVelocity());
+
+        PIDFCoefficients pid = rightShooterWheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("P", pid.p);
+        telemetry.addData("I", pid.i);
+        telemetry.addData("D", pid.d);
+        telemetry.addData("F", pid.f);
+        if (tuneP) telemetry.addLine("TUNING P");
+        if (tuneI) telemetry.addLine("TUNING I");
+        if (tuneD) telemetry.addLine("TUNING D");
+        if (tuneF) telemetry.addLine("TUNING F");
+
 
     }
 

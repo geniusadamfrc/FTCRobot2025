@@ -25,6 +25,7 @@ public class BackupAndShoot extends OpMode {
     private SequentialCommand main;
     @Override
     public void init() {
+
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM,3352, 3200, AngleUnit.DEGREES,45));
         try {
             CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);

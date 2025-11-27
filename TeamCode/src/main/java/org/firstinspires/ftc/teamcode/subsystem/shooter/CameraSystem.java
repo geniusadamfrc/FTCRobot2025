@@ -20,6 +20,7 @@ public class CameraSystem {
     private VisionPortal visionPortal;
 
     private AprilTagDetection lastDetection;
+    private double lastBearing;
     private int goalId;
     public void init(HardwareMap hardwareMap) {
 
@@ -133,15 +134,15 @@ public class CameraSystem {
     public double getBearing() {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
-        if (aprilTags.size() ==0) return lastDetection.ftcPose.bearing;
+        if (aprilTags.size() ==0) return lastBearing;
         AprilTagDetection current = null;
         for(AprilTagDetection d : aprilTags){
             if (d.id == goalId){
                 current = d;
             }
         }
-        if (current == null) return lastDetection.ftcPose.bearing;
-        lastDetection = current;
+        if (current == null) return lastBearing;
+        lastBearing = current.ftcPose.bearing;
         return current.ftcPose.bearing;
     }
 }
