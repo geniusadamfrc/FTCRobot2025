@@ -11,24 +11,30 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class DriveStraightPath extends Command {
+public class MoveToPointOnField extends Command {
 
 
-    private double inches;
+    private double x;
+    private double y;
+    private double heading;
     private Action action;
-    public DriveStraightPath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
 
-        this.inches = inches;
-        this.registerSubsystem(drivetrain);
+    public MoveToPointOnField(double x, double y, double heading) {
+
+        this.x = x;
+        this.y = y;
+        this.heading = heading;
+        this.registerSubsystem(Robot.drivetrain);
     }
 
     @Override
     public void beginImpl() {
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .lineToX(this.inches)
+                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .splineToLinearHeading(new Pose2d(x, y, Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
                 //.lineToX(47.5)

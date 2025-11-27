@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraight;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.commands.simple.Shoot3Balls;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.IdentifyPattern;
 
@@ -44,7 +45,7 @@ public class BlueBackupAndShoot extends OpMode {
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
         main.addCommand(new Turn90DegreesPath(90));
         main.addCommand(new IdentifyPattern());
-        //main.addCommand(new Drive to First Block of Balls);
+        main.addCommand(new MoveToPointOnField(-12,12,180));
         //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
         main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
         main.begin();
