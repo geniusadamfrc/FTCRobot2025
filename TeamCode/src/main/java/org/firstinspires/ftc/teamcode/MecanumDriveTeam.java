@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
-import org.firstinspires.ftc.teamcode.commands.simple.AlignTarget;
-import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTarget;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 
 @TeleOp(name = "Blue Teleop")
 public class MecanumDriveTeam extends OpMode {

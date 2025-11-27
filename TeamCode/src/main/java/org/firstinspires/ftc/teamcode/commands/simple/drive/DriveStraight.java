@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.simple;
+package org.firstinspires.ftc.teamcode.commands.simple.drive;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.TimerCommand;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
@@ -24,13 +24,13 @@ public class DriveStraight extends Command {
     public void beginImpl(){
         timer = new TimerCommand(time);
         timer.begin();
-        drivetrain.drive(forward,0,strafe);
+        drivetrain.driveRobotRelative(forward,0,strafe);
         telemetry.addData("DriveStraight Begin", "true");
     }
     public void loopImpl(){
         telemetry.addData("DriveStraight Loop", "true");
         if (timer.isFinished()){
-            drivetrain.drive(0,0,0);
+            drivetrain.setDriveToZero();
             finish();
         }else {
             timer.loop();    
@@ -38,7 +38,7 @@ public class DriveStraight extends Command {
         
     }
     public void finishImpl(){
-        drivetrain.drive(0,0,0);
+        drivetrain.setDriveToZero();
     }
     // todo: write your code here
 }

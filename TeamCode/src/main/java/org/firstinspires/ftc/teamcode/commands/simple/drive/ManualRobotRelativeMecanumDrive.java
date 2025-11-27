@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.commands.simple;
+package org.firstinspires.ftc.teamcode.commands.simple.drive;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.gamepad.Axis;
-import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 
 public class ManualRobotRelativeMecanumDrive extends Command {
     private Axis left_stick_y;
@@ -32,6 +31,6 @@ public class ManualRobotRelativeMecanumDrive extends Command {
 
     @Override
     public void finishImpl(){
-        Robot.drivetrain.driveRobotRelative(0,0,0);
+        Robot.drivetrain.setDriveToZero();
     }
 }

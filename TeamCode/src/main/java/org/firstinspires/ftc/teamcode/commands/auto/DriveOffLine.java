@@ -6,11 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
-import org.firstinspires.ftc.teamcode.commands.simple.DriveStraight;
-import org.firstinspires.ftc.teamcode.commands.simple.DriveStraightDistance;
-import org.firstinspires.ftc.teamcode.commands.simple.ManualRobotRelativeMecanumDrive;
-import org.firstinspires.ftc.teamcode.commands.simple.Shoot3Balls;
-import org.firstinspires.ftc.teamcode.commands.simple.Turn90Degrees;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraight;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 
 @Autonomous(name="Drive Off Line")
 public class DriveOffLine extends OpMode {

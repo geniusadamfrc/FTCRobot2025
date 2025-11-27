@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.simple;
+package org.firstinspires.ftc.teamcode.commands.simple.drive;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +21,7 @@ public class DriveStraightDistance extends Command {
     
     public void beginImpl(){
         currentEncoderReading = drivetrain.getEncoderReading();
-        drivetrain.drive(power,0,0);
+        drivetrain.driveRobotRelative(power,0,0);
         telemetry.addData("DriveStraightDistance", "begin");
         direction = false;
         if (power > 0) direction = true; 
@@ -37,7 +37,7 @@ public class DriveStraightDistance extends Command {
         }
     }
     public void finishImpl(){
-        drivetrain.drive(0,0,0);
+        drivetrain.setDriveToZero();
     }
     // todo: write your code here
 }

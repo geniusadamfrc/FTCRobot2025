@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.simple;
+package org.firstinspires.ftc.teamcode.commands.simple.drive;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -34,7 +34,7 @@ public class AlignTarget extends Command {
 
         double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
         out = out + (out < 0 ? -staticFeedForward : staticFeedForward);
-        Robot.drivetrain.drive(0.0, out, 0.0);
+        Robot.drivetrain.driveRobotRelative(0.0, out, 0.0);
         lastError = error;
 
         // reset the timer for next time
