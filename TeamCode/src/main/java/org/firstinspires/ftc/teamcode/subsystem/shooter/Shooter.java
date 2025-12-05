@@ -42,8 +42,8 @@ public class Shooter extends Subsystem {
         rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27, 8,0,15));
-        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27, 8,0,15));
+        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
+        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
         camera = new CameraSystem();
         camera.init(hardwareMap);
     }
@@ -68,13 +68,14 @@ public class Shooter extends Subsystem {
                 rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
 
     }
-    public double getIdealShootingSpeed(Telemetry telemetry){
-        double range  = camera.computeRangeToGoal(telemetry);
-        if (range < 30) return 0;
-        else if (range< 51) return 600;
-        else {
-            return 500 + 2.5 * range;
-        }
+    public double getIdealShootingSpeed()  {
+            double range = camera.computeRangeToGoal();
+            if (range < 30) return 0;
+            else if (range< 51) return 600;
+            else {
+                return 500 + 2.5 * range;
+            }
+
     }
 
 
@@ -93,7 +94,7 @@ public class Shooter extends Subsystem {
 
 
 
-    public void setIdle(){
+    public void setShooterIdle(){
         setTargetSpeed(0.0);
         shooterState = ShooterState.IDLE;
     }

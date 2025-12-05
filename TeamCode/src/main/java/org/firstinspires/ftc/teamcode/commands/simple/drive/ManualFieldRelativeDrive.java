@@ -26,7 +26,7 @@ public class ManualFieldRelativeDrive extends Command {
         double forward = -left_stick_y.getState();
         double turn = right_stick_x.getState();
         double strafe = left_stick_x.getState();
-        Robot.drivetrain.driveFieldRelative(forward, turn, strafe);
+        Robot.drivetrain.driveFieldRelative(forward, strafe, turn);
     }
 
     @Override

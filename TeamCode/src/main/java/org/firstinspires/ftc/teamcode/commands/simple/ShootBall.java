@@ -4,10 +4,10 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.*;
 import org.firstinspires.ftc.teamcode.commands.simple.ramp.*;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
 
 public class ShootBall extends Command {
-    private Command speedUp;
-    private Command moveRamp;
+    private PushBallUp moveRamp;
     private Command shooting;
     public ShootBall(){
         registerSubsystem(Robot.shooter);
@@ -15,24 +15,21 @@ public class ShootBall extends Command {
     }
     @Override
     public void beginImpl() {
-        speedUp = new SpeedUpForShooting(900.0);
-        speedUp.begin();
+        moveRamp = new PushBallUp();
+        double targetSpeed;
+        targetSpeed = Robot.shooter.getIdealShootingSpeed();
+        if (targetSpeed < 600.0) targetSpeed = 620;
+        shooting = new HoldForShooting(targetSpeed);
+        moveRamp.begin();
+        shooting.begin();
+
     }
 
     @Override
     public void loopImpl() {
-        if (!speedUp.isFinished()) speedUp.loop();
-        if (speedUp.isFinished() && moveRamp == null){
-            moveRamp = new PushBallUp();
-            shooting = new HoldForShooting();
-            moveRamp.begin();
-            shooting.begin();
-        }
-        if( moveRamp != null){
-            moveRamp.loop();
-            shooting.loop();
-        }
-        if (shooting != null && shooting.isFinished()){
+        moveRamp.loop();
+        shooting.loop();
+        if ((shooting.isFinished() && moveRamp.hasMovedEnough())|| moveRamp.hasMovedMaximum()) {
             moveRamp.finish();
             finish();
         }

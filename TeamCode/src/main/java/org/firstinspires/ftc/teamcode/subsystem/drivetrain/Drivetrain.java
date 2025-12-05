@@ -70,7 +70,7 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void playOnceImpl(){
-        odo.resetPosAndIMU();
+        //odo.resetPosAndIMU();
         if (telemetry == null) return;
         telemetry.addData("Status", "Initialized");
         telemetry.addData("X offset", odo.getXOffset(DistanceUnit.MM));
@@ -135,8 +135,8 @@ public class Drivetrain extends Subsystem {
     }
 
     public void driveFieldRelative(double x, double y, double spin){
-        double strafe = Math.cos(odo.getHeading(AngleUnit.RADIANS))*x + Math.sin(odo.getHeading(AngleUnit.RADIANS)*y);
-        double forward = Math.sin(odo.getHeading(AngleUnit.RADIANS))*x + Math.cos(odo.getHeading(AngleUnit.RADIANS)*y);;
+        double strafe = Math.cos(odo.getHeading(AngleUnit.RADIANS))*x + Math.sin(odo.getHeading(AngleUnit.RADIANS))*y;
+        double forward = Math.sin(odo.getHeading(AngleUnit.RADIANS))*x + Math.cos(odo.getHeading(AngleUnit.RADIANS))*y;;
         driveRobotRelative(forward, spin, strafe);
     }
 

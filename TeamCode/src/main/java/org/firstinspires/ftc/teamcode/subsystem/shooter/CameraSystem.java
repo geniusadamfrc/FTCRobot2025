@@ -39,7 +39,9 @@ public class CameraSystem {
                 // == CAMERA CALIBRATION ==
                 // If you do not manually specify calibration parameters, the SDK will attempt
                 // to load a predefined calibration for your camera.
-                .setLensIntrinsics(283, 283, 317, 231.506)
+                .setLensIntrinsics(283/0.339, 283/0.339, 317, 231.506)
+//                .setLensIntrinsics(283, 283, 317, 231.506)
+
                 // ... these parameters are fx, fy, cx, cy.
 
                 .build();
@@ -84,7 +86,7 @@ public class CameraSystem {
     }
 
 
-    public void doTelemetry(Telemetry telemetry) {
+    public void doTelemetry(Telemetry telemetry, boolean fullWriteOut) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
@@ -93,9 +95,9 @@ public class CameraSystem {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                if (fullWriteOut)telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 //telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                if (fullWriteOut)telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
@@ -110,7 +112,7 @@ public class CameraSystem {
     }
 
 
-    public double computeRangeToGoal(Telemetry telemetry){
+    public double computeRangeToGoal() {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
         if (aprilTags.size() ==0){
@@ -123,18 +125,21 @@ public class CameraSystem {
                 current = d;
             }
         }
-        if (current == null) return convertRangeToActualDistance(lastDetection.ftcPose.range);
-        telemetry.addData("Image Range", current.ftcPose.range);
+        if (current == null){
+            if (lastDetection == null) return 0.0;
+            return convertRangeToActualDistance(lastDetection.ftcPose.range);
+        }
         lastDetection = current;
         return convertRangeToActualDistance(current.ftcPose.range);
     }
     private double convertRangeToActualDistance(double cameraRange) {
-        return cameraRange/0.339;
+        return cameraRange;
     }
 
     public double getBearing() {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
+
         if (aprilTags.size() ==0) return lastBearing;
         AprilTagDetection current = null;
         for(AprilTagDetection d : aprilTags){

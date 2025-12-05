@@ -4,14 +4,15 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 
 
 public class HoldForShooting extends Command{
-    public static final double TARGET_SPEEED = 900.0;
     public static final double SPEED_DROP = 150.0;
-    public HoldForShooting(){
+    private double speed;
+    public HoldForShooting(double speed){
         registerSubsystem(Robot.shooter);
+        this.speed = speed;
     }
     @Override
     public void beginImpl() {
-        Robot.shooter.setTargetSpeed(TARGET_SPEEED);
+        Robot.shooter.setTargetSpeed(speed);
     }
 
     @Override

@@ -5,30 +5,32 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 
-public class AlignTarget extends Command {
+public class AlignTargetOdo extends Command {
 
     private double Kp = 0.05;
     private double Ki = 0.01;
     private double Kd = 0.0;
     private double integralSum = 0;
-
+    private double targetOdo;
     private double lastError = 0;
     ElapsedTime timer;
     private double staticFeedForward = 0.05;
     private boolean allowFinish;
-    public AlignTarget(boolean allowFinish){
+    public AlignTargetOdo(boolean allowFinish){
         registerSubsystem(Robot.drivetrain);
         registerSubsystem(Robot.shooter);
         this.allowFinish = allowFinish;
     }
     @Override
-    public void beginImpl() {
+    public void beginImpl()
+    {
+        this.targetOdo = Robot.drivetrain.getHeading() + Robot.shooter.getBearing();
         timer = new ElapsedTime();
     }
 
     @Override
     public void loopImpl() {
-        double error = -Robot.shooter.getBearing();
+        double error = Robot.drivetrain.getHeading() - targetOdo;
         // rate of change of the error
         double derivative = (error - lastError) / timer.seconds();
         // sum of all error over time
@@ -41,6 +43,10 @@ public class AlignTarget extends Command {
 
         // reset the timer for next time
         timer.reset();
-        if (Math.abs(error) < 3.0 && allowFinish) finish();
+        if (Math.abs(error) < 1.5 && allowFinish) finish();
+    }
+    @Override
+    public void finishImpl(){
+        Robot.drivetrain.driveRobotRelative(0,0,0);
     }
 }

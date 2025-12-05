@@ -39,7 +39,7 @@ public class Robot {
 
     }
     public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
-        init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM, 0,0, AngleUnit.DEGREES,0));
+        init(hardwareMap, telemetry, gamepad1, gamepad2, lastPosition);
     }
 
 
@@ -54,7 +54,7 @@ public class Robot {
         drivetrain.loop();
         telemetry.addData("Drivetrain: ", drivetrain.getCurrentCommand());
         shooter.loop();
-        shooter.camera.doTelemetry(telemetry);
+        shooter.camera.doTelemetry(telemetry, false);
         lastPosition = drivetrain.getOdoPosition();
     }
 

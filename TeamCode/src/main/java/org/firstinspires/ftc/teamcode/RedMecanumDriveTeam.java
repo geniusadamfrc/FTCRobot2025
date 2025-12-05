@@ -1,0 +1,96 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
+
+@TeleOp(name = "Red Teleop")
+public class RedMecanumDriveTeam extends OpMode {
+    double oldTime = 0;
+    double speed = 1000.0;
+    double intakeSpeed = 0.8;
+    private double targetSpeed;
+    /**
+     * This function is executed when this OpMode is selected from the Driver Station.
+     */
+    private Command alignTarget = null;
+
+    @Override
+    public void init(){
+
+        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
+        try {
+            CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
+        } catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch START to start OpMode");
+        telemetry.update();
+        Robot.shooter.camera.setGoalId(24);
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+    }
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+        Robot.drivetrain.playOnce();
+    }
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+        Robot.update(telemetry);
+
+
+        if (gamepad1.x) {
+            //Robot.drivetrain.resetPosition();
+        }
+        if (gamepad1.b) {
+            //Robot.drivetrain.recalibrateIMU();
+        }
+        //if (gamepad2.a) speed -=1;
+        //if (gamepad2.y) speed +=1;
+        //telemetry.addData("Target Speed", speed);
+        telemetry.addData("Ideal Speed", Robot.shooter.getIdealShootingSpeed());
+        Robot.shooter.writeSpeeds(telemetry);
+
+
+        if (gamepad1.left_bumper) {
+            targetSpeed = Robot.shooter.getIdealShootingSpeed();
+            Robot.shooter.setTargetSpeed(targetSpeed);
+        } else {
+            Robot.shooter.setTargetSpeed(0.0);
+        }
+        Robot.ramp.setRampPower(gamepad1.left_trigger - gamepad1.right_trigger);
+        if (gamepad1.right_bumper) Robot.ramp.setIntakePower(-intakeSpeed);
+        else Robot.ramp.setIntakePower(0.0);
+
+        if (gamepad1.b) {
+            if (alignTarget == null) {
+                alignTarget = new AlignTargetOdo(false);
+                CommandManager.schedule(alignTarget);
+            }
+        } else {
+            if (alignTarget != null) {
+                alignTarget.finish();
+                alignTarget = null;
+            }
+        }
+        telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
+        //if (gamepad1.x)intakeSpeed = - intakeSpeed;
+    }
+}

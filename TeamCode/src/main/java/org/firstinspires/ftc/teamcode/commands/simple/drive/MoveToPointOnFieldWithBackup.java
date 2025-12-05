@@ -8,10 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class MoveToPointOnField extends Command {
+public class MoveToPointOnFieldWithBackup extends Command {
 
 
     private double x;
@@ -19,7 +17,7 @@ public class MoveToPointOnField extends Command {
     private double heading;
     private Action action;
 
-    public MoveToPointOnField(double x, double y, double heading) {
+    public MoveToPointOnFieldWithBackup(double x, double y, double heading) {
 
         this.x = x;
         this.y = y;
@@ -29,11 +27,19 @@ public class MoveToPointOnField extends Command {
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+        double initialX = Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH);
+        double initialY = Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH);
+        double initialHeading =Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS);
+
+                action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+                        initialX,
+                        initialY,
+                        initialHeading))
                 .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .splineToLinearHeading(
+                        new Pose2d(initialX +30, initialY, initialHeading), initialHeading
+                )
+                .turnTo(90)
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))

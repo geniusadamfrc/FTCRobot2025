@@ -1,17 +1,21 @@
 package org.firstinspires.ftc.teamcode.commands.simple.drive;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
+import com.acmerobotics.roadrunner.VelConstraint;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class MoveToPointOnField extends Command {
+public class MoveToPointOnFieldSlow extends Command {
 
 
     private double x;
@@ -19,7 +23,7 @@ public class MoveToPointOnField extends Command {
     private double heading;
     private Action action;
 
-    public MoveToPointOnField(double x, double y, double heading) {
+    public MoveToPointOnFieldSlow(double x, double y, double heading) {
 
         this.x = x;
         this.y = y;
@@ -29,16 +33,22 @@ public class MoveToPointOnField extends Command {
 
     @Override
     public void beginImpl() {
+        //Robot.drivetrain.roadRunnerController.defaultVelConstraint
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
                         Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
-                .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
+                .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading), new VelConstraint() {
+                    @Override
+                    public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                        return 9.0;
+                    }
+                })
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
-                //.lineToX(4
-                .build();
+                //.lineToX(47.5)
+                .waitSeconds(0.5).build();
     }
 
     @Override
