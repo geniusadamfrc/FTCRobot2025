@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
@@ -59,4 +60,14 @@ public class Robot {
     }
 
 
+    public static void setupParams(int i) {
+        Robot.shooter.camera.setGoalId(20);
+        try {
+            CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
+        } catch (Exception ex){
+            throw new RuntimeException(ex);
+        }
+
+
+    }
 }

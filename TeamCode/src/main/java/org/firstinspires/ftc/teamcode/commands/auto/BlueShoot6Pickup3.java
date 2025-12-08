@@ -28,12 +28,9 @@ public class BlueShoot6Pickup3 extends OpMode {
         //Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM,0, 0, AngleUnit.DEGREES,0));
 
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.INCH,-59, 58, AngleUnit.DEGREES,-35));
-        Robot.shooter.camera.setGoalId(20);
-        try {
-            CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
-        } catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
+        Robot.setupParams(20);
+
+
 
     }
     @Override
