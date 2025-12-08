@@ -55,7 +55,7 @@ public class BlueShoot6Pickup3 extends OpMode {
 
 
         main.addCommand(new MoveToPointOnField(-12,25,179));
-        main.addCommand(new DriveForwardAndIntake(-30));
+        main.addCommand(new DriveForwardAndIntake(-33));
         ParallelCommand sq2 = new ParallelCommand();
         sq2.addCommand(new MoveToPointOnField(-20, 32, -35));
         sq2.addCommand(new SpeedUpForShooting(620));

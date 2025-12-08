@@ -49,9 +49,15 @@ public class Shooter extends Subsystem {
     }
 
     public void setTargetSpeed(double targetSpeed){
+        //leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.targetSpeed = targetSpeed;
         leftShooter.setVelocity(targetSpeed);
         rightShooter.setVelocity(targetSpeed);
+    }
+    public void setPower(double power){
+        leftShooter.setPower(power);
+        rightShooter.setPower(power);
     }
     public void setSpeedTolerance(double speedTolerance){
         this.speedTolerance = speedTolerance;
@@ -95,7 +101,7 @@ public class Shooter extends Subsystem {
 
 
     public void setShooterIdle(){
-        setTargetSpeed(0.0);
+        setPower(0.0);
         shooterState = ShooterState.IDLE;
     }
     public void setStartShooting(double targetSpeed){
