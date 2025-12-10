@@ -13,7 +13,7 @@ public class AlignTarget extends Command {
     private double integralSum = 0;
 
     private double lastError = 0;
-    ElapsedTime timer;
+    private ElapsedTime timer;
     private double staticFeedForward = 0.1;
     public AlignTarget(){
         registerSubsystem(Robot.drivetrain);
