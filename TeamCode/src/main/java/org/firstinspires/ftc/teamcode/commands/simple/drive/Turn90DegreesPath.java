@@ -23,9 +23,9 @@ public class Turn90DegreesPath extends Command {
                         Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .turn(Math.toRadians(angleInDegrees))
+                .turnTo(Math.toRadians(angleInDegrees))
                 //.lineToX(47.5)
-                .waitSeconds(0.5).build();
+                .build();
     }
     @Override
     public void loopImpl() {

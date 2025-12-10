@@ -9,7 +9,7 @@ public class Shoot3Balls extends SequentialCommand {
 
 
     public Shoot3Balls init(Shooter shooter, Ramp ramp){
-        super.addCommand(new ShootBall());
+        super.addCommand(new ShootBallAfterSpeedUp());
         super.addCommand(new ShootBall());
         super.addCommand(new ShootBall());
         super.addCommand(new ShooterIdle());

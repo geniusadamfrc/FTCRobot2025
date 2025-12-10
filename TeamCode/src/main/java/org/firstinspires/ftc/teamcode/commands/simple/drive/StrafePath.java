@@ -11,34 +11,28 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class MoveToPointOnField extends Command {
+public class StrafePath extends Command {
 
 
-    private double x;
-    private double y;
-    private double heading;
+    private double inches;
     private Action action;
+    public StrafePath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
 
-    public MoveToPointOnField(double x, double y, double heading) {
-
-        this.x = x;
-        this.y = y;
-        this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.inches = inches;
+        this.registerSubsystem(drivetrain);
     }
 
     @Override
     public void beginImpl() {
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
+                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
-                .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
+                .lineToX(this.inches)
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
-                //.lineToX(4
-                .build();
+                //.lineToX(47.5)
+                .waitSeconds(0.5).build();
     }
 
     @Override

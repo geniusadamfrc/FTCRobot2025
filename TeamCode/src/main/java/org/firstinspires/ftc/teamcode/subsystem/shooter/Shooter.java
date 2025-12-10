@@ -42,16 +42,22 @@ public class Shooter extends Subsystem {
         rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27, 8,0,15));
-        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27, 8,0,15));
+        leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
+        rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
         camera = new CameraSystem();
         camera.init(hardwareMap);
     }
 
     public void setTargetSpeed(double targetSpeed){
+        //leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.targetSpeed = targetSpeed;
         leftShooter.setVelocity(targetSpeed);
         rightShooter.setVelocity(targetSpeed);
+    }
+    public void setPower(double power){
+        leftShooter.setPower(power);
+        rightShooter.setPower(power);
     }
     public void setSpeedTolerance(double speedTolerance){
         this.speedTolerance = speedTolerance;
@@ -68,13 +74,14 @@ public class Shooter extends Subsystem {
                 rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
 
     }
-    public double getIdealShootingSpeed(Telemetry telemetry){
-        double range  = camera.computeRangeToGoal(telemetry);
-        if (range < 30) return 0;
-        else if (range< 51) return 600;
-        else {
-            return 500 + 2.5 * range;
-        }
+    public double getIdealShootingSpeed()  {
+            double range = camera.computeRangeToGoal();
+            if (range < 30) return 0;
+            else if (range< 51) return 600;
+            else {
+                return 500 + 2.5 * range;
+            }
+
     }
 
 
@@ -93,8 +100,8 @@ public class Shooter extends Subsystem {
 
 
 
-    public void setIdle(){
-        setTargetSpeed(0.0);
+    public void setShooterIdle(){
+        setPower(0.0);
         shooterState = ShooterState.IDLE;
     }
     public void setStartShooting(double targetSpeed){

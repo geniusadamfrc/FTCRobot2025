@@ -35,12 +35,12 @@ public class Ramp extends Subsystem{
         rampState = RampState.LOADED;
     }
 
+    public double getRampPosition() {
+        return rampMotor.getCurrentPosition();
+    }
 
 
-
-
-
-   public enum RampState{
+    public enum RampState{
         LOADING_EMPTY, LOADING_1, LOADING_2, LOADED, IDLE
    }
 }

@@ -10,7 +10,8 @@ public class ShooterIdle extends Command {
     }
     @Override
     public void beginImpl() {
-        Robot.shooter.setTargetSpeed(0.0);
+        Robot.shooter.setPower(0.0);
+        Robot.ramp.setIntakePower(0.0);
     }
 
     @Override
