@@ -46,7 +46,7 @@ public class RedAutoShoot3Get3 extends OpMode {
 
 
         main.addCommand(new MoveToPointOnField(18,4,0));
-        main.addCommand(new DriveForwardAndIntake(33));
+        main.addCommand(new DriveForwardAndIntake(33, 0));
 
         ParallelCommand sq2 = new ParallelCommand();
         sq2.addCommand(new MoveToPointOnField(20, 32, -145));
@@ -56,7 +56,7 @@ public class RedAutoShoot3Get3 extends OpMode {
         main.addCommand(new AlignTargetOdo(true));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
         main.addCommand(new MoveToPointOnField(20, -20, 0));
-        main.addCommand(new DriveForwardAndIntake(33));
+        main.addCommand(new DriveForwardAndIntake(33, 0));
 
         //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
         //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));

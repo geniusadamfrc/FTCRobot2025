@@ -52,7 +52,7 @@ public class RedPatternMatchAuto extends OpMode {
         main.addCommand(new IdentifyPattern());
 
         main.addCommand(new MoveToPointOnFieldWithUpdate(18,4,0));
-        main.addCommand(new DriveForwardAndIntake(30));
+        main.addCommand(new DriveForwardAndIntake(30,0));
         ParallelCommand sq2 = new ParallelCommand();
         sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35));
         sq2.addCommand(new SpeedUpForShooting(620));

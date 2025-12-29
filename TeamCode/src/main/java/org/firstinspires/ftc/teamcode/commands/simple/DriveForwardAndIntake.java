@@ -12,17 +12,19 @@ import org.firstinspires.ftc.teamcode.commands.simple.ramp.TurnOnIntake;
 public class DriveForwardAndIntake extends Command {
     private TurnOnIntake intake;
     private MoveToPointOnFieldSlow drive;
+    private double heading;
     //private SlowRampUp rampUp;
     private double distance;
-    public DriveForwardAndIntake(double distance){
+    public DriveForwardAndIntake(double distance, double heading){
         this.distance = distance;
+        this.heading = heading;
     }
     @Override
     public void beginImpl() {
         double currentY = Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH);
         double currentX = Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH);
-        double currentHeading = Robot.drivetrain.getHeading();
-        drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, currentHeading);
+        //double currentHeading = Robot.drivetrain.getHeading();
+        drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, heading);
         intake = new TurnOnIntake(-1.0, -0.25);
         //rampUp = new SlowRampUp();
         drive.begin();

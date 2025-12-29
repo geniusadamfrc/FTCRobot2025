@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystem.drivetrain;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.geometry.CoordinateSystem;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,6 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.MecanumImpl;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -29,6 +36,7 @@ public class Drivetrain extends Subsystem {
 
     public GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public MecanumDrive roadRunnerController;
+    public Follower follower;
     private final boolean ignoreOdo = false;
 
     private Telemetry telemetry;
@@ -38,6 +46,9 @@ public class Drivetrain extends Subsystem {
         initMotors(hardwareMap);
         initOdo(hardwareMap, initialPose);
         initRoadRunner(hardwareMap, initialPose);
+        initPedro(hardwareMap, initialPose);
+        odo.setPosition(initialPose);
+
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -64,7 +75,10 @@ public class Drivetrain extends Subsystem {
     private void initRoadRunner(HardwareMap hardwareMap, Pose2D initialPose){
         this.roadRunnerController = new MecanumDrive(hardwareMap, initialPose);
     }
-
+    private void initPedro(HardwareMap hardwareMap, Pose2D initialPose){
+        follower = Constants.createFollowerRobot(hardwareMap);
+        follower.setStartingPose(PoseConverter.pose2DToPose(initialPose, PedroCoordinates.INSTANCE));
+    }
 
 
 
@@ -149,6 +163,13 @@ public class Drivetrain extends Subsystem {
         rightBackDrive.setPower(brs);
         
     }
+    public void setPowersRaw(double fls, double frs, double bls, double brs, double threshold){
+        if(Math.abs(leftFrontDrive.getPower() -fls) > threshold) leftFrontDrive.setPower(fls);
+        if(Math.abs(leftBackDrive.getPower() -bls) > threshold) leftBackDrive.setPower(bls);
+        if(Math.abs(rightFrontDrive.getPower() -frs) > threshold) rightFrontDrive.setPower(frs);
+        if(Math.abs(rightBackDrive.getPower() -brs) > threshold) rightBackDrive.setPower(brs);
+    }
+
     public int getEncoderReading(){
         return (leftFrontDrive.getCurrentPosition() 
             + leftBackDrive.getCurrentPosition()

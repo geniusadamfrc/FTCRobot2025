@@ -13,6 +13,7 @@ public class AlignTargetOdo extends Command {
     private double integralSum = 0;
     private double targetOdo;
     private double lastError = 0;
+    private int finishCount;
     ElapsedTime timer;
     private double staticFeedForward = 0.05;
     private boolean allowFinish;
@@ -26,6 +27,7 @@ public class AlignTargetOdo extends Command {
     {
         this.targetOdo = Robot.drivetrain.getHeading() + Robot.shooter.getBearing();
         timer = new ElapsedTime();
+        finishCount = 0;
     }
 
     @Override
@@ -43,7 +45,10 @@ public class AlignTargetOdo extends Command {
 
         // reset the timer for next time
         timer.reset();
-        if (Math.abs(error) < 1.5 && allowFinish) finish();
+        if (Math.abs(error) < 1.5 && allowFinish){
+            if (finishCount < 5) finishCount++;
+            else finish();
+        }else {finishCount = 0;}
     }
     @Override
     public void finishImpl(){

@@ -53,7 +53,7 @@ public class BluePatternMatchAuto extends OpMode {
 
 
         main.addCommand(new MoveToPointOnFieldWithUpdate(-12,25,179));
-        main.addCommand(new DriveForwardAndIntake(-33));
+        main.addCommand(new DriveForwardAndIntake(-33, 179));
         ParallelCommand sq2 = new ParallelCommand();
         sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35));
         sq2.addCommand(new SpeedUpForShooting(620));
