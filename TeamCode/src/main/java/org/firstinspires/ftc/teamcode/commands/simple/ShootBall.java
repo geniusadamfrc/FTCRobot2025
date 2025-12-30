@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
 
 public class ShootBall extends Command {
     private PushBallUp moveRamp;
-    private Command shooting;
     public ShootBall(){
         registerSubsystem(Robot.shooter);
         registerSubsystem(Robot.ramp);
@@ -16,20 +15,15 @@ public class ShootBall extends Command {
     @Override
     public void beginImpl() {
         moveRamp = new PushBallUp();
-        double targetSpeed;
-        targetSpeed = Robot.shooter.getIdealShootingSpeed();
-        if (targetSpeed < 600.0) targetSpeed = 620;
-        shooting = new HoldForShooting(targetSpeed);
         moveRamp.begin();
-        shooting.begin();
-
+        Robot.shooter.startShooting();
     }
 
     @Override
     public void loopImpl() {
         moveRamp.loop();
-        shooting.loop();
-        if ((shooting.isFinished() && moveRamp.hasMovedEnough())|| moveRamp.hasMovedMaximum()) {
+        if ((Robot.shooter.isBallShot() && moveRamp.hasMovedEnough())|| moveRamp.hasMovedMaximum()) {
+            Robot.shooter.clearBallShot();
             moveRamp.finish();
             finish();
         }

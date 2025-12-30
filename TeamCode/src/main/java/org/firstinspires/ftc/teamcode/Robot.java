@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
+import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
@@ -22,6 +23,7 @@ public class Robot {
     public static Drivetrain drivetrain;
     public static Shooter shooter;
     public static Ramp ramp;
+    public static Intake intake;
     public static Pose2D lastPosition = new Pose2D(DistanceUnit.MM, 0.0, 0.0, AngleUnit.DEGREES, 0.0);
 
 
@@ -37,6 +39,8 @@ public class Robot {
         shooter.init(hardwareMap);
         if (ramp == null) ramp = new Ramp();
         ramp.init(hardwareMap);
+        if (intake == null) intake = new Intake();
+        intake.init(hardwareMap);
 
     }
     public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
@@ -45,7 +49,7 @@ public class Robot {
 
 
 
-    public static void update(Telemetry telemetry){
+    public static void update(){
         //These are default.  Don't touch.
         gamepadex1.update();
         gamepadex2.update();
@@ -53,9 +57,9 @@ public class Robot {
 
         //update these
         drivetrain.loop();
-        telemetry.addData("Drivetrain: ", drivetrain.getCurrentCommand());
         shooter.loop();
-        shooter.camera.doTelemetry(telemetry, false);
+        ramp.loop();
+        intake.loop();
         lastPosition = drivetrain.getOdoPosition();
     }
 

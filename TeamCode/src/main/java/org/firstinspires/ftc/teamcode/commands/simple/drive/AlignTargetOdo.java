@@ -24,7 +24,7 @@ public class AlignTargetOdo extends Command {
     @Override
     public void beginImpl()
     {
-        this.targetOdo = Robot.drivetrain.getHeading() + Robot.shooter.getBearing();
+        this.targetOdo = Robot.drivetrain.getHeading() + Robot.shooter.camera.getBearing();
         timer = new ElapsedTime();
     }
 

@@ -65,7 +65,7 @@ public class RedAutoShoot3Get3 extends OpMode {
 
     @Override
     public void loop() {
-        Robot.update(telemetry);
+        Robot.update();
         Robot.drivetrain.writeOutPosition(telemetry);
         telemetry.addData("Pattern ID", Robot.shooter.camera.getPatternId());
         if (!main.isFinished())

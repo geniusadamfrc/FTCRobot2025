@@ -28,7 +28,7 @@ public class AlignTarget extends Command {
 
     @Override
     public void loopImpl() {
-        double error = -Robot.shooter.getBearing();
+        double error = -Robot.shooter.camera.getBearing();
         // rate of change of the error
         double derivative = (error - lastError) / timer.seconds();
         // sum of all error over time

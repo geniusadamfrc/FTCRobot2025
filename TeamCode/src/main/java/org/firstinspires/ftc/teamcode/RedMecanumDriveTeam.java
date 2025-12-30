@@ -53,31 +53,21 @@ public class RedMecanumDriveTeam extends OpMode {
      */
     @Override
     public void loop() {
-        Robot.update(telemetry);
-
-
-        if (gamepad1.x) {
-            //Robot.drivetrain.resetPosition();
-        }
-        if (gamepad1.b) {
-            //Robot.drivetrain.recalibrateIMU();
-        }
-        //if (gamepad2.a) speed -=1;
-        //if (gamepad2.y) speed +=1;
-        //telemetry.addData("Target Speed", speed);
-        telemetry.addData("Ideal Speed", Robot.shooter.getIdealShootingSpeed());
-        Robot.shooter.writeSpeeds(telemetry);
-
 
         if (gamepad1.left_bumper) {
-            targetSpeed = Robot.shooter.getIdealShootingSpeed();
-            Robot.shooter.setTargetSpeed(targetSpeed);
+            Robot.shooter.startShooting();
         } else {
-            Robot.shooter.setPower(0.0);
+            Robot.shooter.setIdleShooter();
         }
-        Robot.ramp.setRampPower(gamepad1.left_trigger - gamepad1.right_trigger);
-        if (gamepad1.right_bumper) Robot.ramp.setIntakePower(-intakeSpeed);
-        else Robot.ramp.setIntakePower(0.0);
+        if (gamepad1.left_trigger >0.05 || gamepad1.right_trigger > 0.05){
+            Robot.ramp.setTargetPower(gamepad1.left_trigger - gamepad1.right_trigger);
+            Robot.ramp.setFeeding();
+        }else{
+            Robot.ramp.setIdleRamp();
+        }
+        if (gamepad1.right_bumper) Robot.intake.setIntaking();
+        else Robot.ramp.setIdleRamp();
+
 
         if (gamepad1.b) {
             if (alignTarget == null) {
@@ -90,7 +80,11 @@ public class RedMecanumDriveTeam extends OpMode {
                 alignTarget = null;
             }
         }
+        Robot.shooter.camera.doTelemetry(telemetry, false);
+        Robot.shooter.writeSpeeds(telemetry);
+        telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());
         telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
-        //if (gamepad1.x)intakeSpeed = - intakeSpeed;
+        Robot.update();
+        telemetry.update();
     }
 }

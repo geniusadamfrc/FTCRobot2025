@@ -21,16 +21,19 @@ public class Shooter extends Subsystem {
     public final static String LEFT_SHOOTER_NAME = "leftShooter";
     public final static String RIGHT_SHOOTER_NAME = "rightShooter";
 
-    public final static double SPEED_DROP_ON_SHOT = 200.0;
-
-
+    public final static double SPEED_DROP_ON_SHOT = 150.0;
+    public final static double DEFAULT_TARGET_SPEED = 620.0;
+    public final static double DEFAULT_SPEED_TOLERANCE = 20.0;
+    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 5;
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
 
     private double targetSpeed;
     private double speedTolerance;
+    private int iterationsForSpeed;
 
+    private boolean ballShot;
     private ShooterState shooterState;
     public CameraSystem camera;
 
@@ -46,83 +49,107 @@ public class Shooter extends Subsystem {
         rightShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
         camera = new CameraSystem();
         camera.init(hardwareMap);
+        this.speedTolerance = DEFAULT_SPEED_TOLERANCE;
+        ballShot = false;
     }
 
-    public void setTargetSpeed(double targetSpeed){
-        //leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.targetSpeed = targetSpeed;
-        leftShooter.setVelocity(targetSpeed);
-        rightShooter.setVelocity(targetSpeed);
-    }
-    public void setPower(double power){
-        leftShooter.setPower(power);
-        rightShooter.setPower(power);
-    }
     public void setSpeedTolerance(double speedTolerance){
         this.speedTolerance = speedTolerance;
     }
     public void writeSpeeds(Telemetry telemetry){
+        telemetry.addData("Target Speed", targetSpeed);
         telemetry.addData("Actual Speeds L/R", leftShooter.getVelocity() + "/" + rightShooter.getVelocity());
         //telemetry.addData("Right Speed", rightShooter.getVelocity());
     }
-    public boolean isAtSpeed(){
-        return isAtSpeed(this.speedTolerance);
-    }
-    public boolean isAtSpeed (double speedTolerance){
-        return leftShooter.getVelocity() < targetSpeed+ speedTolerance && leftShooter.getVelocity() > targetSpeed - speedTolerance &&
-                rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
 
-    }
-    public double getIdealShootingSpeed()  {
-            double range = camera.computeRangeToGoal();
-            if (range < 30) return 0;
-            else if (range< 51) return 600;
-            else {
-                return 500 + 2.5 * range;
-            }
-
-    }
-
-
-
-    @Override
-    public void loop(){
-        if ((shooterState == ShooterState.SPINNING_UP|| shooterState == ShooterState.BALL_SHOT_SPINNING_UP) && isAtSpeed()){
-            shooterState = ShooterState.READY_FOR_SHOT;
-        }
-        if (shooterState == ShooterState.READY_FOR_SHOT && isAtSpeed(SPEED_DROP_ON_SHOT)){
-            shooterState = ShooterState.BALL_SHOT_SPINNING_UP;
-        }
-
-    }
-
-
-
-
-    public void setShooterIdle(){
-        setPower(0.0);
+    public void setIdleShooter(){
         shooterState = ShooterState.IDLE;
+        doIdle();
     }
-    public void setStartShooting(double targetSpeed){
-        setTargetSpeed(targetSpeed);
+    public void startShooting(){
+        startShooting(DEFAULT_TARGET_SPEED);
+    }
+    public void startShooting(double defaultSpeed){
         shooterState = ShooterState.SPINNING_UP;
+        targetSpeed = defaultSpeed;
+        ballShot = false;
+        doSpinningUp();
     }
 
     public boolean isReadyForShot(){
         return shooterState == ShooterState.READY_FOR_SHOT;
     }
     public boolean isBallShot(){
-        return shooterState == ShooterState.BALL_SHOT_SPINNING_UP;
+        return ballShot;
+    }
+    public void clearBallShot(){ballShot =false;}
+
+
+    @Override
+    public void loop(){
+        if (shooterState == ShooterState.IDLE) doIdle();
+        else if (shooterState == ShooterState.SPINNING_UP) doSpinningUp();
+        else if (shooterState == ShooterState.READY_FOR_SHOT) doReadyForShot();
+        if (shooterState == ShooterState.READY_FOR_SHOT && isAtSpeed(SPEED_DROP_ON_SHOT)){
+            //shooterState = ShooterState.BALL_SHOT_SPINNING_UP;
+        }
+
     }
 
-    public double getBearing() {
-        return camera.getBearing();
+    private void doIdle(){
+        leftShooter.setPower(0.0);
+        rightShooter.setPower(0.0);
     }
+    private void doSpinningUp(){
+        computeTargetSpeed();
+        if (isAtSpeed()) {
+            if (iterationsForSpeed >= ITERATIONS_TO_ASSUME_AT_SPEED) {
+                shooterState = ShooterState.READY_FOR_SHOT;
+                doReadyForShot();
+            }else {
+                iterationsForSpeed++;
+            }
+        }else{
+            iterationsForSpeed = 0;
+        }
+    }
+    private void doReadyForShot(){
+        iterationsForSpeed = 0;
+        if (!isAtSpeed(SPEED_DROP_ON_SHOT)) ballShot = true;
+        computeTargetSpeed();
+        if (!isAtSpeed()) shooterState = ShooterState.SPINNING_UP;
+    }
+
+    private void computeTargetSpeed(){
+        double cameraSpeed = getIdealShootingSpeed();
+        if (cameraSpeed>100){
+            targetSpeed = cameraSpeed;
+            leftShooter.setVelocity(targetSpeed);
+            rightShooter.setVelocity(targetSpeed);
+        }
+    }
+    private boolean isAtSpeed(){
+        return isAtSpeed(this.speedTolerance);
+    }
+    private boolean isAtSpeed (double speedTolerance){
+        return leftShooter.getVelocity() < targetSpeed+ speedTolerance && leftShooter.getVelocity() > targetSpeed - speedTolerance &&
+                rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
+
+    }
+    private double getIdealShootingSpeed()  {
+        double range = camera.computeRangeToGoal();
+        if (range < 30) return 0;
+        else if (range< 51) return 600;
+        else {
+            return 500 + 2.5 * range;
+        }
+
+    }
+
 
 
     private enum ShooterState {
-        IDLE, SPINNING_UP, READY_FOR_SHOT, BALL_SHOT_SPINNING_UP, MANUAL_CONTROL
+        IDLE, SPINNING_UP, READY_FOR_SHOT, MANUAL_CONTROL
     }
 
 

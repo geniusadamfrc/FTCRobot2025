@@ -15,19 +15,19 @@ public class PushBallUp  extends Command {
     }
     @Override
     public void beginImpl() {
-        ramp.setRampPower(-0.5);
-        ramp.setIntakePower((-0.5));
+        Robot.intake.setSlowIntaking();
+        Robot.ramp.setTargetPower(0.5);
+        Robot.ramp.setFeeding();
         rampPosition = Robot.ramp.getRampPosition();
     }
 
     @Override
     public void loopImpl() {
-        ramp.setRampPower(-0.5);
-        ramp.setIntakePower(-0.8);
     }
     @Override
-    public void finishImpl(){
-        ramp.setRampPower(0.0);
+    public void finishImpl() {
+        Robot.ramp.setIdleRamp();
+        Robot.intake.setIdleIntake();
     }
 
     public boolean hasMovedEnough(){
