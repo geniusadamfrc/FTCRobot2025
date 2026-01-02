@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class MoveToPointOnFieldSlow extends Command {
 
@@ -22,19 +23,21 @@ public class MoveToPointOnFieldSlow extends Command {
     private double y;
     private double heading;
     private Action action;
+    private MecanumDrive roadrunner;
 
-    public MoveToPointOnFieldSlow(double x, double y, double heading) {
+    public MoveToPointOnFieldSlow(double x, double y, double heading, MecanumDrive controller) {
 
         this.x = x;
         this.y = y;
         this.heading = heading;
         this.registerSubsystem(Robot.drivetrain);
+        this.roadrunner = controller;
     }
 
     @Override
     public void beginImpl() {
         //Robot.drivetrain.roadRunnerController.defaultVelConstraint
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = roadrunner.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))

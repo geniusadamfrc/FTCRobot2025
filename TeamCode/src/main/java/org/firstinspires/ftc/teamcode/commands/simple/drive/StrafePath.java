@@ -16,15 +16,17 @@ public class StrafePath extends Command {
 
     private double inches;
     private Action action;
+    private MecanumDrive controller;
     public StrafePath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
 
         this.inches = inches;
         this.registerSubsystem(drivetrain);
+        this.controller = drivePath;
     }
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = controller.actionBuilder(new Pose2d(
                 Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))

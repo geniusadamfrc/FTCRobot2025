@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.SpeedUpForShooting;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous(name="Red Main Auto")
 public class RedAutoShoot3Get3 extends BaseAutoCommand {
@@ -35,26 +36,27 @@ public class RedAutoShoot3Get3 extends BaseAutoCommand {
     }
     @Override
     public Command getMainCommand() {
+        MecanumDrive roadrunner = new MecanumDrive(hardwareMap, getInitialPose());
         SequentialCommand main = new SequentialCommand();
         ParallelCommand sq1 = new ParallelCommand();
-        sq1.addCommand(new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, 24));
+        sq1.addCommand(new DriveStraightPath(Robot.drivetrain, roadrunner, 24));
         sq1.addCommand(new SpeedUpForShooting(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
 
 
-        main.addCommand(new MoveToPointOnField(18,4,0));
-        main.addCommand(new DriveForwardAndIntake(33));
+        main.addCommand(new MoveToPointOnField(18,4,0, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(33, roadrunner));
 
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnField(20, 32, -145));
+        sq2.addCommand(new MoveToPointOnField(20, 32, -145,roadrunner));
         sq2.addCommand(new SpeedUpForShooting(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new AlignTargetOdo(true));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        main.addCommand(new MoveToPointOnField(20, -20, 0));
-        main.addCommand(new DriveForwardAndIntake(33));
+        main.addCommand(new MoveToPointOnField(20, -20, 0,roadrunner));
+        main.addCommand(new DriveForwardAndIntake(33, roadrunner));
 
         return main;
     }

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class MoveToPointOnFieldWithBackup extends Command {
 
@@ -16,9 +17,9 @@ public class MoveToPointOnFieldWithBackup extends Command {
     private double y;
     private double heading;
     private Action action;
-
-    public MoveToPointOnFieldWithBackup(double x, double y, double heading) {
-
+    private MecanumDrive controller;
+    public MoveToPointOnFieldWithBackup(double x, double y, double heading, MecanumDrive controller) {
+        this.controller = controller;
         this.x = x;
         this.y = y;
         this.heading = heading;
@@ -31,7 +32,7 @@ public class MoveToPointOnFieldWithBackup extends Command {
         double initialY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
         double initialHeading =Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS);
 
-                action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+                action = controller.actionBuilder(new Pose2d(
                         initialX,
                         initialY,
                         initialHeading))

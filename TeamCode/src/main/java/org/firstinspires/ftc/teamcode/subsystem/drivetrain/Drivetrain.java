@@ -31,12 +31,8 @@ public class Drivetrain extends CommandSubsystem {
     public GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public MecanumDrive roadRunnerController;
 
-    private Telemetry telemetry;
-
-    public void init(HardwareMap hardwareMap, Telemetry telemetry, Pose2D initialPose){
-        this.telemetry = telemetry;
+    public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
-        initRoadRunner(hardwareMap, initialPose);
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -53,9 +49,7 @@ public class Drivetrain extends CommandSubsystem {
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
-    private void initRoadRunner(HardwareMap hardwareMap, Pose2D initialPose){
-        this.roadRunnerController = new MecanumDrive(hardwareMap, initialPose);
-    }
+
 
 
 

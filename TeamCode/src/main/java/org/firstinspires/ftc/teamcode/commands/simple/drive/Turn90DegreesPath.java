@@ -8,18 +8,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class Turn90DegreesPath extends Command {
     private Action action;
     private int angleInDegrees;
-    public Turn90DegreesPath(int angleInDegrees){
+    private MecanumDrive controller;
+    public Turn90DegreesPath(int angleInDegrees, MecanumDrive controller){
         //this.imu = imu;
         registerSubsystem(Robot.drivetrain);
         this.angleInDegrees = angleInDegrees;
+        this.controller = controller;
     }
     @Override
     public void beginImpl(){
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))

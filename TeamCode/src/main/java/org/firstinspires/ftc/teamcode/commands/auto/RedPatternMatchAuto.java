@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldWi
 import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.IdentifyPattern;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.SpeedUpForShooting;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous(name="Red Pattern Match Auto")
 public class RedPatternMatchAuto extends BaseAutoCommand {
@@ -38,25 +39,26 @@ public class RedPatternMatchAuto extends BaseAutoCommand {
     }
     @Override
     public Command getMainCommand(){
+        MecanumDrive roadrunner = new MecanumDrive(hardwareMap, getInitialPose());
         SequentialCommand main = new SequentialCommand();
         ParallelCommand sq1 = new ParallelCommand();
-        sq1.addCommand(new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, 24));
+        sq1.addCommand(new DriveStraightPath(Robot.drivetrain, roadrunner, 24));
         sq1.addCommand(new SpeedUpForShooting(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        main.addCommand(new Turn90DegreesPath(-65));
+        main.addCommand(new Turn90DegreesPath(-65, roadrunner));
         main.addCommand(new IdentifyPattern());
 
-        main.addCommand(new MoveToPointOnFieldWithUpdate(18,4,0));
-        main.addCommand(new DriveForwardAndIntake(30));
+        main.addCommand(new MoveToPointOnFieldWithUpdate(18,4,0, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(30, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35));
+        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35, roadrunner));
         sq2.addCommand(new SpeedUpForShooting(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new AlignTargetOdo(true));
         main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        main.addCommand(new MoveToPointOnField(20, -20, 0));
+        main.addCommand(new MoveToPointOnField(20, -20, 0, roadrunner));
         //main.addCommand(new DriveForwardAndIntake(-30));
 
 

@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class MoveToPointOnFieldWithUpdate extends Command {
 
@@ -16,13 +17,14 @@ public class MoveToPointOnFieldWithUpdate extends Command {
     private double y;
     private double heading;
     private Action action;
-
-    public MoveToPointOnFieldWithUpdate(double x, double y, double heading) {
+    private MecanumDrive controller;
+    public MoveToPointOnFieldWithUpdate(double x, double y, double heading, MecanumDrive controller) {
 
         this.x = x;
         this.y = y;
         this.heading = heading;
         this.registerSubsystem(Robot.drivetrain);
+        this.controller = controller;
     }
     public void update(){
         int pattern = Robot.shooter.camera.getPatternId();
@@ -38,7 +40,7 @@ public class MoveToPointOnFieldWithUpdate extends Command {
     @Override
     public void beginImpl() {
         update();
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))

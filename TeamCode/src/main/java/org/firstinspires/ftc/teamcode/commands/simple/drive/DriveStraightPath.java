@@ -16,15 +16,16 @@ public class DriveStraightPath extends Command {
 
     private double inches;
     private Action action;
+    private MecanumDrive roadrunner;
     public DriveStraightPath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
-
+        this.roadrunner = drivePath;
         this.inches = inches;
         this.registerSubsystem(drivetrain);
     }
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = roadrunner.actionBuilder(new Pose2d(
                 Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))

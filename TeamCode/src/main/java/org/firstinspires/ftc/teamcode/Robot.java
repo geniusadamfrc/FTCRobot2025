@@ -36,7 +36,7 @@ public class Robot {
 
         //update these
         if (drivetrain == null) drivetrain = new Drivetrain();
-        drivetrain.init(hardwareMap, telemetry, initialPose);
+        drivetrain.init(hardwareMap);
         if (odometry == null) odometry = new Odometry();
         odometry.init(hardwareMap, telemetry, initialPose);
         if (shooter == null) shooter = new Shooter();

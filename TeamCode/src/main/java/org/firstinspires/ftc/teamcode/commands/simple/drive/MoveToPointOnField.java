@@ -18,18 +18,19 @@ public class MoveToPointOnField extends Command {
     private double y;
     private double heading;
     private Action action;
-
-    public MoveToPointOnField(double x, double y, double heading) {
+    private MecanumDrive controller;
+    public MoveToPointOnField(double x, double y, double heading, MecanumDrive controller) {
 
         this.x = x;
         this.y = y;
         this.heading = heading;
         this.registerSubsystem(Robot.drivetrain);
+        this.controller = controller;
     }
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+        action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
