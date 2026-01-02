@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 public class ShooterIdle extends Command {
 
     public ShooterIdle(){
-        registerSubsystem(Robot.shooter);
+        //registerSubsystem(Robot.shooter);
     }
     @Override
     public void beginImpl() {

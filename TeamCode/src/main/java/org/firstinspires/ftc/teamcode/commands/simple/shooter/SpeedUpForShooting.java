@@ -18,8 +18,8 @@ public class SpeedUpForShooting extends Command {
 
     @Override
     public void loopImpl() {
-        if (Robot.shooter.isReadyForShot()) {
-            finish();
-        }
+        if (Robot.shooter.isReadyForShot()){
+                finish();
+            }
     }
 }

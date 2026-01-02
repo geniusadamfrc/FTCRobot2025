@@ -32,4 +32,15 @@ public class CommandSubsystem extends Subsystem{
         currentCommand = null;
         state = State.IDLE;
     }
+    public String getCurrentCommand(){
+        if (currentCommand == null) return "IDLE";
+        return currentCommand.getClass().getSimpleName();
+    }
+
+    public void forceExit() {
+        currentCommand.interrupt();
+    }
+    protected enum State {
+        IDLE, DEFAULT, ACTIVE;
+    }
 }

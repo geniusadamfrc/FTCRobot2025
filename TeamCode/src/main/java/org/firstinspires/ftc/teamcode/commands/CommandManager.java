@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 
 import java.util.ArrayList;
@@ -10,11 +11,11 @@ import java.util.List;
 public class CommandManager {
 
     private static HashSet<Command> commands= new HashSet<>();
-    private static HashMap<Subsystem, Command> defaultCommands= new HashMap<>();;
+    private static HashMap<CommandSubsystem, Command> defaultCommands= new HashMap<>();;
     public static boolean BUSY_SUBSYSTEM_INTERRUPT = true; //true for interupt, false will ignore command
 
 
-    public static void registerDefaultCommand(Command c, Subsystem s) throws Exception {
+    public static void registerDefaultCommand(Command c, CommandSubsystem s) throws Exception {
         if (c.getSubsystems().size() != 1 || c.getSubsystems().get(0) != s){
             throw new Exception("Bad Default Command: " + c.getClass());
         }
@@ -25,13 +26,15 @@ public class CommandManager {
     public static boolean schedule(Command command){
         boolean active = false;
         boolean isDefault = false;
-        for(Subsystem s : command.getSubsystems()){
-            if (s.isActive()) active =true;
-            if (s.isDefault()) isDefault = true;
+        for(CommandSubsystem s : command.getSubsystems()){
+            if (s.getClass() == CommandSubsystem.class) {
+                if (s.isActive()) active = true;
+                if (s.isDefault()) isDefault = true;
+            }
         }
         if (active && !BUSY_SUBSYSTEM_INTERRUPT) return false;
         if (active || isDefault){
-            for(Subsystem s : command.getSubsystems()){
+            for(CommandSubsystem s : command.getSubsystems()){
                 if (s.isActive()) {
                     s.forceExit();
                 }
@@ -39,7 +42,7 @@ public class CommandManager {
             checkFinish();
         }
 
-        for (Subsystem s : command.getSubsystems()){
+        for (CommandSubsystem s : command.getSubsystems()){
             s.setActive(command);
         }
         startCommand(command);
@@ -52,13 +55,13 @@ public class CommandManager {
     }
     private static void finishCommand(Command c){
         commands.remove(c);
-        for(Subsystem s : c.getSubsystems()){
+        for(CommandSubsystem s : c.getSubsystems()){
             s.setIdle();
         }
     }
 
 
-    public static void forceExit(Subsystem s){
+    public static void forceExit(CommandSubsystem s){
         s.forceExit();
     }
 
@@ -83,7 +86,7 @@ public class CommandManager {
     }
 
     private static void checkForDefaultCommand(){
-        for(Subsystem s : defaultCommands.keySet()){
+        for(CommandSubsystem s : defaultCommands.keySet()){
             if (s.isIdle()){
                 Command c = defaultCommands.get(s);
                 s.setDefault(c);

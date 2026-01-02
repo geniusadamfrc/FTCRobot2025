@@ -137,7 +137,7 @@ public class Shooter extends Subsystem {
 
     }
     private double getIdealShootingSpeed()  {
-        double range = camera.computeRangeToGoal();
+        double range = camera.computeRangeToGoal(false);
         if (range < 30) return 0;
         else if (range< 51) return 600;
         else {

@@ -85,7 +85,6 @@ public class CameraSystem {
         this.goalId  =goalId;
     }
 
-
     public void doTelemetry(Telemetry telemetry, boolean fullWriteOut) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -112,11 +111,12 @@ public class CameraSystem {
     }
 
 
-    public double computeRangeToGoal() {
+
+    public double computeRangeToGoal(boolean useLastImage) {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
         if (aprilTags.size() ==0){
-            if (lastDetection == null) return 0.0;
+            if (!useLastImage || lastDetection == null) return 0.0;
             return convertRangeToActualDistance(lastDetection.ftcPose.range);
         }
         AprilTagDetection current = null;
@@ -126,12 +126,13 @@ public class CameraSystem {
             }
         }
         if (current == null){
-            if (lastDetection == null) return 0.0;
+            if (!useLastImage || lastDetection == null) return 0.0;
             return convertRangeToActualDistance(lastDetection.ftcPose.range);
         }
         lastDetection = current;
         return convertRangeToActualDistance(current.ftcPose.range);
     }
+
     private double convertRangeToActualDistance(double cameraRange) {
         return cameraRange;
     }

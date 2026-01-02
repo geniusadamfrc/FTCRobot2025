@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 
 import java.util.ArrayList;
@@ -9,16 +10,18 @@ import java.util.Map;
 public abstract class Command {
     private boolean finished;
     private boolean started;
-    private List<Subsystem> subsystems;
+    private List<CommandSubsystem> subsystems;
     public Command()
     {
-        subsystems = new ArrayList<Subsystem>();
+        subsystems = new ArrayList<CommandSubsystem>();
 
     }
     public void registerSubsystem(Subsystem s){
-        subsystems.add(s);
+        if (s.getClass() == CommandSubsystem.class){
+            subsystems.add((CommandSubsystem) s);
+        }
     }
-    public List<Subsystem> getSubsystems() { return subsystems;
+    public List<CommandSubsystem> getSubsystems() { return subsystems;
     }
     public boolean isStarted(){
         return started;

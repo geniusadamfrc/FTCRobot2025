@@ -10,13 +10,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import java.util.Locale;
 
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends CommandSubsystem {
     public static final String leftFrontName = "Front Left Motor";
     public static final String rightFrontName = "Front Right Motor";
     public static final String leftBackName = "Back Left Motor";
