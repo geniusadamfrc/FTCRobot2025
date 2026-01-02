@@ -16,9 +16,9 @@ public class DriveForwardAndIntake extends Command {
     }
     @Override
     public void beginImpl() {
-        double currentY = Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH);
-        double currentX = Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH);
-        double currentHeading = Robot.drivetrain.getHeading();
+        double currentY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
+        double currentX = Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH);
+        double currentHeading = Robot.odometry.getHeading();
         drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, currentHeading);
         intake = new TurnOnIntake(-0.25);
         //rampUp = new SlowRampUp();

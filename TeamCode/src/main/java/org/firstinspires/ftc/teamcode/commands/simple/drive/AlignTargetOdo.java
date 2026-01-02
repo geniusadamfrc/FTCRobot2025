@@ -24,13 +24,13 @@ public class AlignTargetOdo extends Command {
     @Override
     public void beginImpl()
     {
-        this.targetOdo = Robot.drivetrain.getHeading() + Robot.shooter.camera.getBearing();
+        this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
         timer = new ElapsedTime();
     }
 
     @Override
     public void loopImpl() {
-        double error = Robot.drivetrain.getHeading() - targetOdo;
+        double error = Robot.odometry.getHeading() - targetOdo;
         // rate of change of the error
         double derivative = (error - lastError) / timer.seconds();
         // sum of all error over time

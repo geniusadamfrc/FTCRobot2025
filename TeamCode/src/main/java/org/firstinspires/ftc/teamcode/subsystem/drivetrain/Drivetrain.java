@@ -30,14 +30,12 @@ public class Drivetrain extends CommandSubsystem {
 
     public GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
     public MecanumDrive roadRunnerController;
-    private final boolean ignoreOdo = false;
 
     private Telemetry telemetry;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry, Pose2D initialPose){
         this.telemetry = telemetry;
         initMotors(hardwareMap);
-        initOdo(hardwareMap, initialPose);
         initRoadRunner(hardwareMap, initialPose);
     }
     private void initMotors(HardwareMap hardwareMap){
@@ -54,37 +52,12 @@ public class Drivetrain extends CommandSubsystem {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
-    private void initOdo(HardwareMap hardwareMap, Pose2D initialPose){
-        if (!ignoreOdo) odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        if (ignoreOdo) return;
-        odo.setOffsets(84.0, 0.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.setPosition(initialPose);
-    }
+
     private void initRoadRunner(HardwareMap hardwareMap, Pose2D initialPose){
         this.roadRunnerController = new MecanumDrive(hardwareMap, initialPose);
     }
 
 
-
-
-    @Override
-    public void playOnceImpl(){
-        //odo.resetPosAndIMU();
-        if (telemetry == null) return;
-        telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset(DistanceUnit.MM));
-        telemetry.addData("Y offset", odo.getYOffset(DistanceUnit.MM));
-        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Heading Scalar", odo.getYawScalar());
-    }
-    public void setOdoPositions(double x, double y, double heading){
-        odo.setPosition( new Pose2D(DistanceUnit.MM,x, y, AngleUnit.DEGREES, heading));
-    }
-    public Pose2D getOdoPosition(){
-        return odo.getPosition();
-    }
 
     public void setBrakeMode(){
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,7 +71,6 @@ public class Drivetrain extends CommandSubsystem {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-
     public void setDriveToZero(){
         driveRobotRelative(0,0,0);
     }
@@ -134,15 +106,11 @@ public class Drivetrain extends CommandSubsystem {
         minSpeed = Math.min(minSpeed, brs);
         return minSpeed;
     }
-
-    public void driveFieldRelative(double x, double y, double spin){
-        double strafe = Math.cos(odo.getHeading(AngleUnit.RADIANS))*x + Math.sin(odo.getHeading(AngleUnit.RADIANS))*y;
-        double forward = Math.sin(odo.getHeading(AngleUnit.RADIANS))*x + Math.cos(odo.getHeading(AngleUnit.RADIANS))*y;;
+    public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
+        double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
+        double forward = Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
         driveRobotRelative(forward, spin, strafe);
     }
-
-    
-    
     public void setPowersRaw(double fls, double frs, double bls, double brs){
         leftFrontDrive.setPower(fls);
         rightFrontDrive.setPower(frs);
@@ -157,38 +125,5 @@ public class Drivetrain extends CommandSubsystem {
             + rightBackDrive.getCurrentPosition())/4;
     }
 
-    public double getHeading(){
-        return odo.getHeading(AngleUnit.DEGREES);
-    }
-
-    public void resetPosition(){
-        if(ignoreOdo)return;
-        odo.resetPosAndIMU(); //resets the position to 0 and recalibrates the IMU
-    }
-    public void recalibrateIMU(){
-        if(ignoreOdo)return;
-        odo.recalibrateIMU(); //recalibrates the IMU without resetting position
-    }
-    @Override
-    public void loop(){
-        /*
-            Request an update from the Pinpoint odometry computer. This checks almost all outputs
-            from the device in a single I2C read.
-             */
-        //telemetry.addData("Wheel Config", leftFrontDrive.getDirection());
-        //telemetry.update();
-        if(ignoreOdo)return;
-        odo.update();
-        writeOutPosition(telemetry);
-        //String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", odo.getVelX(DistanceUnit.MM), odo.getVelY(DistanceUnit.MM), odo.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
-        //telemetry.addData("Velocity", velocity);
-    }
-    public void writeOutPosition(Telemetry telemetry){
-        odo.update();
-        Pose2D pos = odo.getPosition();
-        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("Position", data);
-
-    }
 
 }

@@ -25,9 +25,9 @@ public class StrafePath extends Command {
     @Override
     public void beginImpl() {
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+                Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .lineToX(this.inches)
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))

@@ -27,10 +27,10 @@ public class Turn90Degrees extends Command {
     }
     public void loopImpl(){
         telemetry.addData("Turn 90", "loop");
-        telemetry.addData("Current Angle", (Robot.drivetrain.getHeading()) + "");
-        if ((direction && angle < Robot.drivetrain.getHeading())
+        telemetry.addData("Current Angle", (Robot.odometry.getHeading()) + "");
+        if ((direction && angle < Robot.odometry.getHeading())
             ||
-            (!direction && angle > Robot.drivetrain.getHeading())
+            (!direction && angle > Robot.odometry.getHeading())
             ){
             Robot.drivetrain.setDriveToZero();
             finish();

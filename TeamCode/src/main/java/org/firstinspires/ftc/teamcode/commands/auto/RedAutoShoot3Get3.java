@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.ParallelCommand;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
@@ -20,24 +21,21 @@ import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
 import org.firstinspires.ftc.teamcode.commands.simple.shooter.SpeedUpForShooting;
 
 @Autonomous(name="Red Main Auto")
-public class RedAutoShoot3Get3 extends OpMode {
+public class RedAutoShoot3Get3 extends BaseAutoCommand {
 
-    private SequentialCommand main;
-    @Override
-    public void init() {
-        //Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.MM,0, 0, AngleUnit.DEGREES,0));
 
-        Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, new Pose2D(DistanceUnit.INCH,59, 58, AngleUnit.DEGREES,-145));
-        Robot.setupParams(24);
-    }
     @Override
-    public void init_loop(){
-        Robot.drivetrain.writeOutPosition(telemetry);
+    public int getGoalID() {
+        return 24;
     }
 
     @Override
-    public void start(){
-        main = new SequentialCommand();
+    public Pose2D getInitialPose() {
+        return new Pose2D(DistanceUnit.INCH,59, 58, AngleUnit.DEGREES,-145);
+    }
+    @Override
+    public Command getMainCommand() {
+        SequentialCommand main = new SequentialCommand();
         ParallelCommand sq1 = new ParallelCommand();
         sq1.addCommand(new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, 24));
         sq1.addCommand(new SpeedUpForShooting(620));
@@ -58,20 +56,6 @@ public class RedAutoShoot3Get3 extends OpMode {
         main.addCommand(new MoveToPointOnField(20, -20, 0));
         main.addCommand(new DriveForwardAndIntake(33));
 
-        //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
-        //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
-        main.begin();
-    }
-
-    @Override
-    public void loop() {
-        Robot.update();
-        Robot.drivetrain.writeOutPosition(telemetry);
-        telemetry.addData("Pattern ID", Robot.shooter.camera.getPatternId());
-        if (!main.isFinished())
-            main.loop();
-        Robot.lastPosition = Robot.drivetrain.getOdoPosition();
-        Robot.shooter.writeSpeeds(telemetry);
-        Robot.drivetrain.writeOutPosition(telemetry);
+        return main;
     }
 }

@@ -35,9 +35,9 @@ public class MoveToPointOnFieldSlow extends Command {
     public void beginImpl() {
         //Robot.drivetrain.roadRunnerController.defaultVelConstraint
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+                        Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading), new VelConstraint() {
                     @Override

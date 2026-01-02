@@ -20,9 +20,9 @@ public class Turn90DegreesPath extends Command {
     @Override
     public void beginImpl(){
         action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+                        Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .turnTo(Math.toRadians(angleInDegrees))
                 //.lineToX(47.5)
                 .build();

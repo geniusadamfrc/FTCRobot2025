@@ -27,9 +27,9 @@ public class MoveToPointOnFieldWithBackup extends Command {
 
     @Override
     public void beginImpl() {
-        double initialX = Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH);
-        double initialY = Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH);
-        double initialHeading =Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS);
+        double initialX = Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH);
+        double initialY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
+        double initialHeading =Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS);
 
                 action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
                         initialX,

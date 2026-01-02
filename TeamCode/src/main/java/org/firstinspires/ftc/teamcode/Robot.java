@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeM
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
+import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Odometry;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
@@ -21,6 +22,7 @@ public class Robot {
     public static GamePadExtended gamepadex2;
     //update these
     public static Drivetrain drivetrain;
+    public static Odometry odometry;
     public static Shooter shooter;
     public static Ramp ramp;
     public static Intake intake;
@@ -35,6 +37,8 @@ public class Robot {
         //update these
         if (drivetrain == null) drivetrain = new Drivetrain();
         drivetrain.init(hardwareMap, telemetry, initialPose);
+        if (odometry == null) odometry = new Odometry();
+        odometry.init(hardwareMap, telemetry, initialPose);
         if (shooter == null) shooter = new Shooter();
         shooter.init(hardwareMap);
         if (ramp == null) ramp = new Ramp();
@@ -57,10 +61,11 @@ public class Robot {
 
         //update these
         drivetrain.loop();
+        odometry.loop();
         shooter.loop();
         ramp.loop();
         intake.loop();
-        lastPosition = drivetrain.getOdoPosition();
+        lastPosition = odometry.getOdoPosition();
     }
 
 
