@@ -7,7 +7,7 @@ public class TurnOnIntake extends Command {
     private static final double RAMP_POWER = 0.25;
     private double rampPower;
     public TurnOnIntake( double rampPower){
-        registerSubsystem(Robot.ramp);
+        registerBasicSubsystem(Robot.ramp);
         this.rampPower =rampPower;
     }
     @Override

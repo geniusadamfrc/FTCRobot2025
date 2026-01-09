@@ -20,7 +20,7 @@ public class StrafePath extends Command {
     public StrafePath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
 
         this.inches = inches;
-        this.registerSubsystem(drivetrain);
+        this.registerCommandSubsystem(drivetrain);
         this.controller = drivePath;
     }
 

@@ -14,7 +14,7 @@ public class DriveStraight extends Command {
     private Telemetry telemetry;
     public DriveStraight(Drivetrain drivetrain, double forward, double strafe, int timeInMilliseconds, Telemetry telemetry){
         this.drivetrain = drivetrain;
-        registerSubsystem(drivetrain);
+        registerCommandSubsystem(drivetrain);
         this.forward = forward;
         this.strafe = strafe;
         this.time = timeInMilliseconds;

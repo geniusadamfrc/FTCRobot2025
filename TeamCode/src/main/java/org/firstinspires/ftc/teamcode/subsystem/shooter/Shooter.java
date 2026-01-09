@@ -90,10 +90,6 @@ public class Shooter extends Subsystem {
         if (shooterState == ShooterState.IDLE) doIdle();
         else if (shooterState == ShooterState.SPINNING_UP) doSpinningUp();
         else if (shooterState == ShooterState.READY_FOR_SHOT) doReadyForShot();
-        if (shooterState == ShooterState.READY_FOR_SHOT && isAtSpeed(SPEED_DROP_ON_SHOT)){
-            //shooterState = ShooterState.BALL_SHOT_SPINNING_UP;
-        }
-
     }
 
     private void doIdle(){
@@ -112,6 +108,9 @@ public class Shooter extends Subsystem {
         }else{
             iterationsForSpeed = 0;
         }
+        leftShooter.setVelocity(targetSpeed);
+        rightShooter.setVelocity(targetSpeed);
+
     }
     private void doReadyForShot(){
         iterationsForSpeed = 0;
@@ -124,8 +123,6 @@ public class Shooter extends Subsystem {
         double cameraSpeed = getIdealShootingSpeed();
         if (cameraSpeed>100){
             targetSpeed = cameraSpeed;
-            leftShooter.setVelocity(targetSpeed);
-            rightShooter.setVelocity(targetSpeed);
         }
     }
     private boolean isAtSpeed(){
@@ -151,9 +148,4 @@ public class Shooter extends Subsystem {
     private enum ShooterState {
         IDLE, SPINNING_UP, READY_FOR_SHOT, MANUAL_CONTROL
     }
-
-
-
-
-
 }

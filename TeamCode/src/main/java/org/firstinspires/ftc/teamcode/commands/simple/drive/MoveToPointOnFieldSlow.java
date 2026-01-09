@@ -30,7 +30,7 @@ public class MoveToPointOnFieldSlow extends Command {
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.registerCommandSubsystem(Robot.drivetrain);
         this.roadrunner = controller;
     }
 
@@ -41,7 +41,7 @@ public class MoveToPointOnFieldSlow extends Command {
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading), new VelConstraint() {
                     @Override
                     public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {

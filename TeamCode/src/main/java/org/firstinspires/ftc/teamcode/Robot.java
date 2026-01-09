@@ -70,7 +70,7 @@ public class Robot {
 
 
     public static void setupParams(int i) {
-        Robot.shooter.camera.setGoalId(20);
+        Robot.shooter.camera.setGoalId(i);
         try {
             CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
         } catch (Exception ex){

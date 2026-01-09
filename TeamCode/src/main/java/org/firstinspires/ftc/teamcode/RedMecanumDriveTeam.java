@@ -24,15 +24,10 @@ public class RedMecanumDriveTeam extends OpMode {
     public void init(){
 
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2);
-        try {
-            CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
-        } catch (Exception ex){
-            throw new RuntimeException(ex);
-        }
+        Robot.setupParams(24);
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch START to start OpMode");
         telemetry.update();
-        Robot.shooter.camera.setGoalId(24);
     }
 
     /*
@@ -60,7 +55,7 @@ public class RedMecanumDriveTeam extends OpMode {
             Robot.shooter.setIdleShooter();
         }
         if (gamepad1.left_trigger >0.05 || gamepad1.right_trigger > 0.05){
-            Robot.ramp.setTargetPower(gamepad1.left_trigger - gamepad1.right_trigger);
+            Robot.ramp.setTargetPower(gamepad1.right_trigger - gamepad1.left_trigger);
             Robot.ramp.setFeeding();
         }else{
             Robot.ramp.setIdleRamp();

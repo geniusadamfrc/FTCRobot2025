@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
 public class ShootBall extends Command {
     private PushBallUp moveRamp;
     public ShootBall(){
-        registerSubsystem(Robot.shooter);
-        registerSubsystem(Robot.ramp);
+        registerBasicSubsystem(Robot.shooter);
+        registerBasicSubsystem(Robot.ramp);
     }
     @Override
     public void beginImpl() {

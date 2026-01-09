@@ -16,10 +16,11 @@ public abstract class Command {
         subsystems = new ArrayList<CommandSubsystem>();
 
     }
-    public void registerSubsystem(Subsystem s){
-        if (s.getClass() == CommandSubsystem.class){
-            subsystems.add((CommandSubsystem) s);
-        }
+
+    public void registerCommandSubsystem(CommandSubsystem s){
+        subsystems.add(s);
+    }
+    public void registerBasicSubsystem(Subsystem s){
     }
     public List<CommandSubsystem> getSubsystems() { return subsystems;
     }

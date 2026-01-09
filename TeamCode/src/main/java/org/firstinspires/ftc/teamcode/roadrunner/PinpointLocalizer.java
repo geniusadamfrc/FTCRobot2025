@@ -19,7 +19,7 @@ public final class PinpointLocalizer {
 
 
     public PinpointLocalizer(Pose2d initialPose) {
-        driver = Robot.drivetrain.odo;
+        driver = Robot.odometry.odo;
     }
 
 

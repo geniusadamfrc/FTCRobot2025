@@ -7,7 +7,7 @@ public class SpeedUpForShooting extends Command {
     private double targetSpeed;
     public final static double TOLERANCE = 50.0;
     public SpeedUpForShooting(double targetSpeed){
-        registerSubsystem(Robot.shooter);
+        registerBasicSubsystem(Robot.shooter);
         this.targetSpeed = targetSpeed;
     }
     @Override
@@ -18,8 +18,6 @@ public class SpeedUpForShooting extends Command {
 
     @Override
     public void loopImpl() {
-        if (Robot.shooter.isReadyForShot()){
-                finish();
-            }
+        if (Robot.shooter.isReadyForShot()) finish();
     }
 }

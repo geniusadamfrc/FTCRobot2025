@@ -26,10 +26,6 @@ public class Drivetrain extends CommandSubsystem {
     public DcMotorEx  rightFrontDrive  = null;
     public DcMotorEx  leftBackDrive   = null;
     public DcMotorEx  rightBackDrive  = null;
-    public final static double CONTROLLER_THRESHOLD = 0.04;
-
-    public GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    public MecanumDrive roadRunnerController;
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);

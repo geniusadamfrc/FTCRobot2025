@@ -23,7 +23,7 @@ public class MoveToPointOnFieldWithBackup extends Command {
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.registerCommandSubsystem(Robot.drivetrain);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class MoveToPointOnFieldWithBackup extends Command {
                         initialX,
                         initialY,
                         initialHeading))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(
                         new Pose2d(initialX +30, initialY, initialHeading), initialHeading
                 )

@@ -13,7 +13,7 @@ public class DriveStraightDistance extends Command {
     private boolean direction;  //either  true for forward, false for back
     public DriveStraightDistance(Drivetrain drivetrain, double power, int distance, Telemetry telemetry){
         this.drivetrain = drivetrain;
-        registerSubsystem(drivetrain);
+        registerCommandSubsystem(drivetrain);
         this.distance = distance;
         this.telemetry = telemetry;
         this.power = power;

@@ -16,7 +16,7 @@ public class Turn90DegreesPath extends Command {
     private MecanumDrive controller;
     public Turn90DegreesPath(int angleInDegrees, MecanumDrive controller){
         //this.imu = imu;
-        registerSubsystem(Robot.drivetrain);
+        registerCommandSubsystem(Robot.drivetrain);
         this.angleInDegrees = angleInDegrees;
         this.controller = controller;
     }

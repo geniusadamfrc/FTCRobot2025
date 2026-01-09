@@ -20,7 +20,7 @@ public class DriveStraightPath extends Command {
     public DriveStraightPath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
         this.roadrunner = drivePath;
         this.inches = inches;
-        this.registerSubsystem(drivetrain);
+        this.registerCommandSubsystem(drivetrain);
     }
 
     @Override

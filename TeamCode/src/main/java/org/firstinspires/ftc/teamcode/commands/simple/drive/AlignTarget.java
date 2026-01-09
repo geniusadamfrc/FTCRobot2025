@@ -17,8 +17,8 @@ public class AlignTarget extends Command {
     private double staticFeedForward = 0.05;
     private boolean allowFinish;
     public AlignTarget(boolean allowFinish){
-        registerSubsystem(Robot.drivetrain);
-        registerSubsystem(Robot.shooter);
+        registerCommandSubsystem(Robot.drivetrain);
+        registerBasicSubsystem(Robot.shooter);
         this.allowFinish = allowFinish;
     }
     @Override

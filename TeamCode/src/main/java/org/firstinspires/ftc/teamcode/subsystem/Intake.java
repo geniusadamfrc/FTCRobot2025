@@ -14,7 +14,7 @@ public class Intake extends Subsystem{
     private IntakeState intakeState;
     public void init (HardwareMap hardwareMap){
         intakeMotor = hardwareMap.get(DcMotorEx.class, INTAKE_NAME);
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeState = IntakeState.IDLE;
     }
 

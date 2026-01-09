@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.commands.simple.ramp.PushBallUp;
 public class ShootBallAfterSpeedUp extends Command {
     private PushBallUp moveRamp;
     public ShootBallAfterSpeedUp(){
-        registerSubsystem(Robot.shooter);
-        registerSubsystem(Robot.ramp);
+        registerBasicSubsystem(Robot.shooter);
+        registerBasicSubsystem(Robot.ramp);
     }
     @Override
     public void beginImpl() {
@@ -23,11 +23,11 @@ public class ShootBallAfterSpeedUp extends Command {
         }
         if( moveRamp != null){
             moveRamp.loop();
-        }
-        if ((Robot.shooter.isBallShot() && moveRamp.hasMovedEnough())|| moveRamp.hasMovedMaximum()) {
-            moveRamp.finish();
-            Robot.shooter.clearBallShot();
-            finish();
+            if ((Robot.shooter.isBallShot() && moveRamp.hasMovedEnough())|| moveRamp.hasMovedMaximum()) {
+                moveRamp.finish();
+                Robot.shooter.clearBallShot();
+                finish();
+            }
         }
     }
 }

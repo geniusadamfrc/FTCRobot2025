@@ -24,7 +24,7 @@ public class MoveToPointOnField extends Command {
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.registerCommandSubsystem(Robot.drivetrain);
         this.controller = controller;
     }
 
@@ -34,7 +34,7 @@ public class MoveToPointOnField extends Command {
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))

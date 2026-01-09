@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 
 public class PushBallUp  extends Command {
     private Ramp ramp;
-    private double rampPosition;
+    private double initialRampPosition;
     private final static double MINIMUM_RAMP_MOVEMENT = 800;
     private final static double MAXIMUM_RAMP_MOVEMENT = 2500;
 
@@ -18,7 +18,7 @@ public class PushBallUp  extends Command {
         Robot.intake.setSlowIntaking();
         Robot.ramp.setTargetPower(0.5);
         Robot.ramp.setFeeding();
-        rampPosition = Robot.ramp.getRampPosition();
+        initialRampPosition = Robot.ramp.getRampPosition();
     }
 
     @Override
@@ -31,9 +31,9 @@ public class PushBallUp  extends Command {
     }
 
     public boolean hasMovedEnough(){
-        return rampPosition - MINIMUM_RAMP_MOVEMENT > ramp.getRampPosition();
+        return initialRampPosition + MINIMUM_RAMP_MOVEMENT < ramp.getRampPosition();
     }
     public boolean hasMovedMaximum(){
-        return rampPosition - MAXIMUM_RAMP_MOVEMENT > ramp.getRampPosition();
+        return initialRampPosition + MAXIMUM_RAMP_MOVEMENT < ramp.getRampPosition();
     }
 }

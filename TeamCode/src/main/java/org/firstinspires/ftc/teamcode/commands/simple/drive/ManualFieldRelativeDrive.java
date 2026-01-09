@@ -14,7 +14,7 @@ public class ManualFieldRelativeDrive extends Command {
         this.left_stick_y = left_stick_y;
         this.left_stick_x = left_stick_x;
         this.right_stick_x = right_stick_x;
-        super.registerSubsystem(Robot.drivetrain);
+        registerCommandSubsystem(Robot.drivetrain);
     }
 
     @Override
