@@ -88,8 +88,7 @@ public class BlueTeleopTest extends OpMode {
         telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());
         telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
         Robot.update();
-        telemetry.addData("Bottom IR Break", Robot.ramp.getBottomIRState());
-        telemetry.addData("Upper IR Break", Robot.ramp.getUpperIRState());
+        telemetry.addData("Ball Detected", Robot.ramp.isBallInIntake());
         telemetry.update();
         //if (gamepad1.x)intakeSpeed = - intakeSpeed;
     }

@@ -14,6 +14,10 @@ public class ShootingSystem extends Subsystem{
     private State state;
     private AlignTargetOdo alignTarget;
 
+    private boolean okToFind;
+    private boolean okToShoot;
+
+
     public ShootingSystem(){
 
     }
@@ -24,10 +28,23 @@ public class ShootingSystem extends Subsystem{
         state = State.IDLE;
     }
 
+
+    public void setOkToFind(boolean okToFind) {
+        this.okToFind = okToFind;
+    }
+
+    public void setOkToShoot(boolean okToShoot) {
+        this.okToShoot = okToShoot;
+    }
+
     public void setIdle(){
-        shooter.setIdleShooter();
-        idleDrivetrain();
-        ramp.setIdleRamp();
+        setOkToShoot(false);
+        setOkToFind(false);
+        if (state != State.IDLE) {
+            shooter.setIdleShooter();
+            idleDrivetrain();
+            ramp.setIdleRamp();
+        }
     }
     public void setSpinUp(){
         shooter.startShooting();
@@ -42,9 +59,6 @@ public class ShootingSystem extends Subsystem{
         doSpinUp();
     }
     public void setFinding(){
-        if (state == State.IDLE){
-            setSpinUp();
-        }
         state = State.FINDING;
         if (alignTarget == null){
             alignTarget = new AlignTargetOdo(false);
@@ -68,8 +82,14 @@ public class ShootingSystem extends Subsystem{
         else if (state == State.FINDING) doFinding();
         else if (state == State.SHOOTING) doShooting();
     }
-    private void doIdle(){}
-    private void doSpinUp(){}
+    private void doIdle(){
+        if (okToFind){
+            setSpinUp();
+        }
+    }
+    private void doSpinUp(){
+        
+    }
     private void doFinding(){
 
     }
@@ -78,5 +98,7 @@ public class ShootingSystem extends Subsystem{
     private enum State {
         IDLE, SPIN_UP, FINDING, SHOOTING
     }
+
+
 
 }
