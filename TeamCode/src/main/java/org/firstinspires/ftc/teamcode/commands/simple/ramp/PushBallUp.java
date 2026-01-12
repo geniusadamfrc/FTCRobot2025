@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 public class PushBallUp  extends Command {
     private Ramp ramp;
     private double initialRampPosition;
-    private final static double MINIMUM_RAMP_MOVEMENT = 800;
-    private final static double MAXIMUM_RAMP_MOVEMENT = 2500;
+    private final static double MINIMUM_RAMP_MOVEMENT = 200;
+    private final static double MAXIMUM_RAMP_MOVEMENT = 700;
 
     public PushBallUp(){
         this.ramp = Robot.ramp;

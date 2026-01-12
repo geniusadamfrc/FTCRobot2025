@@ -21,10 +21,10 @@ public class Shooter extends Subsystem {
     public final static String LEFT_SHOOTER_NAME = "leftShooter";
     public final static String RIGHT_SHOOTER_NAME = "rightShooter";
 
-    public final static double SPEED_DROP_ON_SHOT = 150.0;
+    public final static double SPEED_DROP_ON_SHOT = 80.0;
     public final static double DEFAULT_TARGET_SPEED = 620.0;
     public final static double DEFAULT_SPEED_TOLERANCE = 20.0;
-    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 5;
+    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 3;
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
@@ -128,7 +128,7 @@ public class Shooter extends Subsystem {
     private boolean isAtSpeed(){
         return isAtSpeed(this.speedTolerance);
     }
-    private boolean isAtSpeed (double speedTolerance){
+    public boolean isAtSpeed(double speedTolerance){
         return leftShooter.getVelocity() < targetSpeed+ speedTolerance && leftShooter.getVelocity() > targetSpeed - speedTolerance &&
                 rightShooter.getVelocity() < targetSpeed + speedTolerance && rightShooter.getVelocity() > targetSpeed - speedTolerance;
 
