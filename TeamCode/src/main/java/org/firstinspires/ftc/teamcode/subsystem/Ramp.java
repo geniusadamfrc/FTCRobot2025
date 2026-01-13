@@ -19,7 +19,7 @@ public class Ramp extends Subsystem{
     private double idlePower;
     private int ballsLoaded;
     private double initialPosition;
-    private RampState rampState;
+    private State state;
     private DigitalChannel bottomIR;
     private DigitalChannel bottomIR2;
     private int countOfIntake;
@@ -27,7 +27,7 @@ public class Ramp extends Subsystem{
     public void init (HardwareMap hardwareMap){
         rampMotor = hardwareMap.get(DcMotorEx.class, RAMP_NAME);
         rampMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rampState = RampState.IDLE;
+        state = State.IDLE;
         bottomIR = hardwareMap.get(DigitalChannel.class,BOTTOM_IR_NAME);
         bottomIR.setMode(DigitalChannel.Mode.INPUT);
         bottomIR2 = hardwareMap.get(DigitalChannel.class,BOTTOM_IR_2_NAME);
@@ -44,21 +44,18 @@ public class Ramp extends Subsystem{
     }
 
     public void setIdleRamp(){
-        rampState = RampState.IDLE;
+        state = State.IDLE;
         doIdle();
     }
     public void setLoading(){
         resetBallsLoaded();
-        rampState = RampState.LOADING;
+        state = State.LOADING;
         countOfIntake = 0;
         doLoading();
     }
-    public void setSlowRamp(){
-        rampState = RampState.SLOW_RAMP;
-        doSlowRamp();
-    }
+
     public void setFeeding(){
-        rampState = RampState.FEEDING;
+        state = State.FEEDING;
         initialPosition = rampMotor.getCurrentPosition();
         doFeeding();
     }
@@ -83,11 +80,10 @@ public class Ramp extends Subsystem{
 
     @Override
     public void loop(){
-        if (rampState == RampState.IDLE) doIdle();
-        else if (rampState == RampState.SLOW_RAMP) doSlowRamp();
-        else if (rampState == RampState.LOADING) doLoading();
-        else if (rampState == RampState.LOADING_RAISE_BALL) doLoadingRaiseBall();
-        else if (rampState == RampState.FEEDING) doFeeding();
+        if (state == State.IDLE) doIdle();
+        else if (state == State.LOADING) doLoading();
+        else if (state == State.LOADING_RAISE_BALL) doLoadingRaiseBall();
+        else if (state == State.FEEDING) doFeeding();
     }
     private void doIdle() {
         rampMotor.setPower(idlePower);
@@ -99,7 +95,7 @@ public class Ramp extends Subsystem{
                 initialPosition = rampMotor.getCurrentPosition();
                 ballLoaded();
                 if (ballsLoaded <3)
-                    rampState = RampState.LOADING_RAISE_BALL;
+                    state = State.LOADING_RAISE_BALL;
                 else setIdleRamp();
             }else {
                 countOfIntake ++;
@@ -111,11 +107,8 @@ public class Ramp extends Subsystem{
     private void doLoadingRaiseBall(){
         rampMotor.setPower(SLOW_RAMP_POWER);
         if (rampMotor.getCurrentPosition() > initialPosition+LOADING_DISTANCE){
-            rampState = RampState.LOADING;
+            state = State.LOADING;
         }
-    }
-    private void doSlowRamp()   {
-        rampMotor.setPower(SLOW_RAMP_POWER);
     }
     private void doFeeding() {
         if (rampMotor.getCurrentPosition() > initialPosition + FEED_DISTANCE){
@@ -127,10 +120,15 @@ public class Ramp extends Subsystem{
 
 
     public String getState(){
-        return rampState.toString();
+        return state.toString();
     }
-    public enum RampState{
-        IDLE,  LOADING, LOADING_RAISE_BALL,  SLOW_RAMP, FEEDING
+
+    public boolean isRampIdle() {
+        return state == State.IDLE;
+    }
+
+    public enum State {
+        IDLE,  LOADING, LOADING_RAISE_BALL,  FEEDING
     }
 
 }

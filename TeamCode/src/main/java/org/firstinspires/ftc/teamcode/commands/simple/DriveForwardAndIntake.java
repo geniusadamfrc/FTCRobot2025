@@ -4,7 +4,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldSlow;
-import org.firstinspires.ftc.teamcode.commands.simple.ramp.TurnOnIntake;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class DriveForwardAndIntake extends Command {
@@ -23,7 +22,7 @@ public class DriveForwardAndIntake extends Command {
         drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, currentHeading, controller);
         //rampUp = new SlowRampUp();
         drive.begin();
-        Robot.robot.doIntaking();
+        Robot.robot.setIntaking();
     }
 
     @Override

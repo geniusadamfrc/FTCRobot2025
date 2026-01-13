@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.commands.CommandManager;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
@@ -27,8 +29,11 @@ public class Drivetrain extends CommandSubsystem {
     public DcMotorEx  leftBackDrive   = null;
     public DcMotorEx  rightBackDrive  = null;
 
+    public DrivetrainAligner aligner;
+
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
+        aligner = new DrivetrainAligner();
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -115,5 +120,37 @@ public class Drivetrain extends CommandSubsystem {
             + rightBackDrive.getCurrentPosition())/4;
     }
 
+    @Override
+    public void loop(){
+        aligner.loop();
+    }
+
+    public static class DrivetrainAligner {
+
+        private boolean alignMode;
+        private AlignTargetOdo c;
+
+        public void setAlign(){
+            if (!alignMode){
+                alignMode = true;
+                c = new AlignTargetOdo(false);
+                CommandManager.schedule(c);
+            }
+        }
+        public void setOff(){
+            if(alignMode) {
+                alignMode = false;
+                c.finish();
+            }
+        }
+        public void loop(){
+
+        }
+        public boolean isAligned(){
+            return alignMode && c!=null && c.isGood();
+        }
+
+
+    }
 
 }

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
+import org.firstinspires.ftc.teamcode.subsystem.RobotSystem;
 
 @TeleOp(name = "Blue Teleop Test")
 public class BlueTeleopTest extends OpMode {
@@ -53,23 +54,26 @@ public class BlueTeleopTest extends OpMode {
         if (gamepad1.right_bumper){
             Robot.robot.setIntaking();
         }
+        if (gamepad1.a){
+            Robot.robot.setShooting();
+        }
+
+        Robot.ramp.setIdlePower(gamepad1.right_trigger - gamepad1.left_trigger);
+        RobotSystem.shootingSystem.setOkToFind(gamepad1.b);
 
 
-        //Robot.ramp.setIdlePower(gamepad1.right_trigger - gamepad1.left_trigger);
-        Robot.robot.shootingSystem.setOkToFind(gamepad1.b);
-        Robot.robot.shootingSystem.setOkToShoot(gamepad1.right_trigger >0.3);
+        Robot.update();
 
         telemetry.addData("Robot State", Robot.robot.getStateString());
+        RobotSystem.shootingSystem.doTelemetry(telemetry);
         Robot.shooter.camera.doTelemetry(telemetry, false);
         //Robot.shooter.writeSpeeds(telemetry);
         telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());
-        telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
-        Robot.update();
+        //telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
         telemetry.addData("Ball Detected", Robot.ramp.isBallInIntake());
         telemetry.addData("Balls Loaded", Robot.ramp.getBallsLoaded());
         telemetry.addData("Shooter At speed", Robot.shooter.isReadyForShot());
         telemetry.addData("Current Heading", Robot.odometry.getHeading());
-        Robot.robot.shootingSystem.doTelemetry(telemetry);
         //telemetry.addData(Robot.robot.shootingSystem.)
         telemetry.update();
         //if (gamepad1.x)intakeSpeed = - intakeSpeed;

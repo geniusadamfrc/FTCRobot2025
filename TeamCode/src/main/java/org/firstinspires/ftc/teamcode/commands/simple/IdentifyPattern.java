@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commands.simple.shooter;
+package org.firstinspires.ftc.teamcode.commands.simple;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 

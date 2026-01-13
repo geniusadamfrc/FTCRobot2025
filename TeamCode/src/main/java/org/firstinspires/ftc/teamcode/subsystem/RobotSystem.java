@@ -27,6 +27,15 @@ public class RobotSystem extends Subsystem{
         }
         state = State.SHOOTING;
     }
+    public void setShooting(double speed){
+        if (state != State.SHOOTING){
+            shootingSystem.setSpinUp(speed);
+            Robot.intake.setIdleIntake();
+            Robot.ramp.setIdleRamp();
+        }
+        state = State.SHOOTING;
+    }
+
     public void setIntaking(){
         if (state != State.INTAKING){
             Robot.intake.setIntaking();
@@ -43,14 +52,16 @@ public class RobotSystem extends Subsystem{
         else if (state == State.SHOOTING) doShooting();
     }
 
-    public void doIdle(){}
-    public void doIntaking(){
+    private void doIdle(){}
+    private void doIntaking(){
         if (Robot.ramp.getBallsLoaded() > 2){
             setShooting();
         }
     }
     public void doShooting(){
-
+        if (shootingSystem.isIdle()){
+            setIdle();
+        }
     }
 
     public State getState(){
@@ -58,6 +69,18 @@ public class RobotSystem extends Subsystem{
     }
     public String getStateString(){
         return state.toString();
+    }
+
+    public boolean isIdle(){
+        return state == State.IDLE;
+    }
+
+    public boolean isIntaking() {
+        return state == State.INTAKING;
+    }
+
+    public boolean isShooting() {
+        return state == State.SHOOTING;
     }
 
     public enum State {

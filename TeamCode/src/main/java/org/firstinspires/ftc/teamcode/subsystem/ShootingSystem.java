@@ -2,21 +2,16 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.CommandManager;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 public class ShootingSystem extends Subsystem{
-    private Ramp ramp;
-    private Shooter shooter;
-    private Drivetrain drivetrain;
+    public static Ramp ramp;
+    public static Shooter shooter;
+    public static Drivetrain.DrivetrainAligner aligner;
 
     private State state;
-    private AlignTargetOdo alignTarget;
-
     private boolean okToFind;
-    private boolean okToShoot;
 
 
     public ShootingSystem(){
@@ -25,7 +20,7 @@ public class ShootingSystem extends Subsystem{
     public void init() {
         ramp = Robot.ramp;
         shooter = Robot.shooter;
-        drivetrain = Robot.drivetrain;
+        aligner = Robot.drivetrain.aligner;
         state = State.IDLE;
     }
 
@@ -34,12 +29,8 @@ public class ShootingSystem extends Subsystem{
         this.okToFind = okToFind;
     }
 
-    public void setOkToShoot(boolean okToShoot) {
-        this.okToShoot = okToShoot;
-    }
 
     public void setIdle(){
-        setOkToShoot(false);
         setOkToFind(false);
         if (state != State.IDLE) {
             shooter.setIdleShooter();
@@ -61,17 +52,14 @@ public class ShootingSystem extends Subsystem{
     }
     private void setShooting(){
         if (state != State.SHOOTING){
+            Robot.intake.setSlowIntaking();
             Robot.ramp.setFeeding();
         }
         state = State.SHOOTING;
     }
 
     private void idleDrivetrain(){
-        if (alignTarget != null){
-            if (!alignTarget.isFinished()) alignTarget.finish();
-            alignTarget = null;
-        }
-        drivetrain.setIdle();
+        aligner.setOff();
     }
 
     @Override
@@ -98,30 +86,50 @@ public class ShootingSystem extends Subsystem{
             idleDrivetrain();
             state =  State.SPIN_UP;
         }
-        else if (Robot.shooter.isReadyForShot() && alignTarget.isGood() && okToShoot){
+        else if (Robot.shooter.isReadyForShot() && aligner.isAligned()){
             setShooting();
         }
     }
 
     private void doShooting(){
-        if (!Robot.shooter.isReadyForShot() || !alignTarget.isGood() || okToShoot){
+        if (!Robot.shooter.isReadyForShot() || !aligner.isAligned()){
             state = State.FINDING;
             Robot.ramp.setIdleRamp();
+            Robot.intake.setIdleIntake();
             return;
         }
-
+        if (ramp.isRampIdle()){
+            if (ramp.getBallsLoaded() ==0) setIdle();
+            else ramp.setFeeding();
+        }
     }
 
     private void doAligning(){
-        if (alignTarget == null){
-            alignTarget = new AlignTargetOdo(false);
-            CommandManager.schedule(alignTarget);
-        }
+        aligner.setAlign();
     }
+
+
+
     public void doTelemetry(Telemetry telemetry){
         telemetry.addData("Shooting System State", state.toString());
-        if (alignTarget !=null) telemetry.addData("Alignment", alignTarget.isGood());
+        telemetry.addData("Alignment", aligner.isAligned());
+        telemetry.addData("Ready For Shot", shooter.isReadyForShot());
     }
+
+
+    public boolean isReadyForShot() {
+        return state == State.FINDING && shooter.isReadyForShot() && aligner.isAligned();
+    }
+    public boolean isIdle(){
+        return state == State.IDLE;
+    }
+
+    public boolean isShooting(){
+        return state == State.SHOOTING;
+    }
+
+
+
     private enum State {
         IDLE, SPIN_UP, FINDING, SHOOTING
     }
