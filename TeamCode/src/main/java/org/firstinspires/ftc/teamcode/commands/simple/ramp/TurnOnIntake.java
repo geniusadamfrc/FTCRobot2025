@@ -9,8 +9,7 @@ public class TurnOnIntake extends Command {
     }
     @Override
     public void beginImpl() {
-        Robot.intake.setIntaking();
-        Robot.ramp.setSlowRamp();
+        Robot.robot.setIntaking();
     }
 
     @Override
@@ -18,7 +17,6 @@ public class TurnOnIntake extends Command {
     }
     @Override
     public void finishImpl(){
-        Robot.ramp.setIdleRamp();
-        Robot.intake.setIdleIntake();
+        Robot.robot.setIdle();
     }
 }

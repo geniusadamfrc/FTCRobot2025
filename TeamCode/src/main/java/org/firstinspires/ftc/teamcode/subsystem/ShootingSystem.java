@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
@@ -58,13 +59,11 @@ public class ShootingSystem extends Subsystem{
         idleDrivetrain();
         doSpinUp();
     }
-    public void setFinding(){
-        state = State.FINDING;
-        if (alignTarget == null){
-            alignTarget = new AlignTargetOdo(false);
-            CommandManager.schedule(alignTarget);
+    private void setShooting(){
+        if (state != State.SHOOTING){
+            Robot.ramp.setFeeding();
         }
-        doFinding();
+        state = State.SHOOTING;
     }
 
     private void idleDrivetrain(){
@@ -88,13 +87,41 @@ public class ShootingSystem extends Subsystem{
         }
     }
     private void doSpinUp(){
-        
+        if (okToFind){
+            state = State.FINDING;
+            doFinding();
+        }
     }
     private void doFinding(){
+        doAligning();
+        if (!okToFind){
+            idleDrivetrain();
+            state =  State.SPIN_UP;
+        }
+        else if (Robot.shooter.isReadyForShot() && alignTarget.isGood() && okToShoot){
+            setShooting();
+        }
+    }
+
+    private void doShooting(){
+        if (!Robot.shooter.isReadyForShot() || !alignTarget.isGood() || okToShoot){
+            state = State.FINDING;
+            Robot.ramp.setIdleRamp();
+            return;
+        }
 
     }
-    private void doShooting(){}
 
+    private void doAligning(){
+        if (alignTarget == null){
+            alignTarget = new AlignTargetOdo(false);
+            CommandManager.schedule(alignTarget);
+        }
+    }
+    public void doTelemetry(Telemetry telemetry){
+        telemetry.addData("Shooting System State", state.toString());
+        if (alignTarget !=null) telemetry.addData("Alignment", alignTarget.isGood());
+    }
     private enum State {
         IDLE, SPIN_UP, FINDING, SHOOTING
     }

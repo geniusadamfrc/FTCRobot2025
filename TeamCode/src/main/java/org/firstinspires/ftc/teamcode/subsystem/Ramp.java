@@ -10,16 +10,19 @@ public class Ramp extends Subsystem{
     public static final String BOTTOM_IR_NAME = "bottomIRSensor";
     public static final String BOTTOM_IR_2_NAME = "upperIRSensor";
     public static final double DEFAULT_TARGET_POWER = 0.5;
-    public static final double SLOW_RAMP_POWER = 0.25;
+    public static final double SLOW_RAMP_POWER = 0.4;
     private static final double LOADING_DISTANCE = 200;
+    private static final double FEED_DISTANCE = 400 ;
     private DcMotorEx rampMotor;
 
     private double targetPower;
+    private double idlePower;
     private int ballsLoaded;
     private double initialPosition;
     private RampState rampState;
     private DigitalChannel bottomIR;
     private DigitalChannel bottomIR2;
+    private int countOfIntake;
 
     public void init (HardwareMap hardwareMap){
         rampMotor = hardwareMap.get(DcMotorEx.class, RAMP_NAME);
@@ -32,6 +35,7 @@ public class Ramp extends Subsystem{
 
         targetPower = DEFAULT_TARGET_POWER;
     }
+    public void setIdlePower(double power){ this.idlePower = power; }
     public void setTargetPower(double power){
         this.targetPower = power;
     }
@@ -46,6 +50,7 @@ public class Ramp extends Subsystem{
     public void setLoading(){
         resetBallsLoaded();
         rampState = RampState.LOADING;
+        countOfIntake = 0;
         doLoading();
     }
     public void setSlowRamp(){
@@ -54,6 +59,7 @@ public class Ramp extends Subsystem{
     }
     public void setFeeding(){
         rampState = RampState.FEEDING;
+        initialPosition = rampMotor.getCurrentPosition();
         doFeeding();
     }
 
@@ -84,16 +90,23 @@ public class Ramp extends Subsystem{
         else if (rampState == RampState.FEEDING) doFeeding();
     }
     private void doIdle() {
-        rampMotor.setPower(0.0);
+        rampMotor.setPower(idlePower);
     }
     private void doLoading() {
         rampMotor.setPower(0.0);
         if (isBallInIntake()){
-            initialPosition = rampMotor.getCurrentPosition();
-            ballLoaded();
+            if (countOfIntake > 1) {
+                initialPosition = rampMotor.getCurrentPosition();
+                ballLoaded();
+                if (ballsLoaded <3)
+                    rampState = RampState.LOADING_RAISE_BALL;
+                else setIdleRamp();
+            }else {
+                countOfIntake ++;
+            }
+        }else {
+            countOfIntake =0;
         }
-        rampState = RampState.LOADING_RAISE_BALL;
-
     }
     private void doLoadingRaiseBall(){
         rampMotor.setPower(SLOW_RAMP_POWER);
@@ -105,6 +118,10 @@ public class Ramp extends Subsystem{
         rampMotor.setPower(SLOW_RAMP_POWER);
     }
     private void doFeeding() {
+        if (rampMotor.getCurrentPosition() > initialPosition + FEED_DISTANCE){
+            setIdleRamp();
+            ballUnloaded();
+        }
         rampMotor.setPower(targetPower);
     }
 
@@ -113,7 +130,7 @@ public class Ramp extends Subsystem{
         return rampState.toString();
     }
     public enum RampState{
-        IDLE,  LOADING, LOADING_RAISE_BALL, SLOW_RAMP, FEEDING
+        IDLE,  LOADING, LOADING_RAISE_BALL,  SLOW_RAMP, FEEDING
     }
 
 }

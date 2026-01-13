@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 
 public class AlignTargetOdo extends Command {
 
-    private double Kp = 0.05;
+    private double Kp = 0.02;
     private double Ki = 0.01;
     private double Kd = 0.0;
     private double integralSum = 0;
@@ -16,6 +16,7 @@ public class AlignTargetOdo extends Command {
     ElapsedTime timer;
     private double staticFeedForward = 0.05;
     private boolean allowFinish;
+    private boolean isGood;
     public AlignTargetOdo(boolean allowFinish){
         registerCommandSubsystem(Robot.drivetrain);
         registerBasicSubsystem(Robot.shooter);
@@ -24,6 +25,7 @@ public class AlignTargetOdo extends Command {
     @Override
     public void beginImpl()
     {
+        isGood = false;
         this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
         timer = new ElapsedTime();
     }
@@ -43,7 +45,18 @@ public class AlignTargetOdo extends Command {
 
         // reset the timer for next time
         timer.reset();
-        if (Math.abs(error) < 1.5 && allowFinish) finish();
+        isGood = Math.abs(error) < 1.5;
+        if (isGood && allowFinish) finish();
+    }
+    public boolean isGood(){
+        return isGood;
+    }
+
+    public double getTargetOdo(){
+        return targetOdo;
+    }
+    public double getLastError(){
+        return lastError;
     }
     @Override
     public void finishImpl(){

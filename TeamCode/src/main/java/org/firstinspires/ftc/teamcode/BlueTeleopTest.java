@@ -17,7 +17,7 @@ public class BlueTeleopTest extends OpMode {
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
      */
-    private Command alignTarget = null;
+    private AlignTargetOdo alignTarget = null;
 
     @Override
     public void init(){
@@ -48,47 +48,29 @@ public class BlueTeleopTest extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.left_bumper) {
-            Robot.intake.setIdleIntake();
-             Robot.ramp.setIdleRamp();
-             intaking = false;
+            Robot.robot.setIdle();
         }
         if (gamepad1.right_bumper){
-            if (!intaking){
-                intaking = true;
-                Robot.intake.setIntaking();
-                Robot.ramp.setLoading();
-            }
+            Robot.robot.setIntaking();
         }
 
-        /*
-        if (gamepad1.left_trigger >0.05 || gamepad1.right_trigger > 0.05){
-            Robot.ramp.setTargetPower(gamepad1.right_trigger - gamepad1.left_trigger);
-            Robot.ramp.setFeeding();
-        }else{
-            Robot.ramp.setIdleRamp();
-        }
-        */
 
+        //Robot.ramp.setIdlePower(gamepad1.right_trigger - gamepad1.left_trigger);
+        Robot.robot.shootingSystem.setOkToFind(gamepad1.b);
+        Robot.robot.shootingSystem.setOkToShoot(gamepad1.right_trigger >0.3);
 
-
-        if (gamepad1.b) {
-            if (alignTarget == null) {
-                alignTarget = new AlignTargetOdo(false);
-                CommandManager.schedule(alignTarget);
-            }
-        } else {
-            if (alignTarget != null) {
-                alignTarget.finish();
-                alignTarget = null;
-            }
-        }
-        telemetry.addData("Ramp State", Robot.ramp.getState());
+        telemetry.addData("Robot State", Robot.robot.getStateString());
         Robot.shooter.camera.doTelemetry(telemetry, false);
-        Robot.shooter.writeSpeeds(telemetry);
+        //Robot.shooter.writeSpeeds(telemetry);
         telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());
         telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
         Robot.update();
         telemetry.addData("Ball Detected", Robot.ramp.isBallInIntake());
+        telemetry.addData("Balls Loaded", Robot.ramp.getBallsLoaded());
+        telemetry.addData("Shooter At speed", Robot.shooter.isReadyForShot());
+        telemetry.addData("Current Heading", Robot.odometry.getHeading());
+        Robot.robot.shootingSystem.doTelemetry(telemetry);
+        //telemetry.addData(Robot.robot.shootingSystem.)
         telemetry.update();
         //if (gamepad1.x)intakeSpeed = - intakeSpeed;
     }
