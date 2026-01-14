@@ -14,6 +14,11 @@ public class Shoot extends Command {
 
     @Override
     public void loopImpl() {
-        if(Robot.robot.isIdle()) finish();
+        if(Robot.ramp.getBallsLoaded() == 0) finish();
+    }
+    @Override
+    public void finishImpl(){
+        RobotSystem.shootingSystem.setOkToFind(false);
+        Robot.robot.setIdle();
     }
 }

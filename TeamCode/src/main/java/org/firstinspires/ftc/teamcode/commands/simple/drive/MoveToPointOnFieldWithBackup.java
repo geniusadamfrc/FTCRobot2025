@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class MoveToPointOnFieldWithBackup extends Command {
+public class MoveToPointOnFieldWithBackup extends DriveCommand {
 
 
     private double x;

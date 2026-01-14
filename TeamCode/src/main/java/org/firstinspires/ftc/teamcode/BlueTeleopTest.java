@@ -51,10 +51,10 @@ public class BlueTeleopTest extends OpMode {
         if (gamepad1.left_bumper) {
             Robot.robot.setIdle();
         }
-        if (gamepad1.right_bumper){
+        else if (gamepad1.right_bumper){
             Robot.robot.setIntaking();
         }
-        if (gamepad1.a){
+        else if (gamepad1.a){
             Robot.robot.setShooting();
         }
 

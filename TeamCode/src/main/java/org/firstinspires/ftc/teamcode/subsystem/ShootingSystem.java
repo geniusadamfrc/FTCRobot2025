@@ -32,34 +32,31 @@ public class ShootingSystem extends Subsystem{
 
     public void setIdle(){
         setOkToFind(false);
-        if (state != State.IDLE) {
-            shooter.setIdleShooter();
-            idleDrivetrain();
-            ramp.setIdleRamp();
-        }
+        shooter.setIdleShooter();
+        idleDrivetrain();
+        ramp.setIdleRamp();
+        state=State.IDLE;
     }
     public void setSpinUp(){
         shooter.startShooting();
         ramp.setIdleRamp();
         idleDrivetrain();
-        doSpinUp();
+        state = State.SPIN_UP;
     }
     public void setSpinUp(double defaultSpeed){
         shooter.startShooting(defaultSpeed);
         ramp.setIdleRamp();
         idleDrivetrain();
-        doSpinUp();
+        state = State.SPIN_UP;
     }
     private void setShooting(){
-        if (state != State.SHOOTING){
-            Robot.intake.setSlowIntaking();
-            Robot.ramp.setFeeding();
-        }
+        Robot.intake.setSlowIntaking();
+        Robot.ramp.setFeeding();
         state = State.SHOOTING;
     }
 
     private void idleDrivetrain(){
-        aligner.setOff();
+        Robot.drivetrain.setDrive();
     }
 
     @Override
@@ -73,15 +70,15 @@ public class ShootingSystem extends Subsystem{
         if (okToFind){
             setSpinUp();
         }
+        idleDrivetrain();
     }
     private void doSpinUp(){
         if (okToFind){
             state = State.FINDING;
-            doFinding();
+            Robot.drivetrain.setAlign();
         }
     }
     private void doFinding(){
-        doAligning();
         if (!okToFind){
             idleDrivetrain();
             state =  State.SPIN_UP;
@@ -92,8 +89,8 @@ public class ShootingSystem extends Subsystem{
     }
 
     private void doShooting(){
-        if (!Robot.shooter.isReadyForShot() || !aligner.isAligned()){
-            state = State.FINDING;
+        if (!Robot.shooter.isReadyForShot() || !aligner.isAligned() || !okToFind){
+            state = State.SPIN_UP;
             Robot.ramp.setIdleRamp();
             Robot.intake.setIdleIntake();
             return;
@@ -104,9 +101,6 @@ public class ShootingSystem extends Subsystem{
         }
     }
 
-    private void doAligning(){
-        aligner.setAlign();
-    }
 
 
 
@@ -114,6 +108,7 @@ public class ShootingSystem extends Subsystem{
         telemetry.addData("Shooting System State", state.toString());
         telemetry.addData("Alignment", aligner.isAligned());
         telemetry.addData("Ready For Shot", shooter.isReadyForShot());
+        telemetry.addData("OkToFind", okToFind);
     }
 
 

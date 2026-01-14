@@ -55,9 +55,11 @@ public class Ramp extends Subsystem{
     }
 
     public void setFeeding(){
-        state = State.FEEDING;
-        initialPosition = rampMotor.getCurrentPosition();
-        doFeeding();
+        if (state!=State.FEEDING) {
+            state = State.FEEDING;
+            initialPosition = rampMotor.getCurrentPosition();
+            doFeeding();
+        }
     }
 
 
@@ -67,13 +69,6 @@ public class Ramp extends Subsystem{
     public void resetBallsLoaded(){ ballsLoaded=0;}
     public int getBallsLoaded(){return ballsLoaded;}
 
-
-    public boolean getBottomIRState(){
-        return bottomIR.getState();
-    }
-    public boolean getUpperIRState(){
-        return bottomIR2.getState();
-    }
     public boolean isBallInIntake(){
         return !bottomIR.getState() || !bottomIR2.getState();
     }

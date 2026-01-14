@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class Turn90DegreesPath extends Command {
+public class Turn90DegreesPath extends DriveCommand {
     private Action action;
     private int angleInDegrees;
     private MecanumDrive controller;

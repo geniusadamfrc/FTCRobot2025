@@ -64,7 +64,6 @@ public class Shooter extends Subsystem {
 
     public void setIdleShooter(){
         shooterState = ShooterState.IDLE;
-        doIdle();
     }
     public void startShooting(){
         startShooting(DEFAULT_TARGET_SPEED);
@@ -75,14 +74,9 @@ public class Shooter extends Subsystem {
         ballShot = false;
         doSpinningUp();
     }
-
     public boolean isReadyForShot(){
         return shooterState == ShooterState.READY_FOR_SHOT;
     }
-    public boolean isBallShot(){
-        return ballShot;
-    }
-    public void clearBallShot(){ballShot =false;}
 
 
     @Override

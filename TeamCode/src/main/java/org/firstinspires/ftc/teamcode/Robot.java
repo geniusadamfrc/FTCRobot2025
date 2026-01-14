@@ -70,6 +70,7 @@ public class Robot {
         ramp.loop();
         intake.loop();
         robot.loop();
+
         lastPosition = odometry.getOdoPosition();
     }
 

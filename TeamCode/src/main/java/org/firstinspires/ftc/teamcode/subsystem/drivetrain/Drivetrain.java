@@ -9,12 +9,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveCommand;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Locale;
 
@@ -29,11 +32,13 @@ public class Drivetrain extends CommandSubsystem {
     public DcMotorEx  leftBackDrive   = null;
     public DcMotorEx  rightBackDrive  = null;
 
+    private State state;
     public DrivetrainAligner aligner;
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
         aligner = new DrivetrainAligner();
+        state = State.Manual;
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -111,45 +116,98 @@ public class Drivetrain extends CommandSubsystem {
         rightFrontDrive.setPower(frs);
         leftBackDrive.setPower(bls);
         rightBackDrive.setPower(brs);
-        
+
     }
     public int getEncoderReading(){
-        return (leftFrontDrive.getCurrentPosition() 
+        return (leftFrontDrive.getCurrentPosition()
             + leftBackDrive.getCurrentPosition()
             + rightFrontDrive.getCurrentPosition()
             + rightBackDrive.getCurrentPosition())/4;
     }
 
-    @Override
-    public void loop(){
-        aligner.loop();
+
+
+    public void setCommand(DriveCommand command){
+
+
+
     }
+    public void setAlign(){
+        state = State.Align;
+        aligner.startAlign();
+    }
+    public void setDrive(){
+        state=State.Manual;
+    }
+    public void setManualCommand(){
+        //do somethign
+    }
+
+    @Override
+    public void loop()
+    {
+
+        if (state == State.Align) aligner.loop();
+        else if (state == State.Manual){
+
+        }
+    }
+
+    public enum State {
+        Manual, Command, Align
+    }
+
+
 
     public static class DrivetrainAligner {
 
-        private boolean alignMode;
-        private AlignTargetOdo c;
+        private double Kp = 0.05;
+        private double Ki = 0.03;
+        private double Kd = 0.0;
+        private double integralSum = 0;
+        private double targetOdo;
+        private double lastError = 0;
+        ElapsedTime timer;
+        private double staticFeedForward = 0.08;
+        private boolean allowFinish;
+        private boolean isGood;
 
-        public void setAlign(){
-            if (!alignMode){
-                alignMode = true;
-                c = new AlignTargetOdo(false);
-                CommandManager.schedule(c);
-            }
+        public void startAlign(){
+            isGood = false;
+            this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
+            timer = new ElapsedTime();
         }
-        public void setOff(){
-            if(alignMode) {
-                alignMode = false;
-                c.finish();
-            }
-        }
-        public void loop(){
 
+
+
+        public void loop() {
+            double error = Robot.odometry.getHeading() - targetOdo;
+            // rate of change of the error
+            double derivative = (error - lastError) / timer.seconds();
+            // sum of all error over time
+            integralSum = integralSum + (error * timer.seconds());
+
+            double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+            double feedForward = staticFeedForward;
+            if (isGood ) feedForward /=3;
+            out = out + (out < 0 ? -feedForward : feedForward);
+            Robot.drivetrain.driveRobotRelative(0.0, out, 0.0);
+            lastError = error;
+
+            // reset the timer for next time
+            timer.reset();
+            isGood = Math.abs(error) < 1.5;
         }
         public boolean isAligned(){
-            return alignMode && c!=null && c.isGood();
+            return isGood;
         }
 
+        public double getTargetOdo(){
+            return targetOdo;
+        }
+        public double getLastError(){
+            return lastError;
+        }
 
     }
 

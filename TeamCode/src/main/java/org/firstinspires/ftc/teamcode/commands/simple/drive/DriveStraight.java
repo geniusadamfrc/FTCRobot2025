@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class DriveStraight extends Command {
+public class DriveStraight extends DriveCommand {
     private Drivetrain drivetrain;
     private TimerCommand timer;
     private int time;
@@ -14,7 +14,7 @@ public class DriveStraight extends Command {
     private Telemetry telemetry;
     public DriveStraight(Drivetrain drivetrain, double forward, double strafe, int timeInMilliseconds, Telemetry telemetry){
         this.drivetrain = drivetrain;
-        registerCommandSubsystem(drivetrain);
+        //registerCommandSubsystem(drivetrain);
         this.forward = forward;
         this.strafe = strafe;
         this.time = timeInMilliseconds;

@@ -15,15 +15,14 @@ public class RobotSystem extends Subsystem{
     public void setIdle(){
         if (state!= State.IDLE){
             shootingSystem.setIdle();
-            Robot.ramp.setIdleRamp();
             Robot.intake.setIdleIntake();
+            state = State.IDLE;
         }
     }
     public void setShooting(){
         if (state != State.SHOOTING){
             shootingSystem.setSpinUp();
             Robot.intake.setIdleIntake();
-            Robot.ramp.setIdleRamp();
         }
         state = State.SHOOTING;
     }
@@ -31,7 +30,6 @@ public class RobotSystem extends Subsystem{
         if (state != State.SHOOTING){
             shootingSystem.setSpinUp(speed);
             Robot.intake.setIdleIntake();
-            Robot.ramp.setIdleRamp();
         }
         state = State.SHOOTING;
     }
@@ -50,6 +48,7 @@ public class RobotSystem extends Subsystem{
         if (state == State.IDLE) doIdle();
         else if (state == State.INTAKING)doIntaking();
         else if (state == State.SHOOTING) doShooting();
+        shootingSystem.loop();
     }
 
     private void doIdle(){}

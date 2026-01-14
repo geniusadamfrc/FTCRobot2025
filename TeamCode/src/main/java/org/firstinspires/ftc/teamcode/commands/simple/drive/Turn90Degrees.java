@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Turn90Degrees extends Command {
+public class Turn90Degrees extends DriveCommand {
     private double power;
     private int angle;
     private Telemetry telemetry;

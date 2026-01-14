@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class StrafePath extends Command {
+public class StrafePath extends DriveCommand {
 
 
     private double inches;

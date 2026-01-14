@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class MoveToPointOnField extends Command {
+public class MoveToPointOnField extends DriveCommand {
 
 
     private double x;

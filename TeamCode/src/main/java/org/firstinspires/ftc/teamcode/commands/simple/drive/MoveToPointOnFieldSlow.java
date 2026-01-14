@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class MoveToPointOnFieldSlow extends Command {
+public class MoveToPointOnFieldSlow extends DriveCommand {
 
 
     private double x;

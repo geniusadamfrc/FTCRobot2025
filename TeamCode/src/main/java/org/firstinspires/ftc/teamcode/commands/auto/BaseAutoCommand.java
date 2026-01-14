@@ -16,6 +16,7 @@ public abstract class BaseAutoCommand extends OpMode {
     public void init() {
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, getInitialPose());
         Robot.setupParams(getGoalID());
+        Robot.ramp.ballLoaded();Robot.ramp.ballLoaded();Robot.ramp.ballLoaded();
     }
     public abstract int getGoalID();
 
@@ -43,5 +44,6 @@ public abstract class BaseAutoCommand extends OpMode {
         Robot.lastPosition = Robot.odometry.getOdoPosition();
         Robot.shooter.writeSpeeds(telemetry);
         Robot.odometry.writeOutPosition(telemetry);
+        telemetry.addData("Drivetrain", Robot.drivetrain.getCurrentCommand());
     }
 }

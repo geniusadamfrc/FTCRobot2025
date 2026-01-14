@@ -7,14 +7,14 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 
 public class AlignTargetOdo extends Command {
 
-    private double Kp = 0.02;
-    private double Ki = 0.01;
+    private double Kp = 0.05;
+    private double Ki = 0.03;
     private double Kd = 0.0;
     private double integralSum = 0;
     private double targetOdo;
     private double lastError = 0;
     ElapsedTime timer;
-    private double staticFeedForward = 0.05;
+    private double staticFeedForward = 0.08;
     private boolean allowFinish;
     private boolean isGood;
     public AlignTargetOdo(boolean allowFinish){
@@ -39,7 +39,9 @@ public class AlignTargetOdo extends Command {
         integralSum = integralSum + (error * timer.seconds());
 
         double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
-        out = out + (out < 0 ? -staticFeedForward : staticFeedForward);
+        double feedForward = staticFeedForward;
+        if (isGood ) feedForward /=3;
+        out = out + (out < 0 ? -feedForward : feedForward);
         Robot.drivetrain.driveRobotRelative(0.0, out, 0.0);
         lastError = error;
 
