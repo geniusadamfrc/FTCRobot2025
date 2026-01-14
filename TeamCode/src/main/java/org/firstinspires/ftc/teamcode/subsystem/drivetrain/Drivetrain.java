@@ -4,22 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.CommandManager;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveCommand;
-import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
-import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
 
-import java.util.Locale;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class Drivetrain extends CommandSubsystem {
@@ -32,13 +23,14 @@ public class Drivetrain extends CommandSubsystem {
     public DcMotorEx  leftBackDrive   = null;
     public DcMotorEx  rightBackDrive  = null;
 
-    private State state;
     public DrivetrainAligner aligner;
+    private DrivetrainController currentController;
+    private ManualDriveCommand driveCommand; //this is the command that happens if you set the drive function
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
         aligner = new DrivetrainAligner();
-        state = State.Manual;
+        aligner.controller = new DrivetrainController();
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -55,6 +47,11 @@ public class Drivetrain extends CommandSubsystem {
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    public void setDriveCommand(ManualDriveCommand command){
+        this.driveCommand = command;
+        DrivetrainController controller = new DrivetrainController();
+        command.setDrivetrainController(controller);
+    }
 
 
 
@@ -71,10 +68,7 @@ public class Drivetrain extends CommandSubsystem {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-    public void setDriveToZero(){
-        driveRobotRelative(0,0,0);
-    }
-    public void driveRobotRelative(double forward, double turn, double strafe){
+    private void driveRobotRelative(double forward, double turn, double strafe){
         double fls = forward + turn + strafe;
         double frs = forward - turn - strafe;
         double bls = forward + turn - strafe;
@@ -106,12 +100,8 @@ public class Drivetrain extends CommandSubsystem {
         minSpeed = Math.min(minSpeed, brs);
         return minSpeed;
     }
-    public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
-        double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
-        double forward = Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
-        driveRobotRelative(forward, spin, strafe);
-    }
-    public void setPowersRaw(double fls, double frs, double bls, double brs){
+
+    private void setPowersRaw(double fls, double frs, double bls, double brs){
         leftFrontDrive.setPower(fls);
         rightFrontDrive.setPower(frs);
         leftBackDrive.setPower(bls);
@@ -126,36 +116,27 @@ public class Drivetrain extends CommandSubsystem {
     }
 
 
-
-    public void setCommand(DriveCommand command){
-
-
-
+    public DrivetrainController setCommand(){
+        DrivetrainController controller = new DrivetrainController();
+        currentController = controller;
+        return controller;
     }
     public void setAlign(){
-        state = State.Align;
+        currentController = aligner.controller;
         aligner.startAlign();
     }
     public void setDrive(){
-        state=State.Manual;
+        currentController = driveCommand.getDrivetrainController();
     }
-    public void setManualCommand(){
-        //do somethign
-    }
+
 
     @Override
     public void loop()
     {
-
-        if (state == State.Align) aligner.loop();
-        else if (state == State.Manual){
-
-        }
+        driveCommand.loop();
+        currentController.drive(this);
     }
 
-    public enum State {
-        Manual, Command, Align
-    }
 
 
 
@@ -163,43 +144,54 @@ public class Drivetrain extends CommandSubsystem {
 
         private double Kp = 0.05;
         private double Ki = 0.03;
-        private double Kd = 0.0;
+        private double Kd = 0.001;
         private double integralSum = 0;
         private double targetOdo;
         private double lastError = 0;
         ElapsedTime timer;
-        private double staticFeedForward = 0.08;
-        private boolean allowFinish;
-        private boolean isGood;
+        private double staticFeedForward = 0.05;
+        private DrivetrainController controller;
+        public double defaultAngle;
+
+        public void setDefaultAngle(double defaultAngle) {
+            this.defaultAngle = defaultAngle;
+        }
 
         public void startAlign(){
-            isGood = false;
-            this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
+            updateTargetOdo(defaultAngle);
             timer = new ElapsedTime();
         }
 
+        public void updateTargetOdo(double target){
+            try {
+                this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
+            } catch (TagNotFoundException e) {
+                this.targetOdo = target;
+            }
+        }
 
 
         public void loop() {
+            //updateTargetOdo(targetOdo);
             double error = Robot.odometry.getHeading() - targetOdo;
             // rate of change of the error
             double derivative = (error - lastError) / timer.seconds();
             // sum of all error over time
+            if (error*lastError < 0) integralSum = 0;
             integralSum = integralSum + (error * timer.seconds());
 
             double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
             double feedForward = staticFeedForward;
-            if (isGood ) feedForward /=3;
+            if (isAligned() ) feedForward =0;
             out = out + (out < 0 ? -feedForward : feedForward);
-            Robot.drivetrain.driveRobotRelative(0.0, out, 0.0);
+            controller.driveRobotRelative(0.0, out, 0.0);
             lastError = error;
-
             // reset the timer for next time
             timer.reset();
-            isGood = Math.abs(error) < 1.5;
         }
         public boolean isAligned(){
-            return isGood;
+            double error = Robot.odometry.getHeading() - targetOdo;
+            return Math.abs(error) < 1.5;
         }
 
         public double getTargetOdo(){
@@ -211,4 +203,49 @@ public class Drivetrain extends CommandSubsystem {
 
     }
 
+    public static class DrivetrainController {
+        private double forward;
+        private double turn;
+        private double strafe;
+        private boolean ftsMode;
+
+        private double fls;
+        private double frs;
+        private double bls;
+        private double brs;
+
+
+
+        public void driveRobotRelative(double forward, double turn, double strafe){
+            ftsMode =true;
+            this.forward = forward;
+            this.turn = turn;
+            this.strafe = strafe;
+        }
+        public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
+            double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
+            double forward = Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
+            driveRobotRelative(forward, spin, strafe);
+        }
+
+
+        public void setDriveToZero(){
+            driveRobotRelative(0,0,0);
+        }
+
+        public void setPowersRaw(double fls, double frs, double bls, double brs){
+            ftsMode = false;
+            this.fls= fls;
+            this.frs = frs;
+            this.bls =bls;
+            this.brs = brs;
+        }
+
+        public void drive(Drivetrain drivetrain){
+            if (ftsMode)
+                drivetrain.driveRobotRelative(forward, turn, strafe);
+            else drivetrain.setPowersRaw(fls,frs,bls, brs);
+        }
+
+    }
 }

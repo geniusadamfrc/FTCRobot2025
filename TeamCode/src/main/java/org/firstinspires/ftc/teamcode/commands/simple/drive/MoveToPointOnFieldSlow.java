@@ -36,6 +36,7 @@ public class MoveToPointOnFieldSlow extends DriveCommand {
 
     @Override
     public void beginImpl() {
+        roadrunner.setDrivetrainController(drivetrainController);
         //Robot.drivetrain.roadRunnerController.defaultVelConstraint
         action = roadrunner.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),

@@ -26,7 +26,7 @@ public class Odometry extends Subsystem {
         odo.setPosition(initialPose);
     }
 
-    @Override
+   /*@Override
     public void playOnceImpl(){
         //odo.resetPosAndIMU();
         if (telemetry == null) return;
@@ -36,7 +36,7 @@ public class Odometry extends Subsystem {
         telemetry.addData("Device Version Number:", odo.getDeviceVersion());
         telemetry.addData("Heading Scalar", odo.getYawScalar());
     }
-
+*/
     public void setOdoPositions(double x, double y, double heading){
         odo.setPosition( new Pose2D(DistanceUnit.MM,x, y, AngleUnit.DEGREES, heading));
     }

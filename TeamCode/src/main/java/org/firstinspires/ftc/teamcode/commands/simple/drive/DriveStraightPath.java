@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.Pose2d;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
@@ -25,6 +24,7 @@ public class DriveStraightPath extends DriveCommand {
 
     @Override
     public void beginImpl() {
+        roadrunner.setDrivetrainController(drivetrainController);
         action = roadrunner.actionBuilder(new Pose2d(
                 Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),

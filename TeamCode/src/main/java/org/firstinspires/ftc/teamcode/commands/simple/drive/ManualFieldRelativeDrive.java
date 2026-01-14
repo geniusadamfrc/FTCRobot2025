@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.commands.simple.drive;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.gamepad.Axis;
 
-public class ManualFieldRelativeDrive extends Command {
+public class ManualFieldRelativeDrive extends ManualDriveCommand {
     private final Axis left_stick_y;
     private final Axis left_stick_x;
     private final Axis right_stick_x;
@@ -28,11 +27,11 @@ public class ManualFieldRelativeDrive extends Command {
         double turn = right_stick_x.getState();
         double strafe = left_stick_x.getState();
         double currentHeading = Robot.odometry.odo.getHeading(AngleUnit.RADIANS);
-        Robot.drivetrain.driveFieldRelative(forward, strafe, turn, currentHeading);
+        drivetrainController.driveFieldRelative(forward, strafe, turn, currentHeading);
     }
 
     @Override
     public void finishImpl(){
-        Robot.drivetrain.setDriveToZero();
+        drivetrainController.setDriveToZero();
     }
 }

@@ -15,10 +15,11 @@ public abstract class BaseAutoCommand extends OpMode {
     @Override
     public void init() {
         Robot.init(hardwareMap, telemetry, gamepad1, gamepad2, getInitialPose());
-        Robot.setupParams(getGoalID());
-        Robot.ramp.ballLoaded();Robot.ramp.ballLoaded();Robot.ramp.ballLoaded();
+        Robot.setupParams(getGoalID(), getDefaultAngle());
+        Robot.ramp.setBallsLoaded(3);
     }
     public abstract int getGoalID();
+    public abstract double getDefaultAngle();
 
     public abstract Pose2D getInitialPose();
 

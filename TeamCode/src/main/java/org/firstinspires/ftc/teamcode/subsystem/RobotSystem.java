@@ -36,9 +36,9 @@ public class RobotSystem extends Subsystem{
 
     public void setIntaking(){
         if (state != State.INTAKING){
+            shootingSystem.setIdle();
             Robot.intake.setIntaking();
             Robot.ramp.setLoading();
-            shootingSystem.setIdle();
         }
         state = State.INTAKING;
         doIntaking();

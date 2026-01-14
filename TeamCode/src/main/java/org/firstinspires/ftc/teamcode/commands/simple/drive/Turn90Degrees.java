@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.commands.simple.drive;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.Command;
-import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Turn90Degrees extends DriveCommand {
@@ -20,7 +18,7 @@ public class Turn90Degrees extends DriveCommand {
     
     public void beginImpl(){
         //imu.resetYaw();
-        Robot.drivetrain.driveRobotRelative(0,power,0);
+        drivetrainController.driveRobotRelative(0,power,0);
         telemetry.addData("Turn 90", "begin");
         direction = false;
         if (power < 0) direction = true; 
@@ -32,7 +30,7 @@ public class Turn90Degrees extends DriveCommand {
             ||
             (!direction && angle > Robot.odometry.getHeading())
             ){
-            Robot.drivetrain.setDriveToZero();
+            drivetrainController.setDriveToZero();
             finish();
         }
     }

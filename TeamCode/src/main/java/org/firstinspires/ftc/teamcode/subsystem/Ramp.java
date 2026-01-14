@@ -68,6 +68,9 @@ public class Ramp extends Subsystem{
     public void ballUnloaded(){ballsLoaded--;}
     public void resetBallsLoaded(){ ballsLoaded=0;}
     public int getBallsLoaded(){return ballsLoaded;}
+    public void setBallsLoaded(int ballsLoaded) {
+        this.ballsLoaded = ballsLoaded;
+    }
 
     public boolean isBallInIntake(){
         return !bottomIR.getState() || !bottomIR2.getState();
@@ -106,11 +109,12 @@ public class Ramp extends Subsystem{
         }
     }
     private void doFeeding() {
+        rampMotor.setPower(targetPower);
         if (rampMotor.getCurrentPosition() > initialPosition + FEED_DISTANCE){
             setIdleRamp();
             ballUnloaded();
         }
-        rampMotor.setPower(targetPower);
+
     }
 
 
@@ -122,7 +126,7 @@ public class Ramp extends Subsystem{
         return state == State.IDLE;
     }
 
-    public enum State {
+    private enum State {
         IDLE,  LOADING, LOADING_RAISE_BALL,  FEEDING
     }
 

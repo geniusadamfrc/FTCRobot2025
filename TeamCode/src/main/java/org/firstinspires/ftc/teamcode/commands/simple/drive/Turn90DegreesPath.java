@@ -22,6 +22,7 @@ public class Turn90DegreesPath extends DriveCommand {
     }
     @Override
     public void beginImpl(){
+        controller.setDrivetrainController(drivetrainController);
         action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),

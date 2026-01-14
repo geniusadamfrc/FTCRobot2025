@@ -138,19 +138,18 @@ public class CameraSystem {
         return cameraRange;
     }
 
-    public double getBearing() {
+    public double getBearing() throws TagNotFoundException {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
-
-        if (aprilTags.size() ==0) return lastBearing;
+        if (aprilTags.size() ==0) throw new TagNotFoundException("No Tag");
         AprilTagDetection current = null;
         for(AprilTagDetection d : aprilTags){
             if (d.id == goalId){
                 current = d;
             }
         }
-        if (current == null) return lastBearing;
-        lastBearing = current.ftcPose.bearing;
+        if (current == null) throw new TagNotFoundException("No Tag");
+        //lastBearing = current.ftcPose.bearing;
         return current.ftcPose.bearing;
     }
 

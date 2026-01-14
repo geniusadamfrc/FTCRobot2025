@@ -33,46 +33,34 @@ public class ShootingSystem extends Subsystem{
     public void setIdle(){
         setOkToFind(false);
         shooter.setIdleShooter();
-        idleDrivetrain();
         ramp.setIdleRamp();
         state=State.IDLE;
     }
     public void setSpinUp(){
         shooter.startShooting();
         ramp.setIdleRamp();
-        idleDrivetrain();
         state = State.SPIN_UP;
     }
     public void setSpinUp(double defaultSpeed){
         shooter.startShooting(defaultSpeed);
         ramp.setIdleRamp();
-        idleDrivetrain();
         state = State.SPIN_UP;
     }
-    private void setShooting(){
-        Robot.intake.setSlowIntaking();
-        Robot.ramp.setFeeding();
-        state = State.SHOOTING;
-    }
 
-    private void idleDrivetrain(){
-        Robot.drivetrain.setDrive();
-    }
+
 
     @Override
     public void loop(){
         if (state == State.IDLE) doIdle();
-        else if (state == State.SPIN_UP) doSpinUp();
-        else if (state == State.FINDING) doFinding();
-        else if (state == State.SHOOTING) doShooting();
+        if (state == State.SPIN_UP) doSpinUp();
+        if (state == State.FINDING) doFinding();
+        if (state == State.SHOOTING) doShooting();
     }
     private void doIdle(){
-        if (okToFind){
-            setSpinUp();
-        }
-        idleDrivetrain();
+
     }
     private void doSpinUp(){
+
         if (okToFind){
             state = State.FINDING;
             Robot.drivetrain.setAlign();
@@ -80,25 +68,32 @@ public class ShootingSystem extends Subsystem{
     }
     private void doFinding(){
         if (!okToFind){
-            idleDrivetrain();
+            Robot.drivetrain.setDrive();
             state =  State.SPIN_UP;
         }
         else if (Robot.shooter.isReadyForShot() && aligner.isAligned()){
-            setShooting();
+            Robot.intake.setSlowIntaking();
+            Robot.ramp.setFeeding();
+            state = State.SHOOTING;
         }
     }
-
     private void doShooting(){
-        if (!Robot.shooter.isReadyForShot() || !aligner.isAligned() || !okToFind){
+        if (ramp.isRampIdle()){
+            if (ramp.getBallsLoaded() ==0){
+                Robot.drivetrain.setDrive();
+                setIdle();
+            }
+            else{
+                state = State.SPIN_UP;
+                Robot.intake.setIdleIntake();
+            }
+        }
+        else if (!Robot.shooter.isReadyForShot() || !aligner.isAligned() || !okToFind){
             state = State.SPIN_UP;
             Robot.ramp.setIdleRamp();
             Robot.intake.setIdleIntake();
-            return;
         }
-        if (ramp.isRampIdle()){
-            if (ramp.getBallsLoaded() ==0) setIdle();
-            else ramp.setFeeding();
-        }
+
     }
 
 

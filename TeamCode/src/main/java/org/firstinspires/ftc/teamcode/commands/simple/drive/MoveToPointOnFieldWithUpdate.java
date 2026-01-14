@@ -39,6 +39,7 @@ public class MoveToPointOnFieldWithUpdate extends DriveCommand {
 
     @Override
     public void beginImpl() {
+        controller.setDrivetrainController(drivetrainController);
         update();
         action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),

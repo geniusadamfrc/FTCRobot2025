@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.commands.ParallelCommand;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
 import org.firstinspires.ftc.teamcode.commands.simple.DriveForwardAndIntake;
 import org.firstinspires.ftc.teamcode.commands.simple.WaitMSeconds;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.AlignTargetOdo;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
@@ -25,7 +24,8 @@ public class BlueShoot6Pickup3 extends BaseAutoCommand {
     public int getGoalID() {
         return 20;
     }
-
+    @Override
+    public double getDefaultAngle(){return -45;}
     @Override
     public Pose2D getInitialPose() {
         return new Pose2D(DistanceUnit.INCH, -59, 58, AngleUnit.DEGREES, -35);
@@ -51,7 +51,6 @@ public class BlueShoot6Pickup3 extends BaseAutoCommand {
         sq2.addCommand(new StartUpShooter(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
-        main.addCommand(new AlignTargetOdo(true));
         main.addCommand(new Shoot());
         main.addCommand(new MoveToPointOnField(-12, 0, 179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-30, roadrunner));
