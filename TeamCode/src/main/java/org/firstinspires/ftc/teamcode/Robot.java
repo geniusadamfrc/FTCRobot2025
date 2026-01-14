@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.commands.CommandManager;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualRobotRelativeMecanumDrive;
 import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.LEDs;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 import org.firstinspires.ftc.teamcode.subsystem.RobotSystem;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Odometry;
@@ -28,6 +29,7 @@ public class Robot {
     public static Ramp ramp;
     public static Intake intake;
     public static RobotSystem robot;
+    public static LEDs led;
     public static Pose2D lastPosition = new Pose2D(DistanceUnit.MM, 0.0, 0.0, AngleUnit.DEGREES, 0.0);
 
 
@@ -49,6 +51,8 @@ public class Robot {
         intake.init(hardwareMap);
         if (robot == null) robot = new RobotSystem();
         robot.init();
+        if (led == null) led = new LEDs();
+        led.init(hardwareMap);
     }
     public static void init(HardwareMap hardwareMap, Telemetry telemetry, Gamepad gamepad1, Gamepad gamepad2) {
         init(hardwareMap, telemetry, gamepad1, gamepad2, lastPosition);
@@ -69,7 +73,7 @@ public class Robot {
         ramp.loop();
         intake.loop();
         robot.loop();
-
+        led.loop();
         lastPosition = odometry.getOdoPosition();
     }
 
