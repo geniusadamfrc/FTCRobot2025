@@ -116,6 +116,9 @@ public class Drivetrain extends CommandSubsystem {
     }
 
 
+    public boolean isAligned(){
+        return aligner.isAligned();
+    }
     public DrivetrainController setCommand(){
         DrivetrainController controller = new DrivetrainController();
         currentController = controller;

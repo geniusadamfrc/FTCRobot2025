@@ -50,14 +50,14 @@ public class LEDs extends Subsystem{
 
     public void loop(){
         if (Robot.robot.isIntaking()){
-            int balls = ShootingSystem.ramp.getBallsLoaded();
+            int balls = Robot.ramp.getBallsLoaded();
             if (balls == 0) setNoLoaded();
             else if (balls== 1) set1Loaded();
             else if (balls ==2 ) set2Loaded();
             else if (balls ==3) set3Loaded();
         }
         else if (Robot.robot.isShooting()){
-           if (RobotSystem.shootingSystem.isReadyForShot()) setReadyForShot();
+           if (Robot.robot.isReadyForShot()) setReadyForShot();
            else setSpeedingUp();
 
         }

@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.gamepad.GamePadExtended;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Ramp;
 import org.firstinspires.ftc.teamcode.subsystem.RobotSystem;
-import org.firstinspires.ftc.teamcode.subsystem.ShootingSystem;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Odometry;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;

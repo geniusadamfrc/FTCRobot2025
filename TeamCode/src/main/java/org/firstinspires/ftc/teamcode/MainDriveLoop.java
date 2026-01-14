@@ -15,17 +15,17 @@ public class MainDriveLoop {
             Robot.robot.setIntaking();
         }
         else if (gamepad1.a){
-            Robot.robot.setShooting();
+            Robot.robot.setStartShooting();
         }
 
         Robot.ramp.setIdlePower(gamepad1.right_trigger - gamepad1.left_trigger);
-        RobotSystem.shootingSystem.setOkToFind(gamepad1.b);
+        Robot.robot.setOkToFind(gamepad1.b);
 
 
         Robot.update();
 
-        telemetry.addData("Robot State", Robot.robot.getStateString());
-        RobotSystem.shootingSystem.doTelemetry(telemetry);
+
+        Robot.robot.doTelemetry(telemetry);
         Robot.shooter.camera.doTelemetry(telemetry, false);
         //Robot.shooter.writeSpeeds(telemetry);
         telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());

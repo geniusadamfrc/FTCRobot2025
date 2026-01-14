@@ -1,75 +1,28 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 public class RobotSystem extends Subsystem{
+    private static Ramp ramp;
+    private static Shooter shooter;
+    private static Drivetrain.DrivetrainAligner aligner;
+    private boolean okToFind;
     private State state;
-    public static ShootingSystem shootingSystem;
 
     public void init(){
-        shootingSystem = new ShootingSystem();
-        shootingSystem.init();
+        ramp = Robot.ramp;
+        shooter = Robot.shooter;
+        aligner=Robot.drivetrain.aligner;
+        okToFind =false;
         state = State.IDLE;
     }
 
-    public void setIdle(){
-        if (state!= State.IDLE){
-            shootingSystem.setIdle();
-            Robot.intake.setIdleIntake();
-            state = State.IDLE;
-        }
+    public void setOkToFind(boolean okToFind) {
+        this.okToFind = okToFind;
     }
-    public void setShooting(){
-        if (state != State.SHOOTING){
-            shootingSystem.setSpinUp();
-            Robot.intake.setIdleIntake();
-        }
-        state = State.SHOOTING;
-    }
-    public void setShooting(double speed){
-        if (state != State.SHOOTING){
-            shootingSystem.setSpinUp(speed);
-            Robot.intake.setIdleIntake();
-        }
-        state = State.SHOOTING;
-    }
-
-    public void setIntaking(){
-        if (state != State.INTAKING){
-            shootingSystem.setIdle();
-            Robot.intake.setIntaking();
-            Robot.ramp.setLoading();
-        }
-        state = State.INTAKING;
-        doIntaking();
-    }
-
-    public void loop(){
-        if (state == State.IDLE) doIdle();
-        else if (state == State.INTAKING)doIntaking();
-        else if (state == State.SHOOTING) doShooting();
-        shootingSystem.loop();
-    }
-
-    private void doIdle(){}
-    private void doIntaking(){
-        if (Robot.ramp.getBallsLoaded() > 2){
-            setShooting();
-        }
-    }
-    public void doShooting(){
-        if (shootingSystem.isIdle()){
-            setIdle();
-        }
-    }
-
-    public State getState(){
-        return state;
-    }
-    public String getStateString(){
-        return state.toString();
-    }
-
     public boolean isIdle(){
         return state == State.IDLE;
     }
@@ -78,11 +31,115 @@ public class RobotSystem extends Subsystem{
         return state == State.INTAKING;
     }
 
-    public boolean isShooting() {
+    public boolean isShooting(){
         return state == State.SHOOTING;
     }
 
-    public enum State {
-        IDLE, INTAKING, SHOOTING
+
+
+
+    public void setIdle(){
+        if (state == State.IDLE) return;
+        if (state == State.FINDING || state == State.SHOOTING){
+            Robot.drivetrain.setDrive();
+        }
+        setOkToFind(false);
+        shooter.setIdleShooter();
+        ramp.setIdleRamp();
+        Robot.intake.setIdleIntake();
+        state = State.IDLE;
     }
+    public void setStartShooting(){
+        if (state == State.IDLE || state == State.INTAKING) {
+            Robot.intake.setIdleIntake();
+            shooter.startShooting();
+            ramp.setIdleRamp();
+            state = State.SPIN_UP;
+        }
+    }
+    public void setStartShooting(double speed){
+        if (state == State.IDLE || state == State.INTAKING) {
+            Robot.intake.setIdleIntake();
+            shooter.startShooting(speed);
+            ramp.setIdleRamp();
+            state = State.SPIN_UP;
+        }
+    }
+
+
+
+    public void setIntaking(){
+        if (state == State.IDLE){
+            setOkToFind(false);
+            shooter.setIdleShooter();
+            Robot.intake.setIntaking();
+            ramp.setLoading();
+            state = State.INTAKING;
+        }
+    }
+    @Override
+    public void loop(){
+        if (state == State.IDLE) {}
+        if (state == State.INTAKING)doIntaking();
+        if (state == State.SPIN_UP) doSpinUp();
+        if (state == State.FINDING) doFinding();
+        if (state == State.SHOOTING) doShooting();
+    }
+    private void doSpinUp(){
+
+        if (okToFind){
+            state = State.FINDING;
+            Robot.drivetrain.setAlign();
+        }
+    }
+    private void doFinding(){
+        if (!okToFind){
+            Robot.drivetrain.setDrive();
+            state =  State.SPIN_UP;
+        }
+        else if (Robot.shooter.isReadyForShot() && aligner.isAligned()){
+            Robot.intake.setSlowIntaking();
+            Robot.ramp.setFeeding();
+            state = State.SHOOTING;
+        }
+    }
+    private void doShooting(){
+        if (ramp.isRampIdle()){
+            if (ramp.getBallsLoaded() ==0){
+                Robot.drivetrain.setDrive();
+                setIdle();
+            }
+            else{
+                state = State.SPIN_UP;
+                Robot.intake.setIdleIntake();
+            }
+        }
+        else if (!Robot.shooter.isReadyForShot() || !aligner.isAligned() || !okToFind){
+            state = State.SPIN_UP;
+            Robot.ramp.setIdleRamp();
+            Robot.intake.setIdleIntake();
+        }
+
+    }
+    private void doIntaking(){
+        if (Robot.ramp.getBallsLoaded() > 2){
+            setStartShooting();
+        }
+    }
+    public boolean isReadyForShot() {
+        return state == State.FINDING && shooter.isReadyForShot() && aligner.isAligned();
+    }
+
+    private enum State {
+        IDLE, INTAKING, SHOOTING2, SPIN_UP, FINDING, SHOOTING
+    }
+
+    public void doTelemetry(Telemetry telemetry){
+        telemetry.addData("Robot State", state.toString());
+        telemetry.addData("Shooting System State", state.toString());
+        telemetry.addData("Alignment", aligner.isAligned());
+        telemetry.addData("Ready For Shot", shooter.isReadyForShot());
+        telemetry.addData("OkToFind", okToFind);
+    }
+
 }

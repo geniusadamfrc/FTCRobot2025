@@ -11,7 +11,7 @@ public class StartUpShooter extends Command{
 
     @Override
     public void beginImpl() {
-        Robot.robot.setShooting(speed);
+        Robot.robot.setStartShooting(speed);
     }
 
     @Override

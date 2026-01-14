@@ -29,7 +29,6 @@ public class DriveForwardAndIntake extends Command {
     public void loopImpl() {
         drive.loop();
         if (drive.isFinished()){
-            Robot.robot.setIdle();
             finish();
         }
     }
