@@ -14,10 +14,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualDriveCommand;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.MecanumImpl;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.CommandSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.TagNotFoundException;
+
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -36,15 +40,12 @@ public class Drivetrain extends CommandSubsystem {
     public DrivetrainAligner aligner;
     private DrivetrainController currentController;
     private ManualDriveCommand driveCommand; //this is the command that happens if you set the drive function
-    public Follower follower;
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
         aligner = new DrivetrainAligner();
         aligner.controller = new DrivetrainController();
         aligner.controller.setControllable(aligner);
-        initPedro(hardwareMap, initialPose);
-        odo.setPosition(initialPose);
 
     }
     private void initMotors(HardwareMap hardwareMap){
@@ -69,10 +70,7 @@ public class Drivetrain extends CommandSubsystem {
         command.begin();
 
     }
-    private void initPedro(HardwareMap hardwareMap, Pose2D initialPose){
-        follower = Constants.createFollowerRobot(hardwareMap);
-        follower.setStartingPose(PoseConverter.pose2DToPose(initialPose, PedroCoordinates.INSTANCE));
-    }
+
 
 
 

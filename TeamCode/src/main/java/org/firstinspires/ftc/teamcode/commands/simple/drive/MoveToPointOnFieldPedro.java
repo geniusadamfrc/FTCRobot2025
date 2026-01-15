@@ -22,18 +22,17 @@ public class MoveToPointOnFieldPedro extends Command {
     private Path  path;
     private Follower follower;
 
-    public MoveToPointOnFieldPedro(double x, double y, double heading) {
+    public MoveToPointOnFieldPedro(double x, double y, double heading, Follower follower) {
 
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
-        this.follower = Robot.drivetrain.follower;
+        this.follower = follower;
     }
 
     @Override
     public void beginImpl() {
-        Pose startPose = new Pose(Robot.drivetrain.odo.getPosX(DistanceUnit.INCH), Robot.drivetrain.odo.getPosY(DistanceUnit.INCH), Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS));
+        Pose startPose = new Pose(Robot.odometry.odo.getPosX(DistanceUnit.INCH), Robot.odometry.odo.getPosY(DistanceUnit.INCH), Robot.odometry.odo.getHeading(AngleUnit.RADIANS));
         Pose endPose = new Pose(x, y, heading); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
         path = new Path(new BezierLine(startPose, endPose));
         path.setLinearHeadingInterpolation(startPose.getHeading(), endPose.getHeading());

@@ -54,7 +54,7 @@ public class PinpointLocalizer implements Localizer {
     @SuppressLint("NewApi")
     public PinpointLocalizer( PinpointConstants constants, Pose setStartPose){
 
-        odo = Robot.drivetrain.odo;
+        odo = Robot.odometry.odo;
 
         if(constants.yawScalar.isPresent()) {
             odo.setYawScalar(constants.yawScalar.getAsDouble());
