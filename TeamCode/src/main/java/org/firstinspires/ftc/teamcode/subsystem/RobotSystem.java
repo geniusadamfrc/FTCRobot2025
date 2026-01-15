@@ -132,6 +132,10 @@ public class RobotSystem extends Subsystem{
         return state == State.FINDING && shooter.isReadyForShot() && aligner.isAligned();
     }
 
+    public boolean isInShootingMode() {
+        return state == State.SPIN_UP || state == State.FINDING || state == State.SHOOTING;
+    }
+
     private enum State {
         IDLE, INTAKING, SHOOTING2, SPIN_UP, FINDING, SHOOTING
     }
