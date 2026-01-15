@@ -60,14 +60,14 @@ public class Robot {
 
 
 
-    public static void update(){
+    public static void update(Telemetry telemetry){
         //These are default.  Don't touch.
         gamepadex1.update();
         gamepadex2.update();
         CommandManager.update();
 
         //update these
-        drivetrain.loop();
+        drivetrain.loop2(telemetry);
         odometry.loop();
         shooter.loop();
         ramp.loop();
@@ -83,6 +83,7 @@ public class Robot {
         Robot.drivetrain.aligner.setDefaultAngle(defaultAngle);
         try {
             Robot.drivetrain.setDriveCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x));
+            Robot.drivetrain.setDrive();
             //CommandManager.registerDefaultCommand(new ManualRobotRelativeMecanumDrive(Robot.gamepadex1.left_stick_y, Robot.gamepadex1.left_stick_x, Robot.gamepadex1.right_stick_x), Robot.drivetrain);
         } catch (Exception ex){
             throw new RuntimeException(ex);

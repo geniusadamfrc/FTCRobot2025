@@ -9,7 +9,7 @@ public class Ramp extends Subsystem{
     public static final String RAMP_NAME = "ramp";
     public static final String BOTTOM_IR_NAME = "bottomIRSensor";
     public static final String BOTTOM_IR_2_NAME = "upperIRSensor";
-    public static final double DEFAULT_TARGET_POWER = 0.5;
+    public static final double DEFAULT_TARGET_POWER = 0.8;
     public static final double SLOW_RAMP_POWER = 0.4;
     private static final double LOADING_DISTANCE = 200;
     private static final double FEED_DISTANCE = 400 ;
@@ -36,9 +36,6 @@ public class Ramp extends Subsystem{
         targetPower = DEFAULT_TARGET_POWER;
     }
     public void setIdlePower(double power){ this.idlePower = power; }
-    public void setTargetPower(double power){
-        this.targetPower = power;
-    }
     public double getRampPosition() {
         return rampMotor.getCurrentPosition();
     }

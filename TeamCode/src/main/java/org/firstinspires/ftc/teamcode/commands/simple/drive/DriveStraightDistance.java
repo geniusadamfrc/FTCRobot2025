@@ -38,5 +38,9 @@ public class DriveStraightDistance extends DriveCommand {
     public void finishImpl(){
         drivetrainController.setDriveToZero();
     }
+    @Override
+    public String writeName() {
+        return "Drive Straight Distance";
+    }
     // todo: write your code here
 }

@@ -34,4 +34,9 @@ public class ManualFieldRelativeDrive extends ManualDriveCommand {
     public void finishImpl(){
         drivetrainController.setDriveToZero();
     }
+
+    @Override
+    public String writeName() {
+        return "Field Relative Drive";
+    }
 }

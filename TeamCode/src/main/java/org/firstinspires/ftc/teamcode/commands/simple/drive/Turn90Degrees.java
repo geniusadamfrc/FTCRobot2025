@@ -34,5 +34,9 @@ public class Turn90Degrees extends DriveCommand {
             finish();
         }
     }
+    @Override
+    public String writeName() {
+        return "Turn 90 Degrees";
+    }
     // todo: write your code here
 }

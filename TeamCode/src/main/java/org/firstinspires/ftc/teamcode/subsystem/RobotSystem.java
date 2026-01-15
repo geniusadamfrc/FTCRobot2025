@@ -22,6 +22,7 @@ public class RobotSystem extends Subsystem{
 
     public void setOkToFind(boolean okToFind) {
         this.okToFind = okToFind;
+
     }
     public boolean isIdle(){
         return state == State.IDLE;
@@ -118,6 +119,7 @@ public class RobotSystem extends Subsystem{
             state = State.SPIN_UP;
             Robot.ramp.setIdleRamp();
             Robot.intake.setIdleIntake();
+            Robot.drivetrain.setDrive();
         }
 
     }

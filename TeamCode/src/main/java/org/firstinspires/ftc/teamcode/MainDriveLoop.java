@@ -22,13 +22,12 @@ public class MainDriveLoop {
         Robot.robot.setOkToFind(gamepad1.b);
 
 
-        Robot.update();
+        Robot.update(telemetry);
 
 
         Robot.robot.doTelemetry(telemetry);
         Robot.shooter.camera.doTelemetry(telemetry, false);
         //Robot.shooter.writeSpeeds(telemetry);
-        telemetry.addData("Drivetrain: ", Robot.drivetrain.getCurrentCommand());
         //telemetry.addData("Ramp Position", Robot.ramp.getRampPosition());
         telemetry.addData("Ball Detected", Robot.ramp.isBallInIntake());
         telemetry.addData("Balls Loaded", Robot.ramp.getBallsLoaded());

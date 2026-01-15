@@ -57,4 +57,8 @@ public class MoveToPointOnFieldWithUpdate extends DriveCommand {
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
     }
+    @Override
+    public String writeName() {
+        return "Move To Point On Field with Update";
+    }
 }

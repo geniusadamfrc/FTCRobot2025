@@ -38,7 +38,9 @@ public abstract class BaseAutoCommand extends OpMode {
 
     @Override
     public void loop() {
-        Robot.update();
+
+        Robot.update(telemetry);
+        Robot.robot.doTelemetry(telemetry);
         telemetry.addData("Pattern ID", Robot.shooter.camera.getPatternId());
         if (!main.isFinished())
             main.loop();

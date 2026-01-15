@@ -54,15 +54,14 @@ public class BlueShoot6Pickup3 extends BaseAutoCommand {
         main.addCommand(new Shoot());
         main.addCommand(new MoveToPointOnField(-12, 0, 179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-30, roadrunner));
-        /*
+
         ParallelCommand sq3 = new ParallelCommand();
-        sq3.addCommand(new MoveToPointOnField(-20, 32, -35));
-        sq3.addCommand(new SpeedUpForShooting(620));
+        sq3.addCommand(new MoveToPointOnField(-20, 55, 0, roadrunner));
+        sq3.addCommand(new StartUpShooter(620));
         main.addCommand(sq3);
-        main.addCommand(new WaitMSeconds(200));
-        main.addCommand(new AlignTargetOdo(true));
-        main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        */
+
+        main.addCommand(new Shoot());
+
         //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
         //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
         return main;

@@ -39,5 +39,10 @@ public class DriveStraight extends DriveCommand {
     public void finishImpl(){
         drivetrainController.setDriveToZero();
     }
+
+    @Override
+    public String writeName() {
+        return "Drive Straight";
+    }
     // todo: write your code here
 }

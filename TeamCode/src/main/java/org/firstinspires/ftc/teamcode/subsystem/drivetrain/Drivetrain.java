@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.ManualDriveCommand;
@@ -31,6 +32,7 @@ public class Drivetrain extends CommandSubsystem {
         initMotors(hardwareMap);
         aligner = new DrivetrainAligner();
         aligner.controller = new DrivetrainController();
+        aligner.controller.setControllable(aligner);
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -51,6 +53,8 @@ public class Drivetrain extends CommandSubsystem {
         this.driveCommand = command;
         DrivetrainController controller = new DrivetrainController();
         command.setDrivetrainController(controller);
+        command.begin();
+
     }
 
 
@@ -120,6 +124,7 @@ public class Drivetrain extends CommandSubsystem {
         return aligner.isAligned();
     }
     public DrivetrainController setCommand(){
+        aligner.running = false;
         DrivetrainController controller = new DrivetrainController();
         currentController = controller;
         return controller;
@@ -127,27 +132,29 @@ public class Drivetrain extends CommandSubsystem {
     public void setAlign(){
         currentController = aligner.controller;
         aligner.startAlign();
+
     }
     public void setDrive(){
+        aligner.running = false;
         currentController = driveCommand.getDrivetrainController();
     }
 
-
-    @Override
-    public void loop()
-    {
+    //@Override
+    public void loop2(Telemetry telemetry) {
         driveCommand.loop();
+        aligner.loop();
         currentController.drive(this);
+        telemetry.addData("Drivetrain Status:", currentController.getControllableName());
     }
 
 
 
 
-    public static class DrivetrainAligner {
+    public static class DrivetrainAligner implements DrivetrainController.DrivetrainControllable {
 
-        private double Kp = 0.05;
+        private double Kp = 0.03;
         private double Ki = 0.03;
-        private double Kd = 0.001;
+        private double Kd = 0.00;
         private double integralSum = 0;
         private double targetOdo;
         private double lastError = 0;
@@ -155,27 +162,28 @@ public class Drivetrain extends CommandSubsystem {
         private double staticFeedForward = 0.05;
         private DrivetrainController controller;
         public double defaultAngle;
-
+        public boolean running;
         public void setDefaultAngle(double defaultAngle) {
-            this.defaultAngle = defaultAngle;
+            this.targetOdo = defaultAngle;
         }
 
         public void startAlign(){
-            updateTargetOdo(defaultAngle);
+            running = true;
+            updateTargetOdo();
             timer = new ElapsedTime();
         }
 
-        public void updateTargetOdo(double target){
+        public void updateTargetOdo(){
             try {
                 this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
             } catch (TagNotFoundException e) {
-                this.targetOdo = target;
             }
         }
 
 
         public void loop() {
-            //updateTargetOdo(targetOdo);
+            if (!running) return;
+            updateTargetOdo();
             double error = Robot.odometry.getHeading() - targetOdo;
             // rate of change of the error
             double derivative = (error - lastError) / timer.seconds();
@@ -204,6 +212,10 @@ public class Drivetrain extends CommandSubsystem {
             return lastError;
         }
 
+        @Override
+        public String writeName() {
+            return "Aligner";
+        }
     }
 
     public static class DrivetrainController {
@@ -216,7 +228,7 @@ public class Drivetrain extends CommandSubsystem {
         private double frs;
         private double bls;
         private double brs;
-
+        private DrivetrainControllable controllable;
 
 
         public void driveRobotRelative(double forward, double turn, double strafe){
@@ -245,10 +257,18 @@ public class Drivetrain extends CommandSubsystem {
         }
 
         public void drive(Drivetrain drivetrain){
-            if (ftsMode)
-                drivetrain.driveRobotRelative(forward, turn, strafe);
+            if (ftsMode) drivetrain.driveRobotRelative(forward, turn, strafe);
             else drivetrain.setPowersRaw(fls,frs,bls, brs);
         }
+        public String getControllableName(){
+            return controllable !=null ? controllable.writeName():"";
+        }
 
+        public interface DrivetrainControllable{
+            public String writeName();
+        }
+        public void setControllable(DrivetrainControllable controllable){
+            this.controllable = controllable;
+        }
     }
 }

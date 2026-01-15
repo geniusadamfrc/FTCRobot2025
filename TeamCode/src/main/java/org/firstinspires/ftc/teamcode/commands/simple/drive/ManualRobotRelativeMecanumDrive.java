@@ -32,4 +32,9 @@ public class ManualRobotRelativeMecanumDrive extends ManualDriveCommand {
     public void finishImpl(){
         drivetrainController.setDriveToZero();
     }
+
+    @Override
+    public String writeName() {
+        return "Robot Relative Drive";
+    }
 }
