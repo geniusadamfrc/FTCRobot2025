@@ -24,7 +24,7 @@ public class Shooter extends Subsystem {
     public final static double SPEED_DROP_ON_SHOT = 80.0;
     public final static double DEFAULT_TARGET_SPEED = 620.0;
     public final static double DEFAULT_SPEED_TOLERANCE = 30.0;
-    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 3;
+    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 4;
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
