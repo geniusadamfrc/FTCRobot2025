@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands.simple.drive;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.gamepad.Axis;
 
-public class ManualRobotRelativeMecanumDrive extends Command {
+public class ManualRobotRelativeMecanumDrive extends ManualDriveCommand {
     private Axis left_stick_y;
     private Axis left_stick_x;
     private Axis right_stick_x;
@@ -13,7 +12,7 @@ public class ManualRobotRelativeMecanumDrive extends Command {
         this.left_stick_y = left_stick_y;
         this.left_stick_x = left_stick_x;
         this.right_stick_x = right_stick_x;
-        super.registerSubsystem(Robot.drivetrain);
+        registerCommandSubsystem(Robot.drivetrain);
     }
 
     @Override
@@ -26,11 +25,16 @@ public class ManualRobotRelativeMecanumDrive extends Command {
         double forward = -left_stick_y.getState();
         double turn = right_stick_x.getState();
         double strafe = left_stick_x.getState();
-        Robot.drivetrain.driveRobotRelative(forward, turn, strafe);
+        drivetrainController.driveRobotRelative(forward, turn, strafe);
     }
 
     @Override
     public void finishImpl(){
-        Robot.drivetrain.setDriveToZero();
+        drivetrainController.setDriveToZero();
+    }
+
+    @Override
+    public String writeName() {
+        return "Robot Relative Drive";
     }
 }

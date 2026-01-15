@@ -11,23 +11,26 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class StrafePath extends Command {
+public class StrafePath extends DriveCommand {
 
 
     private double inches;
     private Action action;
+    private MecanumDrive controller;
     public StrafePath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
 
         this.inches = inches;
-        this.registerSubsystem(drivetrain);
+        this.registerCommandSubsystem(drivetrain);
+        this.controller = drivePath;
     }
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+        controller.setDrivetrainController(drivetrainController);
+        action = controller.actionBuilder(new Pose2d(
+                Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .lineToX(this.inches)
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
@@ -38,5 +41,9 @@ public class StrafePath extends Command {
     @Override
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
+    }
+    @Override
+    public String writeName() {
+        return "Strafe Path";
     }
 }

@@ -7,27 +7,28 @@ import com.acmerobotics.roadrunner.Pose2d;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
-public class DriveStraightPath extends Command {
+public class DriveStraightPath extends DriveCommand {
 
 
     private double inches;
     private Action action;
+    private MecanumDrive roadrunner;
     public DriveStraightPath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
-
+        this.roadrunner = drivePath;
         this.inches = inches;
-        this.registerSubsystem(drivetrain);
+        this.registerCommandSubsystem(drivetrain);
     }
 
     @Override
     public void beginImpl() {
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+        roadrunner.setDrivetrainController(drivetrainController);
+        action = roadrunner.actionBuilder(new Pose2d(
+                Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
                 .lineToX(this.inches)
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
@@ -38,5 +39,9 @@ public class DriveStraightPath extends Command {
     @Override
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
+    }
+    @Override
+    public String writeName() {
+        return "Drive Straight Path";
     }
 }

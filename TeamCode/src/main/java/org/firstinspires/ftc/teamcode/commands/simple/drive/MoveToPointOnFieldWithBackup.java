@@ -8,34 +8,36 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class MoveToPointOnFieldWithBackup extends Command {
+public class MoveToPointOnFieldWithBackup extends DriveCommand {
 
 
     private double x;
     private double y;
     private double heading;
     private Action action;
-
-    public MoveToPointOnFieldWithBackup(double x, double y, double heading) {
-
+    private MecanumDrive controller;
+    public MoveToPointOnFieldWithBackup(double x, double y, double heading, MecanumDrive controller) {
+        this.controller = controller;
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.registerCommandSubsystem(Robot.drivetrain);
     }
 
     @Override
     public void beginImpl() {
-        double initialX = Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH);
-        double initialY = Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH);
-        double initialHeading =Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS);
+        controller.setDrivetrainController(drivetrainController);
+        double initialX = Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH);
+        double initialY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
+        double initialHeading =Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS);
 
-                action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
+                action = controller.actionBuilder(new Pose2d(
                         initialX,
                         initialY,
                         initialHeading))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(
                         new Pose2d(initialX +30, initialY, initialHeading), initialHeading
                 )
@@ -50,5 +52,9 @@ public class MoveToPointOnFieldWithBackup extends Command {
     @Override
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
+    }
+    @Override
+    public String writeName() {
+        return "Move To Point On Field Backup";
     }
 }

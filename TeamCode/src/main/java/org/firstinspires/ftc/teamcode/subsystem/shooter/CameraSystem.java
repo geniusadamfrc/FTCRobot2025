@@ -85,7 +85,6 @@ public class CameraSystem {
         this.goalId  =goalId;
     }
 
-
     public void doTelemetry(Telemetry telemetry, boolean fullWriteOut) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -95,6 +94,7 @@ public class CameraSystem {
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addData("Camera Bearing", detection.ftcPose.bearing);
                 if (fullWriteOut)telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 //telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 if (fullWriteOut)telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
@@ -112,11 +112,12 @@ public class CameraSystem {
     }
 
 
-    public double computeRangeToGoal() {
+
+    public double computeRangeToGoal(boolean useLastImage) {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
         if (aprilTags.size() ==0){
-            if (lastDetection == null) return 0.0;
+            if (!useLastImage || lastDetection == null) return 0.0;
             return convertRangeToActualDistance(lastDetection.ftcPose.range);
         }
         AprilTagDetection current = null;
@@ -126,29 +127,29 @@ public class CameraSystem {
             }
         }
         if (current == null){
-            if (lastDetection == null) return 0.0;
+            if (!useLastImage || lastDetection == null) return 0.0;
             return convertRangeToActualDistance(lastDetection.ftcPose.range);
         }
         lastDetection = current;
         return convertRangeToActualDistance(current.ftcPose.range);
     }
+
     private double convertRangeToActualDistance(double cameraRange) {
         return cameraRange;
     }
 
-    public double getBearing() {
+    public double getBearing() throws TagNotFoundException {
         if (goalId == 0) throw new RuntimeException("Must set goal ID");
         List<AprilTagDetection> aprilTags  = aprilTag.getDetections();
-
-        if (aprilTags.size() ==0) return lastBearing;
+        if (aprilTags.size() ==0) throw new TagNotFoundException("No Tag");
         AprilTagDetection current = null;
         for(AprilTagDetection d : aprilTags){
             if (d.id == goalId){
                 current = d;
             }
         }
-        if (current == null) return lastBearing;
-        lastBearing = current.ftcPose.bearing;
+        if (current == null) throw new TagNotFoundException("No Tag");
+        //lastBearing = current.ftcPose.bearing;
         return current.ftcPose.bearing;
     }
 

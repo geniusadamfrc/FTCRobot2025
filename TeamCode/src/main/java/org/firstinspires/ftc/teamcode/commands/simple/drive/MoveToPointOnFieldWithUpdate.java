@@ -8,21 +8,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-public class MoveToPointOnFieldWithUpdate extends Command {
+public class MoveToPointOnFieldWithUpdate extends DriveCommand {
 
 
     private double x;
     private double y;
     private double heading;
     private Action action;
-
-    public MoveToPointOnFieldWithUpdate(double x, double y, double heading) {
+    private MecanumDrive controller;
+    public MoveToPointOnFieldWithUpdate(double x, double y, double heading, MecanumDrive controller) {
 
         this.x = x;
         this.y = y;
         this.heading = heading;
-        this.registerSubsystem(Robot.drivetrain);
+        this.registerCommandSubsystem(Robot.drivetrain);
+        this.controller = controller;
     }
     public void update(){
         int pattern = Robot.shooter.camera.getPatternId();
@@ -37,12 +39,13 @@ public class MoveToPointOnFieldWithUpdate extends Command {
 
     @Override
     public void beginImpl() {
+        controller.setDrivetrainController(drivetrainController);
         update();
-        action = Robot.drivetrain.roadRunnerController.actionBuilder(new Pose2d(
-                        Robot.drivetrain.getOdoPosition().getX(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getY(DistanceUnit.INCH),
-                        Robot.drivetrain.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .setTangent(Robot.drivetrain.odo.getHeading(AngleUnit.RADIANS))
+        action = controller.actionBuilder(new Pose2d(
+                        Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
+                        Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
+                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
@@ -53,5 +56,9 @@ public class MoveToPointOnFieldWithUpdate extends Command {
     @Override
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
+    }
+    @Override
+    public String writeName() {
+        return "Move To Point On Field with Update";
     }
 }

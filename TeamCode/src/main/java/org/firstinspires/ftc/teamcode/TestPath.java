@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @TeleOp(name = "TestPathing")
 public class TestPath extends OpMode {
@@ -17,7 +18,8 @@ public class TestPath extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.a && c == null){
-            c = new DriveStraightPath(Robot.drivetrain, Robot.drivetrain.roadRunnerController, 20.0);
+            MecanumDrive controller = new MecanumDrive(hardwareMap, Robot.odometry.getOdoPosition());
+            c = new DriveStraightPath(Robot.drivetrain, controller, 20.0);
             c.begin();
         }
         if (c!= null) {

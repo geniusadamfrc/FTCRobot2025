@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.commands.simple.drive;
-import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.TimerCommand;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class DriveStraight extends Command {
+public class DriveStraight extends DriveCommand {
     private Drivetrain drivetrain;
     private TimerCommand timer;
     private int time;
@@ -14,7 +13,7 @@ public class DriveStraight extends Command {
     private Telemetry telemetry;
     public DriveStraight(Drivetrain drivetrain, double forward, double strafe, int timeInMilliseconds, Telemetry telemetry){
         this.drivetrain = drivetrain;
-        registerSubsystem(drivetrain);
+        //registerCommandSubsystem(drivetrain);
         this.forward = forward;
         this.strafe = strafe;
         this.time = timeInMilliseconds;
@@ -24,13 +23,13 @@ public class DriveStraight extends Command {
     public void beginImpl(){
         timer = new TimerCommand(time);
         timer.begin();
-        drivetrain.driveRobotRelative(forward,0,strafe);
+        drivetrainController.driveRobotRelative(forward,0,strafe);
         telemetry.addData("DriveStraight Begin", "true");
     }
     public void loopImpl(){
         telemetry.addData("DriveStraight Loop", "true");
         if (timer.isFinished()){
-            drivetrain.setDriveToZero();
+            drivetrainController.setDriveToZero();
             finish();
         }else {
             timer.loop();    
@@ -38,7 +37,12 @@ public class DriveStraight extends Command {
         
     }
     public void finishImpl(){
-        drivetrain.setDriveToZero();
+        drivetrainController.setDriveToZero();
+    }
+
+    @Override
+    public String writeName() {
+        return "Drive Straight";
     }
     // todo: write your code here
 }

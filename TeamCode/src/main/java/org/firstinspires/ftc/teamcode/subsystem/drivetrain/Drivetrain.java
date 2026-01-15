@@ -20,10 +20,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystem.Subsystem;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
-import java.util.Locale;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends CommandSubsystem {
     public static final String leftFrontName = "Front Left Motor";
     public static final String rightFrontName = "Front Right Motor";
     public static final String leftBackName = "Back Left Motor";
@@ -32,20 +32,17 @@ public class Drivetrain extends Subsystem {
     public DcMotorEx  rightFrontDrive  = null;
     public DcMotorEx  leftBackDrive   = null;
     public DcMotorEx  rightBackDrive  = null;
-    public final static double CONTROLLER_THRESHOLD = 0.04;
 
-    public GoBildaPinpointDriver odo; // Declare OpMode member for the Odometry Computer
-    public MecanumDrive roadRunnerController;
+    public DrivetrainAligner aligner;
+    private DrivetrainController currentController;
+    private ManualDriveCommand driveCommand; //this is the command that happens if you set the drive function
     public Follower follower;
-    private final boolean ignoreOdo = false;
 
-    private Telemetry telemetry;
-
-    public void init(HardwareMap hardwareMap, Telemetry telemetry, Pose2D initialPose){
-        this.telemetry = telemetry;
+    public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
-        initOdo(hardwareMap, initialPose);
-        initRoadRunner(hardwareMap, initialPose);
+        aligner = new DrivetrainAligner();
+        aligner.controller = new DrivetrainController();
+        aligner.controller.setControllable(aligner);
         initPedro(hardwareMap, initialPose);
         odo.setPosition(initialPose);
 
@@ -64,16 +61,13 @@ public class Drivetrain extends Subsystem {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
-    private void initOdo(HardwareMap hardwareMap, Pose2D initialPose){
-        if (!ignoreOdo) odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        if (ignoreOdo) return;
-        odo.setOffsets(84.0, 0.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.setPosition(initialPose);
-    }
-    private void initRoadRunner(HardwareMap hardwareMap, Pose2D initialPose){
-        this.roadRunnerController = new MecanumDrive(hardwareMap, initialPose);
+
+    public void setDriveCommand(ManualDriveCommand command){
+        this.driveCommand = command;
+        DrivetrainController controller = new DrivetrainController();
+        command.setDrivetrainController(controller);
+        command.begin();
+
     }
     private void initPedro(HardwareMap hardwareMap, Pose2D initialPose){
         follower = Constants.createFollowerRobot(hardwareMap);
@@ -81,23 +75,6 @@ public class Drivetrain extends Subsystem {
     }
 
 
-
-    @Override
-    public void playOnceImpl(){
-        //odo.resetPosAndIMU();
-        if (telemetry == null) return;
-        telemetry.addData("Status", "Initialized");
-        telemetry.addData("X offset", odo.getXOffset(DistanceUnit.MM));
-        telemetry.addData("Y offset", odo.getYOffset(DistanceUnit.MM));
-        telemetry.addData("Device Version Number:", odo.getDeviceVersion());
-        telemetry.addData("Heading Scalar", odo.getYawScalar());
-    }
-    public void setOdoPositions(double x, double y, double heading){
-        odo.setPosition( new Pose2D(DistanceUnit.MM,x, y, AngleUnit.DEGREES, heading));
-    }
-    public Pose2D getOdoPosition(){
-        return odo.getPosition();
-    }
 
     public void setBrakeMode(){
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -111,11 +88,7 @@ public class Drivetrain extends Subsystem {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-
-    public void setDriveToZero(){
-        driveRobotRelative(0,0,0);
-    }
-    public void driveRobotRelative(double forward, double turn, double strafe){
+    private void driveRobotRelative(double forward, double turn, double strafe){
         double fls = forward + turn + strafe;
         double frs = forward - turn - strafe;
         double bls = forward + turn - strafe;
@@ -148,20 +121,12 @@ public class Drivetrain extends Subsystem {
         return minSpeed;
     }
 
-    public void driveFieldRelative(double x, double y, double spin){
-        double strafe = Math.cos(odo.getHeading(AngleUnit.RADIANS))*x + Math.sin(odo.getHeading(AngleUnit.RADIANS))*y;
-        double forward = Math.sin(odo.getHeading(AngleUnit.RADIANS))*x + Math.cos(odo.getHeading(AngleUnit.RADIANS))*y;;
-        driveRobotRelative(forward, spin, strafe);
-    }
-
-    
-    
-    public void setPowersRaw(double fls, double frs, double bls, double brs){
+    private void setPowersRaw(double fls, double frs, double bls, double brs){
         leftFrontDrive.setPower(fls);
         rightFrontDrive.setPower(frs);
         leftBackDrive.setPower(bls);
         rightBackDrive.setPower(brs);
-        
+
     }
     public void setPowersRaw(double fls, double frs, double bls, double brs, double threshold){
         if(Math.abs(leftFrontDrive.getPower() -fls) > threshold) leftFrontDrive.setPower(fls);
@@ -171,44 +136,162 @@ public class Drivetrain extends Subsystem {
     }
 
     public int getEncoderReading(){
-        return (leftFrontDrive.getCurrentPosition() 
+        return (leftFrontDrive.getCurrentPosition()
             + leftBackDrive.getCurrentPosition()
             + rightFrontDrive.getCurrentPosition()
             + rightBackDrive.getCurrentPosition())/4;
     }
 
-    public double getHeading(){
-        return odo.getHeading(AngleUnit.DEGREES);
-    }
 
-    public void resetPosition(){
-        if(ignoreOdo)return;
-        odo.resetPosAndIMU(); //resets the position to 0 and recalibrates the IMU
+    public boolean isAligned(){
+        return aligner.isAligned();
     }
-    public void recalibrateIMU(){
-        if(ignoreOdo)return;
-        odo.recalibrateIMU(); //recalibrates the IMU without resetting position
+    public DrivetrainController setCommand(){
+        aligner.running = false;
+        DrivetrainController controller = new DrivetrainController();
+        currentController = controller;
+        return controller;
     }
-    @Override
-    public void loop(){
-        /*
-            Request an update from the Pinpoint odometry computer. This checks almost all outputs
-            from the device in a single I2C read.
-             */
-        //telemetry.addData("Wheel Config", leftFrontDrive.getDirection());
-        //telemetry.update();
-        if(ignoreOdo)return;
-        odo.update();
-        writeOutPosition(telemetry);
-        //String velocity = String.format(Locale.US,"{XVel: %.3f, YVel: %.3f, HVel: %.3f}", odo.getVelX(DistanceUnit.MM), odo.getVelY(DistanceUnit.MM), odo.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
-        //telemetry.addData("Velocity", velocity);
-    }
-    public void writeOutPosition(Telemetry telemetry){
-        odo.update();
-        Pose2D pos = odo.getPosition();
-        String data = String.format(Locale.US, "{X: %.3f, Y: %.3f, H: %.3f}", pos.getX(DistanceUnit.MM), pos.getY(DistanceUnit.MM), pos.getHeading(AngleUnit.DEGREES));
-        telemetry.addData("Position", data);
+    public void setAlign(){
+        currentController = aligner.controller;
+        aligner.startAlign();
 
     }
+    public void setDrive(){
+        aligner.running = false;
+        currentController = driveCommand.getDrivetrainController();
+    }
 
+    //@Override
+    public void loop2(Telemetry telemetry) {
+        driveCommand.loop();
+        aligner.loop();
+        currentController.drive(this);
+        telemetry.addData("Drivetrain Status:", currentController.getControllableName());
+    }
+
+
+
+
+    public static class DrivetrainAligner implements DrivetrainController.DrivetrainControllable {
+
+        private double Kp = 0.03;
+        private double Ki = 0.03;
+        private double Kd = 0.00;
+        private double integralSum = 0;
+        private double targetOdo;
+        private double lastError = 0;
+        ElapsedTime timer;
+        private double staticFeedForward = 0.05;
+        private DrivetrainController controller;
+        public double defaultAngle;
+        public boolean running;
+        public void setDefaultAngle(double defaultAngle) {
+            this.targetOdo = defaultAngle;
+        }
+
+        public void startAlign(){
+            running = true;
+            updateTargetOdo();
+            timer = new ElapsedTime();
+        }
+
+        public void updateTargetOdo(){
+            try {
+                this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
+            } catch (TagNotFoundException e) {
+            }
+        }
+
+
+        public void loop() {
+            if (!running) return;
+            updateTargetOdo();
+            double error = Robot.odometry.getHeading() - targetOdo;
+            // rate of change of the error
+            double derivative = (error - lastError) / timer.seconds();
+            // sum of all error over time
+            if (error*lastError < 0) integralSum = 0;
+            integralSum = integralSum + (error * timer.seconds());
+
+            double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+            double feedForward = staticFeedForward;
+            if (isAligned() ) feedForward =0;
+            out = out + (out < 0 ? -feedForward : feedForward);
+            controller.driveRobotRelative(0.0, out, 0.0);
+            lastError = error;
+            // reset the timer for next time
+            timer.reset();
+        }
+        public boolean isAligned(){
+            double error = Robot.odometry.getHeading() - targetOdo;
+            return Math.abs(error) < 1.5;
+        }
+
+        public double getTargetOdo(){
+            return targetOdo;
+        }
+        public double getLastError(){
+            return lastError;
+        }
+
+        @Override
+        public String writeName() {
+            return "Aligner";
+        }
+    }
+
+    public static class DrivetrainController {
+        private double forward;
+        private double turn;
+        private double strafe;
+        private boolean ftsMode;
+
+        private double fls;
+        private double frs;
+        private double bls;
+        private double brs;
+        private DrivetrainControllable controllable;
+
+
+        public void driveRobotRelative(double forward, double turn, double strafe){
+            ftsMode =true;
+            this.forward = forward;
+            this.turn = turn;
+            this.strafe = strafe;
+        }
+        public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
+            double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
+            double forward = Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
+            driveRobotRelative(forward, spin, strafe);
+        }
+
+
+        public void setDriveToZero(){
+            driveRobotRelative(0,0,0);
+        }
+
+        public void setPowersRaw(double fls, double frs, double bls, double brs){
+            ftsMode = false;
+            this.fls= fls;
+            this.frs = frs;
+            this.bls =bls;
+            this.brs = brs;
+        }
+
+        public void drive(Drivetrain drivetrain){
+            if (ftsMode) drivetrain.driveRobotRelative(forward, turn, strafe);
+            else drivetrain.setPowersRaw(fls,frs,bls, brs);
+        }
+        public String getControllableName(){
+            return controllable !=null ? controllable.writeName():"";
+        }
+
+        public interface DrivetrainControllable{
+            public String writeName();
+        }
+        public void setControllable(DrivetrainControllable controllable){
+            this.controllable = controllable;
+        }
+    }
 }
