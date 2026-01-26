@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 
 public class DriveStraightPath extends DriveCommand {
 
@@ -16,10 +15,10 @@ public class DriveStraightPath extends DriveCommand {
     private double inches;
     private Action action;
     private MecanumDrive roadrunner;
-    public DriveStraightPath(Drivetrain drivetrain, MecanumDrive drivePath, double inches){
+    public DriveStraightPath(MecanumDrive drivePath, double inches){
         this.roadrunner = drivePath;
         this.inches = inches;
-        this.registerCommandSubsystem(drivetrain);
+        //this.registerCommandSubsystem(drivetrain);
     }
 
     @Override

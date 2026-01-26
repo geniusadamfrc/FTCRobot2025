@@ -19,7 +19,7 @@ public class TestPath extends OpMode {
     public void loop() {
         if (gamepad1.a && c == null){
             MecanumDrive controller = new MecanumDrive(hardwareMap, Robot.odometry.getOdoPosition());
-            c = new DriveStraightPath(Robot.drivetrain, controller, 20.0);
+            c = new DriveStraightPath(controller, 20.0);
             c.begin();
         }
         if (c!= null) {

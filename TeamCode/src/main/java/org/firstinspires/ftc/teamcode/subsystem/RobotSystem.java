@@ -112,6 +112,7 @@ public class RobotSystem extends Subsystem{
             }
             else{
                 state = State.SPIN_UP;
+                Robot.drivetrain.setDrive();
                 Robot.intake.setIdleIntake();
             }
         }

@@ -6,6 +6,7 @@ import com.pedropathing.geometry.CoordinateSystem;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -59,7 +60,7 @@ public class Drivetrain extends CommandSubsystem {
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
@@ -119,7 +120,7 @@ public class Drivetrain extends CommandSubsystem {
         return minSpeed;
     }
 
-    private void setPowersRaw(double fls, double frs, double bls, double brs){
+    public void setPowersRaw(double fls, double frs, double bls, double brs){
         leftFrontDrive.setPower(fls);
         rightFrontDrive.setPower(frs);
         leftBackDrive.setPower(bls);
@@ -163,9 +164,12 @@ public class Drivetrain extends CommandSubsystem {
     //@Override
     public void loop2(Telemetry telemetry) {
         driveCommand.loop();
+        aligner.updateTargetOdo();
         aligner.loop();
         currentController.drive(this);
         telemetry.addData("Drivetrain Status:", currentController.getControllableName());
+        telemetry.addData("Error" , aligner.lastError);
+        telemetry.addData("Out", aligner.out);
     }
 
 
@@ -179,11 +183,12 @@ public class Drivetrain extends CommandSubsystem {
         private double integralSum = 0;
         private double targetOdo;
         private double lastError = 0;
-        ElapsedTime timer;
+        ElapsedTime timer = new ElapsedTime();
         private double staticFeedForward = 0.05;
         private DrivetrainController controller;
         public double defaultAngle;
         public boolean running;
+        double out=0;
         public void setDefaultAngle(double defaultAngle) {
             this.targetOdo = defaultAngle;
         }
@@ -191,7 +196,9 @@ public class Drivetrain extends CommandSubsystem {
         public void startAlign(){
             running = true;
             updateTargetOdo();
-            timer = new ElapsedTime();
+            timer.reset();
+            integralSum = 0;
+            lastError = 0;
         }
 
         public void updateTargetOdo(){
@@ -203,8 +210,6 @@ public class Drivetrain extends CommandSubsystem {
 
 
         public void loop() {
-            if (!running) return;
-            updateTargetOdo();
             double error = Robot.odometry.getHeading() - targetOdo;
             // rate of change of the error
             double derivative = (error - lastError) / timer.seconds();
@@ -212,14 +217,16 @@ public class Drivetrain extends CommandSubsystem {
             if (error*lastError < 0) integralSum = 0;
             integralSum = integralSum + (error * timer.seconds());
 
-            double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+            out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
             double feedForward = staticFeedForward;
             if (isAligned() ) feedForward =0;
             out = out + (out < 0 ? -feedForward : feedForward);
-            controller.driveRobotRelative(0.0, out, 0.0);
-            lastError = error;
-            // reset the timer for next time
             timer.reset();
+            lastError = error;
+            if (!running) return;
+
+            controller.driveRobotRelative(0.0, out, 0.0);
+            // reset the timer for next time
         }
         public boolean isAligned(){
             double error = Robot.odometry.getHeading() - targetOdo;

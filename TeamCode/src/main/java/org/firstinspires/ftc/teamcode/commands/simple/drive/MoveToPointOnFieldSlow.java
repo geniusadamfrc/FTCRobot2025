@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
+
 public class MoveToPointOnFieldSlow extends DriveCommand {
 
 
@@ -52,7 +53,7 @@ public class MoveToPointOnFieldSlow extends DriveCommand {
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
                 //.lineToX(47.5)
-                .waitSeconds(0.5).build();
+                .waitSeconds(0.2).build();
     }
 
     @Override
