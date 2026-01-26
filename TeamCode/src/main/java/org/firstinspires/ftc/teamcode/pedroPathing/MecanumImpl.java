@@ -190,7 +190,8 @@ public class MecanumImpl extends Drivetrain {
     }
 
     public void breakFollowing() {
-        controller.setPowersRaw(0,0,0,0);
+        if (controller!= null)
+            controller.setPowersRaw(0,0,0,0);
         setMotorsToFloat();
     }
 
@@ -252,6 +253,6 @@ public class MecanumImpl extends Drivetrain {
 
     private org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain.DrivetrainController controller;
     public void setDrivetrainController(org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain.DrivetrainController drivetrainController) {
-    this.controller = drivetrainController;
+        this.controller = drivetrainController;
     }
 }
