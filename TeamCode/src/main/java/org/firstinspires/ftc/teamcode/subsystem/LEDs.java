@@ -29,13 +29,13 @@ public class LEDs extends Subsystem{
     private void loadStates(){
         stateToArtboard = new HashMap<State, GoBildaPrismDriver.Artboard>();
         stateToArtboard.put(State.Off, GoBildaPrismDriver.Artboard.ARTBOARD_0);
-        stateToArtboard.put(State.Loaded1, GoBildaPrismDriver.Artboard.ARTBOARD_1);
-        stateToArtboard.put(State.Loaded2, GoBildaPrismDriver.Artboard.ARTBOARD_2);
-        stateToArtboard.put(State.Loaded3, GoBildaPrismDriver.Artboard.ARTBOARD_3);
-        stateToArtboard.put(State.NoLoaded, GoBildaPrismDriver.Artboard.ARTBOARD_4);
-        stateToArtboard.put(State.SpeedingUp, GoBildaPrismDriver.Artboard.ARTBOARD_5);
-        stateToArtboard.put(State.ReadyForShot, GoBildaPrismDriver.Artboard.ARTBOARD_6);
-        stateToArtboard.put(State.Parked, GoBildaPrismDriver.Artboard.ARTBOARD_7);
+        stateToArtboard.put(State.NoLoaded, GoBildaPrismDriver.Artboard.ARTBOARD_1);
+        stateToArtboard.put(State.Loaded1, GoBildaPrismDriver.Artboard.ARTBOARD_2);
+        stateToArtboard.put(State.Loaded2, GoBildaPrismDriver.Artboard.ARTBOARD_3);
+        stateToArtboard.put(State.Loaded3, GoBildaPrismDriver.Artboard.ARTBOARD_4);
+        stateToArtboard.put(State.SpeedingUp, GoBildaPrismDriver.Artboard.ARTBOARD_6);
+        stateToArtboard.put(State.ReadyForShot, GoBildaPrismDriver.Artboard.ARTBOARD_7);
+        stateToArtboard.put(State.Parked, GoBildaPrismDriver.Artboard.ARTBOARD_0);
 
 
     }
@@ -57,7 +57,7 @@ public class LEDs extends Subsystem{
             else if (balls ==2 ) setState(State.Loaded2);
             else if (balls ==3) setState(State.Loaded3);
         }
-        else if (Robot.robot.isShooting()){
+        else if (Robot.robot.isInShootingMode()){
            if (Robot.robot.isReadyForShot()) setState(State.ReadyForShot);
            else setState(State.SpeedingUp);
 

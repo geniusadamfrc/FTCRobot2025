@@ -24,7 +24,7 @@ public class Shooter extends Subsystem {
     public final static double SPEED_DROP_ON_SHOT = 80.0;
     public final static double DEFAULT_TARGET_SPEED = 620.0;
     public final static double DEFAULT_SPEED_TOLERANCE = 30.0;
-    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 3;
+    public final static int ITERATIONS_TO_ASSUME_AT_SPEED = 4;
 
     private DcMotorEx leftShooter;
     private DcMotorEx rightShooter;
@@ -130,11 +130,13 @@ public class Shooter extends Subsystem {
     private double getIdealShootingSpeed()  {
         double range = camera.computeRangeToGoal(false);
         if (range < 30) return 0;
-        else if (range< 51) return 600;
+        else if (range< 71) return 600;
         else {
-            return 500 + 2.5 * range;
+            return 330 + 4.0 * range;
         }
-
+        //70*2.5 +5 = 600
+        //113*2.5 + 500 = 780
+        // 105/43
     }
 
 

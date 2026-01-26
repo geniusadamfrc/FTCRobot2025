@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.RobotSystem;
 
-@TeleOp(name = "Blue Teleop Test")
+@TeleOp(name = "Blue Teleop")
 public class BlueTeleopTest extends OpMode {
 
 

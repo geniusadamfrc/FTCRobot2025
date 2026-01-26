@@ -112,6 +112,7 @@ public class RobotSystem extends Subsystem{
             }
             else{
                 state = State.SPIN_UP;
+                Robot.drivetrain.setDrive();
                 Robot.intake.setIdleIntake();
             }
         }
@@ -130,6 +131,10 @@ public class RobotSystem extends Subsystem{
     }
     public boolean isReadyForShot() {
         return state == State.FINDING && shooter.isReadyForShot() && aligner.isAligned();
+    }
+
+    public boolean isInShootingMode() {
+        return state == State.SPIN_UP || state == State.FINDING || state == State.SHOOTING;
     }
 
     private enum State {

@@ -10,16 +10,27 @@ public class DriveForwardAndIntake extends Command {
     private MoveToPointOnFieldSlow drive;
     private double distance;
     private MecanumDrive controller;
-    public DriveForwardAndIntake(double distance, MecanumDrive controller){
+    private double heading;
+    private boolean useCurrentHeading;
+    public DriveForwardAndIntake(double distance, MecanumDrive controller) {
         this.distance = distance;
         this.controller = controller;
+        useCurrentHeading = true;
+    }
+    public DriveForwardAndIntake(double distance, double desiredAngle, MecanumDrive controller){
+        this.distance = distance;
+        this.controller = controller;
+        this.heading = desiredAngle;
+        useCurrentHeading = false;
     }
     @Override
     public void beginImpl() {
         double currentY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
         double currentX = Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH);
-        double currentHeading = Robot.odometry.getHeading();
-        drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, currentHeading, controller);
+        if (useCurrentHeading) {
+            heading = Robot.odometry.getHeading();
+        }
+        drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, heading, controller);
         //rampUp = new SlowRampUp();
         drive.begin();
         Robot.robot.setIntaking();

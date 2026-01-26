@@ -35,7 +35,7 @@ public class MoveToPointOnField extends DriveCommand {
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH),
                         Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS)))
-                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
+                //.setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))

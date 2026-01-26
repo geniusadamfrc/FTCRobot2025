@@ -12,49 +12,65 @@ import org.firstinspires.ftc.teamcode.commands.simple.DriveForwardAndIntake;
 import org.firstinspires.ftc.teamcode.commands.simple.WaitMSeconds;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldSlow;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous(name="Red Main Auto")
-public class RedAutoShoot3Get3 extends BaseAutoCommand {
-
+@Autonomous(name="Blue Back Auto")
+public class BlueBackAuto extends BaseAutoCommand {
 
     @Override
     public int getGoalID() {
-        return 24;
+        return 20;
     }
     @Override
-    public double getDefaultAngle(){return -135;}
+    public double getDefaultAngle(){return -70;}
     @Override
     public Pose2D getInitialPose() {
-        return new Pose2D(DistanceUnit.INCH,59, 58, AngleUnit.DEGREES,-145);
+        return new Pose2D(DistanceUnit.INCH, -9, -54, AngleUnit.DEGREES, -90);
     }
     @Override
-    public Command getMainCommand() {
+    public Command getMainCommand(){
         MecanumDrive roadrunner = new MecanumDrive(hardwareMap, getInitialPose());
         SequentialCommand main = new SequentialCommand();
         ParallelCommand sq1 = new ParallelCommand();
-        sq1.addCommand(new DriveStraightPath(roadrunner, 24));
+        main.addCommand(new MoveToPointOnField(-9, -48, -70, roadrunner));
         sq1.addCommand(new StartUpShooter(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot());
+        //main.addCommand(new Turn90DegreesPath(-115));
+        //main.addCommand(new IdentifyPattern());
+        //main.addCommand(new Turn90Degrees(0.4, 170, telemetry ));
 
 
-        main.addCommand(new MoveToPointOnField(18,4,0, roadrunner));
-        main.addCommand(new DriveForwardAndIntake(33, roadrunner));
-
+        main.addCommand(new MoveToPointOnField(-12,-26,179, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(-33, 179, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnField(20, 32, -145,roadrunner));
+        sq2.addCommand(new MoveToPointOnField(-9, -48, -70, roadrunner));
         sq2.addCommand(new StartUpShooter(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new Shoot());
-        main.addCommand(new MoveToPointOnField(20, -20, 0,roadrunner));
-        main.addCommand(new DriveForwardAndIntake(33, roadrunner));
-        main.addCommand(new MoveToPointOnField(35, -20, 0, roadrunner));
-        main.addCommand(new MoveToPointOnField(24, 50, 179, roadrunner));
+        main.addCommand(new MoveToPointOnField(-12,-26,179, roadrunner));
+
+        /*main.addCommand(new MoveToPointOnField(-12, -24, 179, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(-42, roadrunner));
+
+        main.addCommand(new DriveStraightPath(roadrunner, -10));
+        main.addCommand(new Turn90DegreesPath(-90, roadrunner));
+        ParallelCommand sq3 = new ParallelCommand();
+        sq3.addCommand(new MoveToPointOnField(-20, 55, 0, roadrunner));
+        sq3.addCommand(new StartUpShooter(620));
+        main.addCommand(sq3);
+
+        main.addCommand(new Shoot());
+
+        //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
+        //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
+        */
         return main;
+
     }
+
 }

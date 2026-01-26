@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.ParallelCommand;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
+@Disabled
 @Autonomous(name="Blue Pattern Match Auto")
 public class BluePatternMatchAuto extends BaseAutoCommand {
 
@@ -40,7 +41,7 @@ public class BluePatternMatchAuto extends BaseAutoCommand {
         MecanumDrive roadrunner = new MecanumDrive(hardwareMap, getInitialPose());
         SequentialCommand main = new SequentialCommand();
         ParallelCommand sq1 = new ParallelCommand();
-        sq1.addCommand(new DriveStraightPath(Robot.drivetrain, roadrunner, -24));
+        sq1.addCommand(new DriveStraightPath(roadrunner, -24));
         sq1.addCommand(new StartUpShooter(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot());
