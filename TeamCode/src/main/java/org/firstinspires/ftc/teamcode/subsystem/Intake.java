@@ -14,7 +14,7 @@ public class Intake extends Subsystem{
     private IntakeState intakeState;
     public void init (HardwareMap hardwareMap){
         intakeMotor = hardwareMap.get(DcMotorEx.class, INTAKE_NAME);
-        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeState = IntakeState.IDLE;
     }
 
@@ -30,6 +30,11 @@ public class Intake extends Subsystem{
         intakeState = IntakeState.INTAKING;
         doIntaking();
     }
+    public void setReverse(){
+        if (intakeState != IntakeState.IDLE) return;
+        intakeState = IntakeState.REVERSE;
+        doReverse();
+    }
 
 
 
@@ -38,6 +43,7 @@ public class Intake extends Subsystem{
         if (intakeState == IntakeState.IDLE) doIdle();
         else if (intakeState == IntakeState.INTAKING) doIntaking();
         else if (intakeState == IntakeState.SLOW_INTAKING) doSlowIntaking();
+        else if (intakeState == IntakeState.REVERSE) doReverse();
     }
     private void doIdle() {
         intakeMotor.setPower(0.0);
@@ -46,8 +52,11 @@ public class Intake extends Subsystem{
         intakeMotor.setPower(intakePower);
     }
     private void doSlowIntaking(){ intakeMotor.setPower(SLOW_INTAKE_POWER);}
+    private void doReverse(){
+        intakeMotor.setPower(-intakePower);
+    }
 
     public enum IntakeState{
-        IDLE, INTAKING, SLOW_INTAKING
+        IDLE, INTAKING, SLOW_INTAKING, REVERSE
     }
 }

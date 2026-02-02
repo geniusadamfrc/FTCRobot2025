@@ -1,9 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Ramp extends Subsystem{
     public static final String RAMP_NAME = "ramp";
@@ -11,8 +18,9 @@ public class Ramp extends Subsystem{
     public static final String BOTTOM_IR_2_NAME = "upperIRSensor";
     public static final double DEFAULT_TARGET_POWER = 1.0;
     public static final double SLOW_RAMP_POWER = 0.4;
-    private static final double LOADING_DISTANCE = 200;
+    private static final double LOADING_DISTANCE = 600;
     private static final double FEED_DISTANCE = 400 ;
+    private static final float GAIN = 100;
     private DcMotorEx rampMotor;
 
     private double targetPower;
@@ -22,7 +30,11 @@ public class Ramp extends Subsystem{
     private State state;
     private DigitalChannel bottomIR;
     private DigitalChannel bottomIR2;
+    private ColorSensor colorSensor;
+    private DistanceSensor colorSensorDistance;
     private int countOfIntake;
+    private boolean manualIndexing;
+    private boolean manualIndexLoadBall;
 
     public void init (HardwareMap hardwareMap){
         rampMotor = hardwareMap.get(DcMotorEx.class, RAMP_NAME);
@@ -32,8 +44,11 @@ public class Ramp extends Subsystem{
         bottomIR.setMode(DigitalChannel.Mode.INPUT);
         bottomIR2 = hardwareMap.get(DigitalChannel.class,BOTTOM_IR_2_NAME);
         bottomIR2.setMode(DigitalChannel.Mode.INPUT);
-
+        colorSensor = hardwareMap.get(ColorSensor.class, "color_sensor");
+        colorSensorDistance = hardwareMap.get(DistanceSensor.class, "color_sensor");
+        ((NormalizedColorSensor) colorSensor).setGain(GAIN);
         targetPower = DEFAULT_TARGET_POWER;
+        manualIndexing = false;
     }
     public void setIdlePower(double power){ this.idlePower = power; }
     public double getRampPosition() {
@@ -43,12 +58,14 @@ public class Ramp extends Subsystem{
     public void setIdleRamp(){
         state = State.IDLE;
         doIdle();
+        colorSensor.enableLed(false);
     }
     public void setLoading(){
         resetBallsLoaded();
         state = State.LOADING;
         countOfIntake = 0;
         doLoading();
+        colorSensor.enableLed(true);
     }
 
     public void setFeeding(){
@@ -60,6 +77,12 @@ public class Ramp extends Subsystem{
     }
 
 
+    public void setManualIndexing(boolean manualIndexing){
+        this.manualIndexing = manualIndexing;
+    }
+    public void setManualIndexLoadBall(boolean manualIndexLoadBall){
+        this.manualIndexLoadBall = manualIndexLoadBall;
+    }
 
     public void ballLoaded(){ballsLoaded++;}
     public void ballUnloaded(){ballsLoaded--;}
@@ -69,8 +92,27 @@ public class Ramp extends Subsystem{
         this.ballsLoaded = ballsLoaded;
     }
 
-    public boolean isBallInIntake(){
-        return !bottomIR.getState() || !bottomIR2.getState();
+    public boolean isBallInIntake()
+    {
+        if (manualIndexing) return manualIndexLoadBall;
+
+        NormalizedRGBA myNormalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
+        // Convert the normalized color values to an Android color value.
+        int myColor = myNormalizedColors.toColor();
+        //purple:  0.17, 0.2, 0.3 -- 0.2, 0.25, 0.38 -- 0.235, 0.278, 0.42  // in a hole 0.1, 0.13, 0.174
+        //Distance 6.6 - 2.6
+        //unloaded distance 6.8 low
+        //unloaded 0.07, 0.12, 0.08
+        //green:  0.1, 0.37, 0.27 - 0.08, 0.29, 0.22 -- 0.11, 0.39, 0.29  // on a hole 0.007, 0.25, 0.18
+        //Distance:  6
+
+        double red = myNormalizedColors.red;
+        double green  = myNormalizedColors.green;
+        double blue = myNormalizedColors.blue;
+        double distance = colorSensorDistance.getDistance(DistanceUnit.CM);
+
+        return green > 0.2 || blue > 0.15 || distance < 4;
+
     }
 
     @Override
@@ -119,6 +161,10 @@ public class Ramp extends Subsystem{
         return state.toString();
     }
 
+    public void writeOut(Telemetry telemetry){
+        telemetry.addData("Ramp: ", state.toString());
+        telemetry.addData("Ramp Position:", rampMotor.getCurrentPosition());
+    }
     public boolean isRampIdle() {
         return state == State.IDLE;
     }
