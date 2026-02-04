@@ -19,7 +19,7 @@ public class Ramp extends Subsystem{
     public static final double DEFAULT_TARGET_POWER = 1.0;
     public static final double SLOW_RAMP_POWER = 0.4;
     private static final double LOADING_DISTANCE = 600;
-    private static final double FEED_DISTANCE = 400 ;
+    private static final double FEED_DISTANCE = 800 ;
     private static final float GAIN = 100;
     private DcMotorEx rampMotor;
 

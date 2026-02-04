@@ -28,7 +28,7 @@ public class Drivetrain extends CommandSubsystem {
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
-        aligner = new DrivetrainAligner();
+        aligner = new DrivetrainAlignerPID();
         aligner.controller = new DrivetrainController();
         aligner.controller.setControllable(aligner);
 
@@ -153,30 +153,56 @@ public class Drivetrain extends CommandSubsystem {
         currentController.drive(this);
         telemetry.addData("Drivetrain Status:", currentController.getControllableName());
         telemetry.addData("Error" , aligner.lastError);
-        telemetry.addData("Out", aligner.out);
+        //telemetry.addData("Out", aligner.out);
     }
 
 
 
 
-    public static class DrivetrainAligner implements DrivetrainController.DrivetrainControllable {
+    public abstract class DrivetrainAligner implements DrivetrainController.DrivetrainControllable{
+        protected DrivetrainController controller;
+        protected double targetOdo;
+        protected double lastError = 0;
+        protected double defaultAngle;
 
-        private double Kp = 0.03;
-        private double Ki = 0.03;
-        private double Kd = 0.00;
-        private double integralSum = 0;
-        private double targetOdo;
-        private double lastError = 0;
-        ElapsedTime timer = new ElapsedTime();
-        private double staticFeedForward = 0.05;
-        private DrivetrainController controller;
-        public double defaultAngle;
+        public abstract void startAlign();
+        public abstract void loop();
+        public void updateTargetOdo(){
+            try {
+                this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
+            } catch (TagNotFoundException e) {
+            }
+        }
         public boolean running;
-        double out=0;
+
+        public boolean isAligned(){
+            double error = Robot.odometry.getHeading() - targetOdo;
+            return Math.abs(error) < 1.5;
+        }
+        public double getTargetOdo(){
+            return targetOdo;
+        }
+        public double getLastError(){
+            return lastError;
+        }
         public void setDefaultAngle(double defaultAngle) {
             this.targetOdo = defaultAngle;
         }
 
+
+    }
+    public class DrivetrainAlignerPID  extends DrivetrainAligner{
+
+        private double Kp = 0.01;
+        private double Ki = 0.03;
+        private double Kd = 0.00;
+        private double integralSum = 0;
+        ElapsedTime timer = new ElapsedTime();
+        private double staticFeedForward = 0.05;
+        double out=0;
+
+
+        @Override
         public void startAlign(){
             running = true;
             updateTargetOdo();
@@ -184,15 +210,7 @@ public class Drivetrain extends CommandSubsystem {
             integralSum = 0;
             lastError = 0;
         }
-
-        public void updateTargetOdo(){
-            try {
-                this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
-            } catch (TagNotFoundException e) {
-            }
-        }
-
-
+        @Override
         public void loop() {
             double error = Robot.odometry.getHeading() - targetOdo;
             // rate of change of the error
@@ -212,23 +230,17 @@ public class Drivetrain extends CommandSubsystem {
             controller.driveRobotRelative(0.0, out, 0.0);
             // reset the timer for next time
         }
-        public boolean isAligned(){
-            double error = Robot.odometry.getHeading() - targetOdo;
-            return Math.abs(error) < 1.5;
-        }
 
-        public double getTargetOdo(){
-            return targetOdo;
-        }
-        public double getLastError(){
-            return lastError;
-        }
 
         @Override
         public String writeName() {
             return "Aligner";
         }
     }
+
+
+
+
 
     public static class DrivetrainController {
         private double forward;
