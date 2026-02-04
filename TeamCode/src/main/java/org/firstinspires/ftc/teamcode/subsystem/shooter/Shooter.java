@@ -41,8 +41,8 @@ public class Shooter extends Subsystem {
         leftShooter = hardwareMap.get(DcMotorEx.class, LEFT_SHOOTER_NAME);
         rightShooter = hardwareMap.get(DcMotorEx.class, RIGHT_SHOOTER_NAME);
 
-        leftShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         leftShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftShooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(56, 0.8,0,10));
@@ -61,6 +61,7 @@ public class Shooter extends Subsystem {
         telemetry.addData("Actual Speeds L/R", leftShooter.getVelocity() + "/" + rightShooter.getVelocity());
         //telemetry.addData("Right Speed", rightShooter.getVelocity());
     }
+    //public void writeSpeeds(){}
 
     public void setIdleShooter(){
         shooterState = ShooterState.IDLE;
@@ -130,15 +131,14 @@ public class Shooter extends Subsystem {
     private double getIdealShootingSpeed()  {
         double range = camera.computeRangeToGoal(false);
         if (range < 30) return 0;
-        else if (range< 71) return 600;
+        else if (range< 46) return 580;
         else {
-            return 330 + 4.0 * range;
+            return 430 + 3.16 * range;
         }
         //70*2.5 +5 = 600
         //113*2.5 + 500 = 780
         // 105/43
     }
-
 
 
     private enum ShooterState {
