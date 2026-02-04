@@ -68,6 +68,8 @@ public class Robot {
 
         //update these
         drivetrain.loop2(telemetry);
+        shooter.writeSpeeds(telemetry);
+        ramp.writeOut(telemetry);
         odometry.loop();
         shooter.loop();
         ramp.loop();

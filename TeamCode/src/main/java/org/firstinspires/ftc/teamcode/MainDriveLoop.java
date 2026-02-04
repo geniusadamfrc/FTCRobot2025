@@ -20,7 +20,11 @@ public class MainDriveLoop {
 
         Robot.ramp.setIdlePower(gamepad1.right_trigger - gamepad1.left_trigger);
         Robot.robot.setOkToFind(gamepad1.b);
+        if (gamepad1.y) Robot.intake.setReverse();
 
+        if (gamepad1.dpad_left) Robot.ramp.setManualIndexing(true);
+        else if (gamepad1.dpad_right) Robot.ramp.setManualIndexing(false);
+        Robot.ramp.setManualIndexLoadBall(gamepad1.x);
 
         Robot.update(telemetry);
 

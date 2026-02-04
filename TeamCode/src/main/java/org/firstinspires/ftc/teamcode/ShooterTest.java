@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.teamcode.subsystem.shooter.CameraSystem;
 
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
@@ -67,6 +68,7 @@ public class ShooterTest extends OpMode{
     boolean tuneI = false;
     boolean tuneD = false;
     boolean tuneF = false;
+    CameraSystem camera;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -78,7 +80,7 @@ public class ShooterTest extends OpMode{
         rampMotor  = hardwareMap.get(DcMotorEx.class, "ramp");
 
 
-        leftShooterWheel.setDirection(DcMotor.Direction.FORWARD);
+        leftShooterWheel.setDirection(DcMotor.Direction.REVERSE);
 
         leftShooterWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightShooterWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -87,6 +89,10 @@ public class ShooterTest extends OpMode{
         rightShooterWheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(27,8,0.0,15));
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press START.");    //
+        camera = new CameraSystem();
+        camera.init(hardwareMap);
+        camera.setGoalId(20);
+
     }
 
     /*
@@ -101,6 +107,7 @@ public class ShooterTest extends OpMode{
      */
     @Override
     public void start() {
+
     }
 
     /*
@@ -108,6 +115,7 @@ public class ShooterTest extends OpMode{
      */
     @Override
     public void loop() {
+
         if (gamepad1.left_bumper) {
             leftShooterWheel.setVelocity(speed);
             rightShooterWheel.setVelocity(speed);
@@ -164,7 +172,10 @@ public class ShooterTest extends OpMode{
         if (tuneD) telemetry.addLine("TUNING D");
         if (tuneF) telemetry.addLine("TUNING F");
 
-
+        telemetry.addData("Range", camera.computeRangeToGoal(true));
+        try{telemetry.addData("Bearing", camera.getBearing());}
+        catch (Exception ex){}
+        telemetry.update();
     }
 
     /*

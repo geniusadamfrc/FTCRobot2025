@@ -51,7 +51,7 @@ public class RobotSystem extends Subsystem{
         state = State.IDLE;
     }
     public void setStartShooting(){
-        if (state == State.IDLE || state == State.INTAKING) {
+        if (state == State.IDLE || state == State.INTAKING || state == State.INTAKING_LAST_LOAD) {
             Robot.intake.setIdleIntake();
             shooter.startShooting();
             ramp.setIdleRamp();
@@ -82,6 +82,7 @@ public class RobotSystem extends Subsystem{
     public void loop(){
         if (state == State.IDLE) {}
         if (state == State.INTAKING)doIntaking();
+        if (state == State.INTAKING_LAST_LOAD) doIntakingLastLoad();
         if (state == State.SPIN_UP) doSpinUp();
         if (state == State.FINDING) doFinding();
         if (state == State.SHOOTING) doShooting();
@@ -126,6 +127,12 @@ public class RobotSystem extends Subsystem{
     }
     private void doIntaking(){
         if (Robot.ramp.getBallsLoaded() > 2){
+            state = State.INTAKING_LAST_LOAD;
+            ramp.setLastLoad();
+        }
+    }
+    private void doIntakingLastLoad(){
+        if (Robot.ramp.isRampIdle()){
             setStartShooting();
         }
     }
@@ -138,7 +145,7 @@ public class RobotSystem extends Subsystem{
     }
 
     private enum State {
-        IDLE, INTAKING, SHOOTING2, SPIN_UP, FINDING, SHOOTING
+        IDLE, INTAKING, INTAKING_LAST_LOAD, SPIN_UP, FINDING, SHOOTING
     }
 
     public void doTelemetry(Telemetry telemetry){
