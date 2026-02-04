@@ -17,7 +17,8 @@ public class Ramp extends Subsystem{
     public static final String BOTTOM_IR_NAME = "bottomIRSensor";
     public static final String BOTTOM_IR_2_NAME = "upperIRSensor";
     public static final double DEFAULT_TARGET_POWER = 1.0;
-    public static final double SLOW_RAMP_POWER = 0.4;
+    public static final double SLOW_RAMP_POWER = 1.0;
+    private static final double LAST_LOADING_DISTANCE = 200;
     private static final double LOADING_DISTANCE = 600;
     private static final double FEED_DISTANCE = 800 ;
     private static final float GAIN = 100;
@@ -67,7 +68,11 @@ public class Ramp extends Subsystem{
         doLoading();
         colorSensor.enableLed(true);
     }
+    public void setLastLoad(){
+        initialPosition = rampMotor.getCurrentPosition();
+        state = State.LAST_LOADING;
 
+    }
     public void setFeeding(){
         if (state!=State.FEEDING) {
             state = State.FEEDING;
@@ -94,7 +99,8 @@ public class Ramp extends Subsystem{
 
     public boolean isBallInIntake()
     {
-        if (manualIndexing) return manualIndexLoadBall;
+        if (manualIndexLoadBall) return true;
+        if (manualIndexing) return false;
 
         NormalizedRGBA myNormalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
         // Convert the normalized color values to an Android color value.
@@ -121,6 +127,7 @@ public class Ramp extends Subsystem{
         else if (state == State.LOADING) doLoading();
         else if (state == State.LOADING_RAISE_BALL) doLoadingRaiseBall();
         else if (state == State.FEEDING) doFeeding();
+        else if (state == State.LAST_LOADING)doLastLoading();
     }
     private void doIdle() {
         rampMotor.setPower(idlePower);
@@ -147,6 +154,13 @@ public class Ramp extends Subsystem{
             state = State.LOADING;
         }
     }
+    private void doLastLoading(){
+        rampMotor.setPower(SLOW_RAMP_POWER);
+        if (rampMotor.getCurrentPosition() > initialPosition+LAST_LOADING_DISTANCE){
+            setIdleRamp();
+        }
+    }
+
     private void doFeeding() {
         rampMotor.setPower(targetPower);
         if (rampMotor.getCurrentPosition() > initialPosition + FEED_DISTANCE){
@@ -170,7 +184,7 @@ public class Ramp extends Subsystem{
     }
 
     private enum State {
-        IDLE,  LOADING, LOADING_RAISE_BALL,  FEEDING
+        IDLE,  LOADING, LOADING_RAISE_BALL, LAST_LOADING,  FEEDING
     }
 
 }

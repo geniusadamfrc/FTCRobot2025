@@ -10,6 +10,7 @@ public class Intake extends Subsystem{
     private static final double SLOW_INTAKE_POWER = 1.0;
 
     private JerkLimitedDcMotorEx intakeMotor;
+    private ElapsedTime reverseTimer;
 
     private double intakePower = 1.0;
     private IntakeState intakeState;
@@ -33,7 +34,7 @@ public class Intake extends Subsystem{
         intakeMotor.setTargetPower(intakePower);
     }
     public void setReverse(){
-        if (intakeState != IntakeState.IDLE) return;
+        reverseTimer = new ElapsedTime();
         intakeState = IntakeState.REVERSE;
         intakeMotor.setTargetPower(-intakePower);
     }
@@ -55,7 +56,7 @@ public class Intake extends Subsystem{
     }
     private void doSlowIntaking(){ }
     private void doReverse(){
-
+        if (reverseTimer.seconds()>2) setIdleIntake();
     }
 
     public enum IntakeState{
