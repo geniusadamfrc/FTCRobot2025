@@ -51,7 +51,7 @@ public class RobotSystem extends Subsystem{
         state = State.IDLE;
     }
     public void setStartShooting(){
-        if (state == State.IDLE || state == State.INTAKING) {
+        if (state == State.IDLE || state == State.INTAKING || state == State.INTAKING_LAST_LOAD) {
             Robot.intake.setIdleIntake();
             shooter.startShooting();
             ramp.setIdleRamp();
