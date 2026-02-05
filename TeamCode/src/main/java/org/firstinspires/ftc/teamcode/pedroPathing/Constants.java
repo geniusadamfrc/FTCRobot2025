@@ -28,8 +28,12 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
+            0.1,
+            0.1,
+            0.07,
             500,
             1,
+            10,
             1)
             ;
 
@@ -68,13 +72,12 @@ public class Constants {
                 .build();
     }
     public static Follower createFollowerRobot(HardwareMap hardwareMap, MecanumImpl mc) {
-        PinpointLocalizer localizer = new PinpointLocalizer(localizerConstants);
-        //pathConstraints.setHeadingConstraint(1.0);
-        //pathConstraints.setVelocityConstraint(0.01);
+        //PinpointLocalizer localizer = new PinpointLocalizer(localizerConstants);
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .setDrivetrain(mc)
-                .setLocalizer(localizer)
+                //.setLocalizer(localizer)
+                .pinpointLocalizer(localizerConstants)
                 .build();
     }
     public static MecanumImpl createMecanumImpl(HardwareMap hardwareMap){

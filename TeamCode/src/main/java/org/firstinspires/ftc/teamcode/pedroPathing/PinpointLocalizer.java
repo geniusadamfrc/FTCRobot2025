@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Robot;
 
 import com.pedropathing.localization.Localizer;
@@ -123,7 +124,12 @@ public class PinpointLocalizer implements Localizer {
      */
     @Override
     public void setPose(Pose setPose) {
+        /*
         odo.setPosition(PoseConverter.poseToPose2D(setPose, PedroCoordinates.INSTANCE));
+        pinpointPose = setPose;
+        previousHeading = setPose.getHeading();
+         */
+        Pose2D setPose2D =PoseConverter.poseToPose2D(setPose, PedroCoordinates.INSTANCE);
         pinpointPose = setPose;
         previousHeading = setPose.getHeading();
     }
