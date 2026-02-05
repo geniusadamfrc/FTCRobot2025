@@ -9,6 +9,8 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.FilteredPIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
@@ -16,6 +18,9 @@ import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(20)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.08,0,0.01,0.035))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.9, 0, 0.03, 0.03))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0.0, 0, 0.6, 0.02))
             .forwardZeroPowerAcceleration(-32.43)
             .lateralZeroPowerAcceleration(-69.35);
 
@@ -35,7 +40,7 @@ public class Constants {
             .leftRearMotorName(Drivetrain.leftBackName)
             .leftFrontMotorName(Drivetrain.leftFrontName)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .xVelocity(64.16)
@@ -65,7 +70,7 @@ public class Constants {
     public static Follower createFollowerRobot(HardwareMap hardwareMap, MecanumImpl mc) {
         PinpointLocalizer localizer = new PinpointLocalizer(localizerConstants);
         //pathConstraints.setHeadingConstraint(1.0);
-        pathConstraints.setVelocityConstraint(0.01);
+        //pathConstraints.setVelocityConstraint(0.01);
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .setDrivetrain(mc)
