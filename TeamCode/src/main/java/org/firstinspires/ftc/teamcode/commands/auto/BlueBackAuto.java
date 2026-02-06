@@ -43,7 +43,7 @@ public class BlueBackAuto extends BaseAutoCommand {
         main.addCommand(new Intake());
         //main.addCommand(new Turn90DegreesPath(-115));
         //main.addCommand(new IdentifyPattern());
-        //main.addCommand(new Turn90Degrees(0.4, 170, telemetry ));
+
 
 
         main.addCommand(new MoveToPointOnField(-12,-26,179, roadrunner));
@@ -70,8 +70,6 @@ public class BlueBackAuto extends BaseAutoCommand {
 
         main.addCommand(new Shoot());
 
-        //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
-        //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
         */
         return main;
 

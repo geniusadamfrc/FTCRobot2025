@@ -27,16 +27,9 @@ public class ManualFieldRelativeDrive extends ManualDriveCommand {
         double turn = right_stick_x.getState();
         double strafe = left_stick_x.getState();
         double currentHeading = Robot.odometry.odo.getHeading(AngleUnit.RADIANS);
-        drivetrainController.driveFieldRelative(forward, strafe, turn, currentHeading);
+        Robot.drivetrain.driveFieldRelative(forward, strafe, turn, currentHeading);
     }
 
-    @Override
-    public void finishImpl(){
-        drivetrainController.setDriveToZero();
-    }
 
-    @Override
-    public String writeName() {
-        return "Field Relative Drive";
-    }
+
 }

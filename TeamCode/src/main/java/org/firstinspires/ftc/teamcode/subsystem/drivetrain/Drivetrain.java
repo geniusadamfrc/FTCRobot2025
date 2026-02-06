@@ -23,15 +23,18 @@ public class Drivetrain extends CommandSubsystem {
     public DcMotorEx  rightBackDrive  = null;
 
     public DrivetrainAligner aligner;
-    private DrivetrainController currentController;
     private ManualDriveCommand driveCommand; //this is the command that happens if you set the drive function
+    private boolean commanded;
+    private double fls;
+    private double frs;
+    private double bls;
+    private double brs;
+
 
     public void init(HardwareMap hardwareMap){
         initMotors(hardwareMap);
         aligner = new DrivetrainAlignerPID();
-        aligner.controller = new DrivetrainController();
-        aligner.controller.setControllable(aligner);
-
+        commanded= false;
     }
     private void initMotors(HardwareMap hardwareMap){
         leftFrontDrive  = hardwareMap.get(DcMotorEx.class, leftFrontName); //0
@@ -50,10 +53,7 @@ public class Drivetrain extends CommandSubsystem {
 
     public void setDriveCommand(ManualDriveCommand command){
         this.driveCommand = command;
-        DrivetrainController controller = new DrivetrainController();
-        command.setDrivetrainController(controller);
         command.begin();
-
     }
 
 
@@ -71,24 +71,47 @@ public class Drivetrain extends CommandSubsystem {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-    private void driveRobotRelative(double forward, double turn, double strafe){
+
+    public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
+        double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
+        double forward = -Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
+        driveRobotRelative(forward, spin, strafe);
+    }
+    public void driveRobotRelative(double forward, double turn, double strafe){
         double fls = forward + turn + strafe;
         double frs = forward - turn - strafe;
         double bls = forward + turn - strafe;
         double brs = forward - turn + strafe;
-         
+
+        addPowersRaw(fls, frs, bls,brs);
+
+    }
+    public void addPowersRaw(double fls, double frs, double bls, double brs){
+        this.fls += fls;
+        this.frs += frs;
+        this.bls += bls;
+        this.brs += brs;
+    }
+
+
+    public void setPowersRaw(double fls, double frs, double bls, double brs){
         double maxSpeed = computeMaxSpeed(fls, frs, bls, brs);
         double minSpeed = computeMinSpeed(fls, frs, bls, brs);
         maxSpeed = Math.max(Math.abs(maxSpeed), Math.abs(minSpeed));
-        
+
         if(maxSpeed>1){
             fls = fls/maxSpeed;
             frs = frs/maxSpeed;
             bls = bls/maxSpeed;
             brs /= maxSpeed;
         }
-        setPowersRaw(fls, frs, bls,brs);
-        
+
+
+        leftFrontDrive.setPower(fls);
+        rightFrontDrive.setPower(frs);
+        leftBackDrive.setPower(bls);
+        rightBackDrive.setPower(brs);
+
     }
     private double computeMaxSpeed(double fls, double frs, double bls, double brs){
         double maxSpeed;
@@ -104,45 +127,24 @@ public class Drivetrain extends CommandSubsystem {
         return minSpeed;
     }
 
-    public void setPowersRaw(double fls, double frs, double bls, double brs){
-        leftFrontDrive.setPower(fls);
-        rightFrontDrive.setPower(frs);
-        leftBackDrive.setPower(bls);
-        rightBackDrive.setPower(brs);
 
-    }
-    public void setPowersRaw(double fls, double frs, double bls, double brs, double threshold){
-        if(Math.abs(leftFrontDrive.getPower() -fls) > threshold) leftFrontDrive.setPower(fls);
-        if(Math.abs(leftBackDrive.getPower() -bls) > threshold) leftBackDrive.setPower(bls);
-        if(Math.abs(rightFrontDrive.getPower() -frs) > threshold) rightFrontDrive.setPower(frs);
-        if(Math.abs(rightBackDrive.getPower() -brs) > threshold) rightBackDrive.setPower(brs);
-    }
-
-    public int getEncoderReading(){
-        return (leftFrontDrive.getCurrentPosition()
-            + leftBackDrive.getCurrentPosition()
-            + rightFrontDrive.getCurrentPosition()
-            + rightBackDrive.getCurrentPosition())/4;
-    }
 
 
     public boolean isAligned(){
         return aligner.isAligned();
     }
-    public DrivetrainController setCommand(){
+    public void setCommand(){
+        commanded = true;
         aligner.running = false;
-        DrivetrainController controller = new DrivetrainController();
-        currentController = controller;
-        return controller;
     }
     public void setAlign(){
-        currentController = aligner.controller;
+        commanded =false;
         aligner.startAlign();
 
     }
     public void setDrive(){
+        commanded = false;
         aligner.running = false;
-        currentController = driveCommand.getDrivetrainController();
     }
 
     //@Override
@@ -150,149 +152,13 @@ public class Drivetrain extends CommandSubsystem {
         driveCommand.loop();
         aligner.updateTargetOdo();
         aligner.loop();
-        currentController.drive(this);
-        telemetry.addData("Drivetrain Status:", currentController.getControllableName());
+        if (!commanded){
+            setPowersRaw(fls,frs,bls, brs);
+            fls =0; frs =0; bls = 0; brs =0;
+        }
+
+        telemetry.addData("Drivetrain Status", commanded ? "Commanded" : (aligner.running? "Aligning" : "Idle"));
         telemetry.addData("Error" , aligner.lastError);
-        //telemetry.addData("Out", aligner.out);
     }
 
-
-
-
-    public abstract class DrivetrainAligner implements DrivetrainController.DrivetrainControllable{
-        protected DrivetrainController controller;
-        protected double targetOdo;
-        protected double lastError = 0;
-        protected double defaultAngle;
-
-        public abstract void startAlign();
-        public abstract void loop();
-        public void updateTargetOdo(){
-            try {
-                this.targetOdo = Robot.odometry.getHeading() + Robot.shooter.camera.getBearing();
-            } catch (TagNotFoundException e) {
-            }
-        }
-        public boolean running;
-
-        public boolean isAligned(){
-            double error = Robot.odometry.getHeading() - targetOdo;
-            return Math.abs(error) < 1.5;
-        }
-        public double getTargetOdo(){
-            return targetOdo;
-        }
-        public double getLastError(){
-            return lastError;
-        }
-        public void setDefaultAngle(double defaultAngle) {
-            this.targetOdo = defaultAngle;
-        }
-
-
-    }
-    public class DrivetrainAlignerPID  extends DrivetrainAligner{
-
-        private double Kp = 0.01;
-        private double Ki = 0.03;
-        private double Kd = 0.00;
-        private double integralSum = 0;
-        ElapsedTime timer = new ElapsedTime();
-        private double staticFeedForward = 0.05;
-        double out=0;
-
-
-        @Override
-        public void startAlign(){
-            running = true;
-            updateTargetOdo();
-            timer.reset();
-            integralSum = 0;
-            lastError = 0;
-        }
-        @Override
-        public void loop() {
-            double error = Robot.odometry.getHeading() - targetOdo;
-            // rate of change of the error
-            double derivative = (error - lastError) / timer.seconds();
-            // sum of all error over time
-            if (error*lastError < 0) integralSum = 0;
-            integralSum = integralSum + (error * timer.seconds());
-
-            out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
-            double feedForward = staticFeedForward;
-            if (isAligned() ) feedForward =0;
-            out = out + (out < 0 ? -feedForward : feedForward);
-            timer.reset();
-            lastError = error;
-            if (!running) return;
-
-            controller.driveRobotRelative(0.0, out, 0.0);
-            // reset the timer for next time
-        }
-
-
-        @Override
-        public String writeName() {
-            return "Aligner";
-        }
-    }
-
-
-
-
-
-    public static class DrivetrainController {
-        private double forward;
-        private double turn;
-        private double strafe;
-        private boolean ftsMode;
-
-        private double fls;
-        private double frs;
-        private double bls;
-        private double brs;
-        private DrivetrainControllable controllable;
-
-
-        public void driveRobotRelative(double forward, double turn, double strafe){
-            ftsMode =true;
-            this.forward = forward;
-            this.turn = turn;
-            this.strafe = strafe;
-        }
-        public void driveFieldRelative(double x, double y, double spin, double currentHeadingInRadians){
-            double strafe = Math.cos(currentHeadingInRadians)*x + Math.sin(currentHeadingInRadians)*y;
-            double forward = Math.sin(currentHeadingInRadians)*x + Math.cos(currentHeadingInRadians)*y;;
-            driveRobotRelative(forward, spin, strafe);
-        }
-
-
-        public void setDriveToZero(){
-            driveRobotRelative(0,0,0);
-        }
-
-        public void setPowersRaw(double fls, double frs, double bls, double brs){
-            ftsMode = false;
-            this.fls= fls;
-            this.frs = frs;
-            this.bls =bls;
-            this.brs = brs;
-        }
-
-        public void drive(Drivetrain drivetrain){
-            if (ftsMode) drivetrain.driveRobotRelative(forward, turn, strafe);
-            else drivetrain.setPowersRaw(fls,frs,bls, brs);
-        }
-        public String getControllableName(){
-            return controllable !=null ? controllable.writeName():"";
-        }
-
-        public interface DrivetrainControllable{
-            public String writeName();
-        }
-        public void setControllable(DrivetrainControllable controllable){
-            this.controllable = controllable;
-        }
-    }
 }

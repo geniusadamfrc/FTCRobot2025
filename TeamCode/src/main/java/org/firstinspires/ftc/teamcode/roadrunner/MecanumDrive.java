@@ -100,7 +100,6 @@ public final class MecanumDrive {
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
-    private Drivetrain.DrivetrainController controller;
     public MecanumDrive(HardwareMap hardwareMap, Pose2D pose) {
         /*LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
@@ -112,9 +111,7 @@ public final class MecanumDrive {
         localizer = new PinpointLocalizer(new Pose2d(pose.getX(DistanceUnit.INCH), pose.getY(DistanceUnit.INCH), pose.getHeading(AngleUnit.RADIANS)));
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
-    public void setDrivetrainController(Drivetrain.DrivetrainController controller){
-        this.controller = controller;
-    }
+
 
 
     public void setDrivePowers(PoseVelocity2d powers) {
@@ -125,7 +122,7 @@ public final class MecanumDrive {
         for (DualNum<Time> power : wheelVels.all()) {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
-        controller.setPowersRaw(wheelVels.leftFront.get(0) / maxPowerMag,
+        Robot.drivetrain.setPowersRaw(wheelVels.leftFront.get(0) / maxPowerMag,
         wheelVels.rightFront.get(0) / maxPowerMag,
         wheelVels.leftBack.get(0) / maxPowerMag,
         wheelVels.rightBack.get(0) / maxPowerMag);
@@ -163,7 +160,7 @@ public final class MecanumDrive {
             }
 
             if (t >= timeTrajectory.duration) {
-                controller.setPowersRaw(0,0,0,0);
+                Robot.drivetrain.setPowersRaw(0,0,0,0);
                 return false;
             }
 
@@ -191,7 +188,7 @@ public final class MecanumDrive {
             mecanumCommandWriter.write(new MecanumCommandMessage(
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
-            controller.setPowersRaw(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+            Robot.drivetrain.setPowersRaw(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
             p.put("x", localizer.getPose().position.x);
             p.put("y", localizer.getPose().position.y);
@@ -247,7 +244,7 @@ public final class MecanumDrive {
             }
 
             if (t >= turn.duration) {
-                controller.setPowersRaw(0,0,0,0);
+                Robot.drivetrain.setPowersRaw(0,0,0,0);
                 return false;
             }
 
@@ -274,7 +271,7 @@ public final class MecanumDrive {
             mecanumCommandWriter.write(new MecanumCommandMessage(
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
-            controller.setPowersRaw(
+            Robot.drivetrain.setPowersRaw(
                     feedforward.compute(wheelVels.leftFront) / voltage,
                     feedforward.compute(wheelVels.rightFront) / voltage,
                     feedforward.compute(wheelVels.leftBack) / voltage,

@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystem.drivetrain.DrivetrainAligner;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 public class RobotSystem extends Subsystem{
     private static Ramp ramp;
     private static Shooter shooter;
-    private static Drivetrain.DrivetrainAligner aligner;
+    private static DrivetrainAligner aligner;
     private boolean okToFind;
     private State state;
 

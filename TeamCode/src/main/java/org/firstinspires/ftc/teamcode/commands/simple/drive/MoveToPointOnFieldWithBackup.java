@@ -28,7 +28,6 @@ public class MoveToPointOnFieldWithBackup extends DriveCommand {
 
     @Override
     public void beginImpl() {
-        controller.setDrivetrainController(drivetrainController);
         double initialX = Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH);
         double initialY = Robot.odometry.getOdoPosition().getY(DistanceUnit.INCH);
         double initialHeading =Robot.odometry.getOdoPosition().getHeading(AngleUnit.RADIANS);
@@ -53,8 +52,5 @@ public class MoveToPointOnFieldWithBackup extends DriveCommand {
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
     }
-    @Override
-    public String writeName() {
-        return "Move To Point On Field Backup";
-    }
+
 }

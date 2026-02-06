@@ -25,16 +25,9 @@ public class ManualRobotRelativeMecanumDrive extends ManualDriveCommand {
         double forward = -left_stick_y.getState();
         double turn = right_stick_x.getState();
         double strafe = left_stick_x.getState();
-        drivetrainController.driveRobotRelative(forward, turn, strafe);
+        Robot.drivetrain.driveRobotRelative(forward, turn, strafe);
     }
 
-    @Override
-    public void finishImpl(){
-        drivetrainController.setDriveToZero();
-    }
 
-    @Override
-    public String writeName() {
-        return "Robot Relative Drive";
-    }
+
 }

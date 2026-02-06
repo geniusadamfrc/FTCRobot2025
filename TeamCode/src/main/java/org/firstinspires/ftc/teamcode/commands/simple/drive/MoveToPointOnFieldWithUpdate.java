@@ -39,7 +39,6 @@ public class MoveToPointOnFieldWithUpdate extends DriveCommand {
 
     @Override
     public void beginImpl() {
-        controller.setDrivetrainController(drivetrainController);
         update();
         action = controller.actionBuilder(new Pose2d(
                         Robot.odometry.getOdoPosition().getX(DistanceUnit.INCH),
@@ -57,8 +56,5 @@ public class MoveToPointOnFieldWithUpdate extends DriveCommand {
     public void loopImpl() {
         if (!action.run(new TelemetryPacket())) finish();
     }
-    @Override
-    public String writeName() {
-        return "Move To Point On Field with Update";
-    }
+
 }
