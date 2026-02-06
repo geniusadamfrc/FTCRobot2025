@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous(name="Blue Shoot 6 and Pickup 3")
+@Autonomous(name="Blue Shoot 6 and Pickup 3 Far")
 public class BlueShoot6Pickup3 extends BaseAutoCommand {
 
     @Override
@@ -50,7 +50,7 @@ public class BlueShoot6Pickup3 extends BaseAutoCommand {
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new Shoot());
         main.addCommand(new Intake());
-        main.addCommand(new MoveToPointOnField(-24, -0, 179, roadrunner));
+        main.addCommand(new MoveToPointOnField(-24, -24, 179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-30, roadrunner));
 
         //main.addCommand(new DriveStraightPath(roadrunner, -40));
