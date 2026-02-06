@@ -47,7 +47,7 @@ public class MoveToPointOnFieldSlow extends DriveCommand {
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading), new VelConstraint() {
                     @Override
                     public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
-                        return 9.0;
+                        return 12.0;
                     }
                 })
                 //.strafeTo(new Vector2d(44.5, 30))

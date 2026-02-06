@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.ParallelCommand;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
 import org.firstinspires.ftc.teamcode.commands.simple.DriveForwardAndIntake;
+import org.firstinspires.ftc.teamcode.commands.simple.Intake;
 import org.firstinspires.ftc.teamcode.commands.simple.WaitMSeconds;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
@@ -39,6 +40,7 @@ public class BlueBackAuto extends BaseAutoCommand {
         sq1.addCommand(new StartUpShooter(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot());
+        main.addCommand(new Intake());
         //main.addCommand(new Turn90DegreesPath(-115));
         //main.addCommand(new IdentifyPattern());
         //main.addCommand(new Turn90Degrees(0.4, 170, telemetry ));
@@ -52,7 +54,9 @@ public class BlueBackAuto extends BaseAutoCommand {
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new Shoot());
-        main.addCommand(new MoveToPointOnField(-12,-26,179, roadrunner));
+        main.addCommand(new Intake());
+        main.addCommand(new MoveToPointOnField(-12,-2,179, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(-33, 179, roadrunner));
 
         /*main.addCommand(new MoveToPointOnField(-12, -24, 179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-42, roadrunner));

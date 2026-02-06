@@ -33,7 +33,7 @@ public class DriveForwardAndIntake extends Command {
         drive = new MoveToPointOnFieldSlow(currentX+ distance, currentY, heading, controller);
         //rampUp = new SlowRampUp();
         drive.begin();
-        Robot.robot.setIntaking();
+        //Robot.robot.setIntaking();
     }
 
     @Override

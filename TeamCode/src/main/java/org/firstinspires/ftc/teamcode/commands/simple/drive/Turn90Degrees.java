@@ -10,7 +10,7 @@ public class Turn90Degrees extends DriveCommand {
     private boolean direction;  //either  true for forward, false for back
     public Turn90Degrees( double power, int angle, Telemetry telemetry){
         //this.imu = imu;
-        registerCommandSubsystem(Robot.drivetrain);
+        //registerCommandSubsystem(Robot.drivetrain);
         this.angle = angle;
         this.telemetry = telemetry;
         this.power = power;
