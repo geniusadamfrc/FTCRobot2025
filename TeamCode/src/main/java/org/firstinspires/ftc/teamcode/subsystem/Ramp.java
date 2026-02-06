@@ -18,7 +18,7 @@ public class Ramp extends Subsystem{
     public static final String BOTTOM_IR_2_NAME = "upperIRSensor";
     public static final double DEFAULT_TARGET_POWER = 1.0;
     public static final double SLOW_RAMP_POWER = 1.0;
-    private static final double LAST_LOADING_DISTANCE = 200;
+    private static final double LAST_LOADING_DISTANCE = 100;
     private static final double LOADING_DISTANCE = 300;
     private static final double FEED_DISTANCE = 600 ;
     private static final float GAIN = 100;
