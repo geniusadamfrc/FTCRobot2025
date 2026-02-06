@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous(name="Blue Shoot 6 and Pickup 3 Far")
+@Autonomous(name="Blue Close - Get Far 3")
 public class BlueShoot6Pickup3 extends BaseAutoCommand {
 
     @Override

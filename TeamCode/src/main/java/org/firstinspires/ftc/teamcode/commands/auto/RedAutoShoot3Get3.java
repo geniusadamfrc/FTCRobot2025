@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous(name="Red Main Auto")
+@Autonomous(name="Red Close - Get Far 3")
 public class RedAutoShoot3Get3 extends BaseAutoCommand {
 
 
