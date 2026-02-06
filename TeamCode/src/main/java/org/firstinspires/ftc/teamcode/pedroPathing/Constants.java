@@ -32,9 +32,9 @@ public class Constants {
             0.1,
             0.07,
             500,
-            1,
+            1.2,
             10,
-            1)
+            1.2)
             ;
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -71,18 +71,4 @@ public class Constants {
                 .pinpointLocalizer(localizerConstants)
                 .build();
     }
-    public static Follower createFollowerRobot(HardwareMap hardwareMap, MecanumImpl mc) {
-        //PinpointLocalizer localizer = new PinpointLocalizer(localizerConstants);
-        return new FollowerBuilder(followerConstants, hardwareMap)
-                .pathConstraints(pathConstraints)
-                .setDrivetrain(mc)
-                //.setLocalizer(localizer)
-                .pinpointLocalizer(localizerConstants)
-                .build();
-    }
-    public static MecanumImpl createMecanumImpl(HardwareMap hardwareMap){
-        MecanumImpl mc = new MecanumImpl(hardwareMap,new MecanumConstants());
-        return mc;
-    }
-
 }

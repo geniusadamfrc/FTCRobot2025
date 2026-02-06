@@ -12,7 +12,7 @@ public abstract class DriveCommand extends Command {
     }
     @Override
     public void finish(){
-        Robot.drivetrain.setDrive();
+        //Robot.drivetrain.setDrive();
         super.finish();
     }
 
