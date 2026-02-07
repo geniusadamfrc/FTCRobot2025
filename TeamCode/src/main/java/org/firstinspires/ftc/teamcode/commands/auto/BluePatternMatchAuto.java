@@ -53,7 +53,7 @@ public class BluePatternMatchAuto extends BaseAutoCommand {
         main.addCommand(new MoveToPointOnFieldWithUpdate(-12,25,179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-33, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35, roadrunner));
+        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35, 0,roadrunner));
         sq2.addCommand(new StartUpShooter(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));

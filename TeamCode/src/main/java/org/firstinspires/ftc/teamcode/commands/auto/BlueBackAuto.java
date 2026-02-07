@@ -47,7 +47,7 @@ public class BlueBackAuto extends BaseAutoCommand {
 
 
         main.addCommand(new MoveToPointOnField(-12,-26,179, roadrunner));
-        main.addCommand(new DriveForwardAndIntake(-33, 179, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(-20, 179, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
         sq2.addCommand(new MoveToPointOnField(-9, -48, -70, roadrunner));
         sq2.addCommand(new StartUpShooter(620));
@@ -57,6 +57,12 @@ public class BlueBackAuto extends BaseAutoCommand {
         main.addCommand(new Intake());
         main.addCommand(new MoveToPointOnField(-12,-2,179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-33, 179, roadrunner));
+        ParallelCommand sq3 = new ParallelCommand();
+        sq3.addCommand(new MoveToPointOnField(-9, -48, -70, roadrunner));
+        sq3.addCommand(new StartUpShooter(620));
+        main.addCommand(sq3);
+        main.addCommand(new Shoot());
+        main.addCommand(new MoveToPointOnField(-12,-2,179, roadrunner));
 
         /*main.addCommand(new MoveToPointOnField(-12, -24, 179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-42, roadrunner));

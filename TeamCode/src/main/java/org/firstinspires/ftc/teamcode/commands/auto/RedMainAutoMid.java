@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -10,20 +9,17 @@ import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.ParallelCommand;
 import org.firstinspires.ftc.teamcode.commands.SequentialCommand;
 import org.firstinspires.ftc.teamcode.commands.simple.DriveForwardAndIntake;
-import org.firstinspires.ftc.teamcode.commands.simple.IdentifyPattern;
+import org.firstinspires.ftc.teamcode.commands.simple.Intake;
 import org.firstinspires.ftc.teamcode.commands.simple.WaitMSeconds;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldWithBackup;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldWithUpdate;
-import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Disabled
-@Autonomous(name="Red Pattern Match Auto")
-public class RedPatternMatchAuto extends BaseAutoCommand {
+@Autonomous(name="Red Close - Get Mid 3")
+public class RedMainAutoMid extends BaseAutoCommand {
 
     @Override
     public int getGoalID() {
@@ -33,7 +29,7 @@ public class RedPatternMatchAuto extends BaseAutoCommand {
     public double getDefaultAngle(){return -135;}
     @Override
     public Pose2D getInitialPose() {
-        return new Pose2D(DistanceUnit.INCH,-59, 58, AngleUnit.DEGREES,-35);
+        return new Pose2D(DistanceUnit.INCH, 59, 58, AngleUnit.DEGREES, -145);
     }
     @Override
     public Command getMainCommand(){
@@ -44,34 +40,27 @@ public class RedPatternMatchAuto extends BaseAutoCommand {
         sq1.addCommand(new StartUpShooter(620));
         main.addCommand(sq1);
         main.addCommand(new Shoot());
-        main.addCommand(new Turn90DegreesPath(-65, roadrunner));
-        main.addCommand(new IdentifyPattern());
+        main.addCommand(new Intake());
 
-        main.addCommand(new MoveToPointOnFieldWithUpdate(18,4,0, roadrunner));
-        main.addCommand(new DriveForwardAndIntake(30, roadrunner));
+        main.addCommand(new MoveToPointOnField(30,4,0, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(23, 0, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35, roadrunner));
+        sq2.addCommand(new MoveToPointOnFieldWithBackup(20, 32, -145, 179, roadrunner));
         sq2.addCommand(new StartUpShooter(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new Shoot());
-        main.addCommand(new MoveToPointOnField(20, -20, 0, roadrunner));
-        //main.addCommand(new DriveForwardAndIntake(-30));
+        main.addCommand(new Intake());
 
-
-
-
-        /*
+        main.addCommand(new MoveToPointOnField(30, -20, 0, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(20, roadrunner));
         ParallelCommand sq3 = new ParallelCommand();
-        sq3.addCommand(new MoveToPointOnField(-20, 32, -35));
-        sq3.addCommand(new SpeedUpForShooting(620));
+        sq3.addCommand(new MoveToPointOnFieldWithBackup(20, 55, 179, 179, roadrunner));
+        sq3.addCommand(new StartUpShooter(620));
         main.addCommand(sq3);
-        main.addCommand(new WaitMSeconds(200));
-        main.addCommand(new AlignTargetOdo(true));
-        main.addCommand(new Shoot3Balls().init(Robot.shooter, Robot.ramp));
-        */
-        //main.addCommand(new Turn90Degrees(Robot.drivetrain, 0.3, 90, telemetry));
-        //main.addCommand(new DriveStraight(Robot.drivetrain, 0.0, 0.5, 300, telemetry));
+        main.addCommand(new Shoot());
+
         return main;
     }
+
 }

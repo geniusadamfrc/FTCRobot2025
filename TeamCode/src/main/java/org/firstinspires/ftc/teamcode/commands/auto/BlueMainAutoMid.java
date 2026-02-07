@@ -13,12 +13,13 @@ import org.firstinspires.ftc.teamcode.commands.simple.Intake;
 import org.firstinspires.ftc.teamcode.commands.simple.WaitMSeconds;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.DriveStraightPath;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnField;
+import org.firstinspires.ftc.teamcode.commands.simple.drive.MoveToPointOnFieldWithBackup;
 import org.firstinspires.ftc.teamcode.commands.simple.drive.Turn90DegreesPath;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.Shoot;
 import org.firstinspires.ftc.teamcode.commands.simple.shooting.StartUpShooter;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous(name="Blue Close - Get Far 3")
+@Autonomous(name="Blue Close - Get Mid 3")
 public class BlueMainAutoMid extends BaseAutoCommand {
 
     @Override
@@ -41,22 +42,22 @@ public class BlueMainAutoMid extends BaseAutoCommand {
         main.addCommand(sq1);
         main.addCommand(new Shoot());
         main.addCommand(new Intake());
-        main.addCommand(new MoveToPointOnField(-24,28,175, roadrunner));
+        main.addCommand(new MoveToPointOnField(-24,24,179, roadrunner));
         main.addCommand(new DriveForwardAndIntake(-23, 179, roadrunner));
         ParallelCommand sq2 = new ParallelCommand();
-        sq2.addCommand(new MoveToPointOnField(-20, 32, -35, roadrunner));
+        sq2.addCommand(new MoveToPointOnFieldWithBackup(-20, 32, -35, 0, roadrunner));
         sq2.addCommand(new StartUpShooter(620));
         main.addCommand(sq2);
         main.addCommand(new WaitMSeconds(200));
         main.addCommand(new Shoot());
         main.addCommand(new Intake());
         main.addCommand(new MoveToPointOnField(-24, 0, 179, roadrunner));
-        main.addCommand(new DriveForwardAndIntake(-30, roadrunner));
+        main.addCommand(new DriveForwardAndIntake(-20, roadrunner));
 
         //main.addCommand(new DriveStraightPath(roadrunner, -40));
-        main.addCommand(new Turn90DegreesPath(0, roadrunner));
+        //main.addCommand(new Turn90DegreesPath(0, roadrunner));
         ParallelCommand sq3 = new ParallelCommand();
-        sq3.addCommand(new MoveToPointOnField(-20, 55, 0, roadrunner));
+        sq3.addCommand(new MoveToPointOnFieldWithBackup(-20, 55, 0, 0, roadrunner));
         sq3.addCommand(new StartUpShooter(620));
         main.addCommand(sq3);
 

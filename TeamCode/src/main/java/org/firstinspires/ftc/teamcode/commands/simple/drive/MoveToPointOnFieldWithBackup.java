@@ -16,13 +16,15 @@ public class MoveToPointOnFieldWithBackup extends DriveCommand {
     private double x;
     private double y;
     private double heading;
+    private double startingHeading;
     private Action action;
     private MecanumDrive controller;
-    public MoveToPointOnFieldWithBackup(double x, double y, double heading, MecanumDrive controller) {
+    public MoveToPointOnFieldWithBackup(double x, double y, double heading, double startingHeading, MecanumDrive controller) {
         this.controller = controller;
         this.x = x;
         this.y = y;
         this.heading = heading;
+        this.startingHeading = startingHeading;
         this.registerCommandSubsystem(Robot.drivetrain);
     }
 
@@ -37,11 +39,7 @@ public class MoveToPointOnFieldWithBackup extends DriveCommand {
                         initialX,
                         initialY,
                         initialHeading))
-                .setTangent(Robot.odometry.odo.getHeading(AngleUnit.RADIANS))
-                .splineToLinearHeading(
-                        new Pose2d(initialX +30, initialY, initialHeading), initialHeading
-                )
-                .turnTo(90)
+                .setTangent(Math.toRadians(startingHeading))
                 .splineToLinearHeading(new Pose2d(x, y, Math.toRadians(heading)), Math.toRadians(heading))
                 //.strafeTo(new Vector2d(44.5, 30))
                 //.turn(Math.toRadians(180))
